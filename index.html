@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>서울 아파트 경매</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-row">
+        <h1 class="app-title">수도권 아파트 경매</h1>
+        <div class="header-meta" id="header-meta">서울 · 경기 핵심지 자동 업데이트</div>
+      </div>
+    </header>
+
+    <!-- Key Metrics (Toss-style clean cards) -->
+    <section class="summary-bar" aria-label="요약 지표">
+      <div class="summary-item">
+        <span class="summary-label">전체 물건</span>
+        <span class="summary-num" id="stat-total">-</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">할인 물건</span>
+        <span class="summary-num red" id="stat-discount">-</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">신건</span>
+        <span class="summary-num" id="stat-new">-</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">이번주 마감</span>
+        <span class="summary-num blue" id="stat-imminent">-</span>
+      </div>
+    </section>
+
+    <!-- Apple-style Segmented Region Pills -->
+    <div class="segmented-wrapper">
+      <nav class="segmented-control" aria-label="권역 선택">
+        <button type="button" class="pill-btn active" data-region="ALL">전체</button>
+        <button type="button" class="pill-btn" data-region="서울">서울</button>
+        <button type="button" class="pill-btn" data-region="광명">광명</button>
+        <button type="button" class="pill-btn" data-region="성남">성남</button>
+        <button type="button" class="pill-btn" data-region="안양">안양</button>
+        <button type="button" class="pill-btn" data-region="수원">수원</button>
+        <button type="button" class="pill-btn" data-region="용인">용인</button>
+      </nav>
+    </div>
+
+    <!-- Minimal Filter & Search Bar -->
+    <section class="filter-bar" aria-label="상세 필터">
+      <div class="search-box">
+        <input type="text" id="input-search" class="search-input" placeholder="아파트명, 동네 검색">
+      </div>
+      <div class="filter-selects">
+        <select id="select-price" class="select-clean" aria-label="가격 필터">
+          <option value="ALL">가격 전체</option>
+          <option value="under5">5억 이하</option>
+          <option value="5to9">5억 ~ 9억</option>
+          <option value="9to15">9억 ~ 15억</option>
+          <option value="over15">15억 초과</option>
+        </select>
+
+        <select id="select-discount" class="select-clean" aria-label="할인율 필터">
+          <option value="ALL">할인 전체</option>
+          <option value="disc20">20% 이상 할인</option>
+          <option value="disc36">36% 이상 할인</option>
+          <option value="new">신건만</option>
+        </select>
+
+        <select id="select-sort" class="select-clean" aria-label="정렬">
+          <option value="dday_asc">마감 빠른순</option>
+          <option value="discount_desc">할인율 높은순</option>
+          <option value="min_price_asc">가격 낮은순</option>
+          <option value="appraisal_desc">감정가 높은순</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Sub Toggles -->
+    <div class="filter-sub-row">
+      <div class="sub-toggles">
+        <label class="check-label">
+          <input type="checkbox" id="chk-safe">
+          안전 권리만
+        </label>
+        <label class="check-label">
+          <input type="checkbox" id="chk-bookmark">
+          ★ 관심만
+        </label>
+      </div>
+      <div class="count-text">
+        <strong id="result-count">0</strong>건
+      </div>
+    </div>
+
+    <!-- Auction Card Grid -->
+    <main class="auction-grid" id="auction-grid">
+      <!-- Injected by app.js -->
+    </main>
+  </div>
+
+  <!-- Toss-style Sheet Modal (Calculator) -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-complex-title">
+    <div class="modal-sheet">
+      <div class="sheet-header">
+        <div>
+          <h2 class="sheet-title" id="modal-complex-title">-</h2>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:2px;" id="modal-case-no">-</div>
+        </div>
+        <button type="button" class="sheet-close" id="modal-close" aria-label="닫기">&times;</button>
+      </div>
+
+      <div class="calc-input-wrap">
+        <label class="calc-input-label" for="calc-input-price">내 예상 입찰가</label>
+        <input type="number" id="calc-input-price" class="sheet-input" step="10000000">
+      </div>
+
+      <div class="calc-result-list">
+        <div class="calc-result-row">
+          <span>입찰보증금 (10%)</span>
+          <span id="res-deposit" style="font-weight:700;">-</span>
+        </div>
+        <div class="calc-result-row">
+          <span>낙찰 잔금</span>
+          <span id="res-balance">-</span>
+        </div>
+        <div class="calc-result-row">
+          <span>예상 대출 (LTV 70%)</span>
+          <span id="res-loan" style="color:var(--toss-blue); font-weight:700;">-</span>
+        </div>
+        <div class="calc-result-row">
+          <span>취득세 (1주택 기준)</span>
+          <span id="res-tax">-</span>
+        </div>
+        <div class="calc-result-row">
+          <span>부대비용 (명도+법무)</span>
+          <span id="res-extra">-</span>
+        </div>
+        <div class="calc-result-row highlight">
+          <span>필요 현금 (자기자본)</span>
+          <span class="total-val" id="res-total">-</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toss-toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
