@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-10-16",
+  "updated_at": "2026-10-15 06:00:00",
   "total_count": 13,
   "stats": {
     "total": 13,
     "new_count": 4,
     "discounted_count": 9,
-    "imminent_count": 6
+    "imminent_count": 5
   },
   "items": [
     {
@@ -24,11 +24,11 @@
       "discount_rate": 20,
       "auction_round": "2회차 (1회 유찰)",
       "auction_date": "2026-10-22",
-      "d_day": 6,
+      "d_day": 7,
       "bid_deposit": 172000000,
       "is_safe": true,
       "rights_badge": "인수권리 없음 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=헬리오시티",
+      "naver_search_url": "https://new.land.naver.com/complexes/111515",
       "hogang_search_url": "https://hogangnono.com/search?q=송파헬리오시티"
     },
     {
@@ -47,11 +47,11 @@
       "discount_rate": 20,
       "auction_round": "2회차 (1회 유찰)",
       "auction_date": "2026-10-20",
-      "d_day": 4,
+      "d_day": 5,
       "bid_deposit": 118400000,
       "is_safe": true,
       "rights_badge": "전액 배당 예상 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=마포래미안푸르지오",
+      "naver_search_url": "https://new.land.naver.com/complexes/104917",
       "hogang_search_url": "https://hogangnono.com/search?q=마포래미안푸르지오"
     },
     {
@@ -70,11 +70,11 @@
       "discount_rate": 30,
       "auction_round": "2회차 (1회 유찰)",
       "auction_date": "2026-10-26",
-      "d_day": 10,
+      "d_day": 11,
       "bid_deposit": 101500000,
       "is_safe": true,
       "rights_badge": "인수권리 없음 • 선도지구 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=시범한양",
+      "naver_search_url": "https://new.land.naver.com/complexes/1879",
       "hogang_search_url": "https://hogangnono.com/search?q=서현동시범한양"
     },
     {
@@ -93,11 +93,11 @@
       "discount_rate": 30,
       "auction_round": "2회차 (1회 유찰)",
       "auction_date": "2026-10-23",
-      "d_day": 7,
+      "d_day": 8,
       "bid_deposit": 75600000,
       "is_safe": true,
       "rights_badge": "1순위 근저당 소멸 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=철산래미안자이",
+      "naver_search_url": "https://new.land.naver.com/complexes/25902",
       "hogang_search_url": "https://hogangnono.com/search?q=철산래미안자이"
     },
     {
@@ -116,11 +116,11 @@
       "discount_rate": 30,
       "auction_round": "2회차 (1회 유찰)",
       "auction_date": "2026-10-20",
-      "d_day": 4,
+      "d_day": 5,
       "bid_deposit": 96600000,
       "is_safe": true,
       "rights_badge": "광교중앙역 역세권 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=광교자연앤힐스테이트",
+      "naver_search_url": "https://new.land.naver.com/complexes/101273",
       "hogang_search_url": "https://hogangnono.com/search?q=광교자연앤힐스테이트"
     },
     {
@@ -139,11 +139,11 @@
       "discount_rate": 0,
       "auction_round": "1회차 (신건)",
       "auction_date": "2026-10-31",
-      "d_day": 15,
+      "d_day": 16,
       "bid_deposit": 89000000,
       "is_safe": true,
       "rights_badge": "범계역 초역세권 신건",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=목련두산",
+      "naver_search_url": "https://new.land.naver.com/complexes/1456",
       "hogang_search_url": "https://hogangnono.com/search?q=평촌목련두산"
     },
     {
@@ -162,11 +162,11 @@
       "discount_rate": 30,
       "auction_round": "2회차 (1회 유찰)",
       "auction_date": "2026-10-24",
-      "d_day": 8,
+      "d_day": 9,
       "bid_deposit": 80500000,
       "is_safe": true,
       "rights_badge": "성복역 연결 역세권 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=e편한세상수지",
+      "naver_search_url": "https://new.land.naver.com/complexes/109948",
       "hogang_search_url": "https://hogangnono.com/search?q=e편한세상수지"
     },
     {
@@ -185,11 +185,11 @@
       "discount_rate": 20,
       "auction_round": "2회차 (1회 유찰)",
       "auction_date": "2026-10-19",
-      "d_day": 3,
+      "d_day": 4,
       "bid_deposit": 272000000,
       "is_safe": true,
       "rights_badge": "1순위 근저당 소멸 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=래미안대치팰리스",
+      "naver_search_url": "https://new.land.naver.com/complexes/180280",
       "hogang_search_url": "https://hogangnono.com/search?q=래미안대치팰리스"
     },
     {
@@ -208,11 +208,11 @@
       "discount_rate": 36,
       "auction_round": "3회차 (2회 유찰)",
       "auction_date": "2026-10-28",
-      "d_day": 12,
+      "d_day": 13,
       "bid_deposit": 37120000,
       "is_safe": true,
       "rights_badge": "소유자 점유 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=상계주공7단지",
+      "naver_search_url": "https://new.land.naver.com/complexes/921",
       "hogang_search_url": "https://hogangnono.com/search?q=상계주공7단지"
     },
     {
@@ -231,11 +231,11 @@
       "discount_rate": 0,
       "auction_round": "1회차 (신건)",
       "auction_date": "2026-10-29",
-      "d_day": 13,
+      "d_day": 14,
       "bid_deposit": 182000000,
       "is_safe": true,
       "rights_badge": "대지권 유효 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=목동신시가지7단지",
+      "naver_search_url": "https://new.land.naver.com/complexes/659",
       "hogang_search_url": "https://hogangnono.com/search?q=목동신시가지7단지"
     },
     {
@@ -254,11 +254,11 @@
       "discount_rate": 36,
       "auction_round": "3회차 (2회 유찰)",
       "auction_date": "2026-10-21",
-      "d_day": 5,
+      "d_day": 6,
       "bid_deposit": 80000000,
       "is_safe": true,
       "rights_badge": "후순위 압류 전액소멸 (안전)",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=DMC파크뷰자이",
+      "naver_search_url": "https://new.land.naver.com/complexes/108064",
       "hogang_search_url": "https://hogangnono.com/search?q=DMC파크뷰자이"
     },
     {
@@ -277,11 +277,11 @@
       "discount_rate": 0,
       "auction_round": "1회차 (신건)",
       "auction_date": "2026-11-03",
-      "d_day": 18,
+      "d_day": 19,
       "bid_deposit": 105000000,
       "is_safe": true,
       "rights_badge": "신축 첫 경매",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=강동헤리티지자이",
+      "naver_search_url": "https://new.land.naver.com/complexes/154118",
       "hogang_search_url": "https://hogangnono.com/search?q=강동헤리티지자이"
     },
     {
@@ -300,11 +300,11 @@
       "discount_rate": 0,
       "auction_round": "1회차 (신건)",
       "auction_date": "2026-10-27",
-      "d_day": 11,
+      "d_day": 12,
       "bid_deposit": 139000000,
       "is_safe": true,
       "rights_badge": "초역세권 신건",
-      "naver_search_url": "https://new.land.naver.com/complexes?searchWord=당산삼성래미안",
+      "naver_search_url": "https://new.land.naver.com/complexes/2981",
       "hogang_search_url": "https://hogangnono.com/search?q=당산삼성래미안"
     }
   ]

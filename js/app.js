@@ -29,7 +29,7 @@
         bid_deposit: 172000000,
         is_safe: true,
         rights_badge: "인수권리 없음 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=헬리오시티",
+        naver_url: "https://new.land.naver.com/complexes/111515",
         hogang_url: "https://hogangnono.com/search?q=송파헬리오시티"
       },
       {
@@ -51,7 +51,7 @@
         bid_deposit: 118400000,
         is_safe: true,
         rights_badge: "전액 배당 예상 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=마포래미안푸르지오",
+        naver_url: "https://new.land.naver.com/complexes/104917",
         hogang_url: "https://hogangnono.com/search?q=마포래미안푸르지오"
       },
       {
@@ -73,7 +73,7 @@
         bid_deposit: 101500000,
         is_safe: true,
         rights_badge: "인수권리 없음 • 선도지구 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=시범한양",
+        naver_url: "https://new.land.naver.com/complexes/1879",
         hogang_url: "https://hogangnono.com/search?q=서현동시범한양"
       },
       {
@@ -95,7 +95,7 @@
         bid_deposit: 75600000,
         is_safe: true,
         rights_badge: "1순위 근저당 소멸 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=철산래미안자이",
+        naver_url: "https://new.land.naver.com/complexes/25902",
         hogang_url: "https://hogangnono.com/search?q=철산래미안자이"
       },
       {
@@ -117,7 +117,7 @@
         bid_deposit: 96600000,
         is_safe: true,
         rights_badge: "광교중앙역 역세권 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=광교자연앤힐스테이트",
+        naver_url: "https://new.land.naver.com/complexes/101273",
         hogang_url: "https://hogangnono.com/search?q=광교자연앤힐스테이트"
       },
       {
@@ -139,7 +139,7 @@
         bid_deposit: 89000000,
         is_safe: true,
         rights_badge: "범계역 초역세권 신건",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=목련두산",
+        naver_url: "https://new.land.naver.com/complexes/1456",
         hogang_url: "https://hogangnono.com/search?q=평촌목련두산"
       },
       {
@@ -161,7 +161,7 @@
         bid_deposit: 80500000,
         is_safe: true,
         rights_badge: "성복역 연결 역세권 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=e편한세상수지",
+        naver_url: "https://new.land.naver.com/complexes/109948",
         hogang_url: "https://hogangnono.com/search?q=e편한세상수지"
       },
       {
@@ -183,7 +183,7 @@
         bid_deposit: 272000000,
         is_safe: true,
         rights_badge: "1순위 근저당 소멸 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=래미안대치팰리스",
+        naver_url: "https://new.land.naver.com/complexes/180280",
         hogang_url: "https://hogangnono.com/search?q=래미안대치팰리스"
       },
       {
@@ -205,7 +205,7 @@
         bid_deposit: 37120000,
         is_safe: true,
         rights_badge: "소유자 점유 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=상계주공7단지",
+        naver_url: "https://new.land.naver.com/complexes/921",
         hogang_url: "https://hogangnono.com/search?q=상계주공7단지"
       },
       {
@@ -227,7 +227,7 @@
         bid_deposit: 182000000,
         is_safe: true,
         rights_badge: "대지권 유효 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=목동신시가지7단지",
+        naver_url: "https://new.land.naver.com/complexes/659",
         hogang_url: "https://hogangnono.com/search?q=목동신시가지7단지"
       },
       {
@@ -249,7 +249,7 @@
         bid_deposit: 80000000,
         is_safe: true,
         rights_badge: "후순위 압류 전액소멸 (안전)",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=DMC파크뷰자이",
+        naver_url: "https://new.land.naver.com/complexes/108064",
         hogang_url: "https://hogangnono.com/search?q=DMC파크뷰자이"
       },
       {
@@ -271,7 +271,7 @@
         bid_deposit: 105000000,
         is_safe: true,
         rights_badge: "신축 첫 경매",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=강동헤리티지자이",
+        naver_url: "https://new.land.naver.com/complexes/154118",
         hogang_url: "https://hogangnono.com/search?q=강동헤리티지자이"
       },
       {
@@ -293,10 +293,29 @@
         bid_deposit: 139000000,
         is_safe: true,
         rights_badge: "초역세권 신건",
-        naver_url: "https://new.land.naver.com/complexes?searchWord=당산삼성래미안",
+        naver_url: "https://new.land.naver.com/complexes/2981",
         hogang_url: "https://hogangnono.com/search?q=당산삼성래미안"
       }
     ]
+  };
+
+  // 네이버 부동산 단지 고유번호 매핑 (호가 버튼 클릭 시 해당 단지 매물창 직행)
+  const NAVER_COMPLEX_ID_MAP = {
+    "송파 헬리오시티": "111515",
+    "헬리오시티": "111515",
+    "마포래미안푸르지오": "104917",
+    "분당 시범한양": "1879",
+    "시범한양": "1879",
+    "철산래미안자이": "25902",
+    "광교자연앤힐스테이트": "101273",
+    "평촌 목련마을 두산": "1456",
+    "e편한세상수지": "109948",
+    "래미안대치팰리스": "180280",
+    "상계주공7단지": "921",
+    "목동신시가지7단지": "659",
+    "DMC파크뷰자이": "108064",
+    "강동헤리티지자이": "154118",
+    "당산삼성래미안": "2981"
   };
 
   // State
@@ -462,6 +481,19 @@
     });
   }
 
+  // Resolve exact Naver Real Estate complex URL for 호가 button
+  function getNaverComplexUrl(item) {
+    if (item && item.complex_name && NAVER_COMPLEX_ID_MAP[item.complex_name]) {
+      return `https://new.land.naver.com/complexes/${NAVER_COMPLEX_ID_MAP[item.complex_name]}`;
+    }
+    const raw = item.naver_url || item.naver_search_url || '';
+    if (/\/complexes\/\d+/.test(raw)) {
+      return raw;
+    }
+    const q = `${item.district || ''} ${item.complex_name || ''}`.trim();
+    return `https://land.naver.com/search/search.naver?query=${encodeURIComponent(q)}`;
+  }
+
   // Render Card HTML (Clean & Informative)
   function renderCard(item) {
     const isBookmarked = state.bookmarks.has(item.id);
@@ -473,9 +505,9 @@
       ? `<span class="chip chip-discount">-${item.discount_rate}%</span>`
       : `<span class="chip chip-new">신건</span>`;
 
-    // B방식: 네이버 법원경매 사건번호 직링크 (세션 오류 없는 상세뷰)
-    const auctionDetailUrl = `https://new.land.naver.com/auction?query=${encodeURIComponent(item.case_no)}`;
-    const naverLink = item.naver_url || item.naver_search_url || '#';
+    // 단지명 클릭 시 사건번호+단지명 경매 상세 검색결과 연결
+    const auctionDetailUrl = `https://search.naver.com/search.naver?where=nexearch&query=${encodeURIComponent(item.case_no + ' ' + item.complex_name + ' 경매')}`;
+    const naverLink = getNaverComplexUrl(item);
     const hogangLink = item.hogang_url || item.hogang_search_url || '#';
     const rightsText = item.rights_badge || (item.is_safe ? '인수권리 없음 (안전)' : '권리확인 필요');
 

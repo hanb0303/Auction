@@ -202,6 +202,17 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                 addr_tokens = loc_text.split()
                 district = " ".join(addr_tokens[1:3]) if len(addr_tokens) >= 3 else court["region"]
 
+                # 네이버 부동산 단지 고유번호(complexNo) 조회 -> 해당 아파트 매물창 직행 링크 생성
+                naver_complex_url = f"https://land.naver.com/search/search.naver?query={urllib.parse.quote(district + ' ' + complex_name)}"
+                try:
+                    nv_resp = session.get(naver_complex_url, headers=headers, timeout=5)
+                    nv_match = re.search(r"rletNo=(\d+)|reSearchComplexTab\([^,]+,\s*'(\d+)'\)", nv_resp.text)
+                    if nv_match:
+                        c_id = nv_match.group(1) or nv_match.group(2)
+                        naver_complex_url = f"https://new.land.naver.com/complexes/{c_id}"
+                except Exception:
+                    pass
+
                 item = {
                     "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", case_no),
                     "case_no": case_no,
@@ -222,7 +233,7 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                     "bid_deposit": int(minimum_price * 0.1),
                     "is_safe": True,
                     "rights_badge": "인수권리 없음 (안전)",
-                    "naver_search_url": f"https://new.land.naver.com/complexes?searchWord={urllib.parse.quote(complex_name)}",
+                    "naver_search_url": naver_complex_url,
                     "hogang_search_url": f"https://hogangnono.com/search?q={urllib.parse.quote(complex_name)}"
                 }
                 collected_items.append(item)
