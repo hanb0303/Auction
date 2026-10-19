@@ -123,6 +123,18 @@ def extract_floor(addr_text: str) -> str:
     return match.group(1) if match else "중간층"
 
 
+def extract_dong_ho(addr_text: str) -> str:
+    """주소 텍스트에서 동·호수(예: '109동 1502호') 추출"""
+    clean = re.sub(r"\([^)]*\)", "", addr_text or "").strip()
+    dong_m = re.search(r"(?:^|\s)제?(\d+동|[가-힣A-Za-z]동)(?=\s+제?\d+층|\s*$)", clean)
+    ho_m = re.search(r"제?(?:\d+층)?\s*제?([\d\-]+호|[가-힣A-Za-z]+-[\d]+호)", clean)
+    dong = dong_m.group(1) if dong_m else ""
+    ho = ho_m.group(1) if ho_m else ""
+    if dong and ho:
+        return f"{dong} {ho}"
+    return dong or ho or ""
+
+
 def extract_complex_name(addr_text: str) -> str:
     """소재지 주소에서 아파트 단지명 추출"""
     paren = re.search(r"\(([^)]+)\)", addr_text)
@@ -189,6 +201,26 @@ def resolve_naver_complex_url(session, headers: dict, district: str, complex_nam
     except Exception:
         pass
     return search_url
+
+
+def resolve_households(session, headers: dict, district: str, complex_name: str) -> str:
+    """네이버 통합검색에서 해당 아파트 단지의 총 세대수(예: '1,622세대') 조회"""
+    query = urllib.parse.quote(f"{district} {complex_name} 세대수".strip())
+    url = f"https://search.naver.com/search.naver?where=nexearch&query={query}"
+    try:
+        time.sleep(0.2)
+        resp = session.get(url, headers={"User-Agent": headers["User-Agent"]}, timeout=5)
+        m_total = re.search(r"총\s*(\d{1,3}(?:,\d{3})*)\s*세대", resp.text)
+        if m_total:
+            return f"{m_total.group(1)}세대"
+        all_m = re.findall(r"(\d{2,3}(?:,\d{3})*|\d,\d{3})\s*세대", resp.text)
+        if all_m:
+            from collections import Counter
+            most_common = Counter(all_m).most_common(1)[0][0]
+            return f"{most_common}세대"
+    except Exception:
+        pass
+    return ""
 
 
 def scrape_court_auction() -> List[Dict[str, Any]]:
@@ -336,12 +368,16 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                     district = f"{tokens[1]} {tokens[2]}".replace(",", "") if len(tokens) >= 3 else region_group
 
                     naver_url = resolve_naver_complex_url(session, headers, district, complex_name)
+                    dong_ho = extract_dong_ho(addr_part)
+                    households = resolve_households(session, headers, district, complex_name)
 
                     item = {
                         "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", case_no),
                         "case_no": case_no,
                         "court": court["short_name"],
                         "complex_name": complex_name,
+                        "dong_ho": dong_ho,
+                        "households": households,
                         "region_group": region_group,
                         "district": district,
                         "address": addr_part,

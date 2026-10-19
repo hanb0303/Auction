@@ -37,7 +37,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/107661",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EC%88%98%EC%A0%95%EA%B5%AC%20%EC%9C%84%EB%A1%80%EC%84%BC%ED%8A%B8%EB%9F%B4%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A4"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EC%88%98%EC%A0%95%EA%B5%AC%20%EC%9C%84%EB%A1%80%EC%84%BC%ED%8A%B8%EB%9F%B4%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A4",
+                      "dong_ho":  "5403동 704호",
+                      "households":  "687세대"
                   },
                   {
                       "id":  "2025타경52944",
@@ -60,7 +62,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/1747",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EC%A4%91%EC%9B%90%EA%B5%AC%20%EC%84%B1%EC%9B%90%EC%B4%88%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EC%A4%91%EC%9B%90%EA%B5%AC%20%EC%84%B1%EC%9B%90%EC%B4%88%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "101동 402호",
+                      "households":  "281세대"
                   },
                   {
                       "id":  "2025타경104110",
@@ -83,7 +87,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/10966",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%80%EC%95%85%EA%B5%AC%20%EC%8B%A0%EB%A6%BC%EB%8F%99%20%ED%95%9C%EB%9D%BC%ED%83%80%EC%9A%B4%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%80%EC%95%85%EA%B5%AC%20%EC%8B%A0%EB%A6%BC%EB%8F%99%20%ED%95%9C%EB%9D%BC%ED%83%80%EC%9A%B4%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "404호",
+                      "households":  "73세대"
                   },
                   {
                       "id":  "2025타경103542",
@@ -106,7 +112,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/17690",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%8C%80%EC%B9%98%EB%8F%99%20%EC%8A%A4%EC%B9%B4%EC%9D%B4%EC%8D%A8%EB%B0%8B%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%8C%80%EC%B9%98%EB%8F%99%20%EC%8A%A4%EC%B9%B4%EC%9D%B4%EC%8D%A8%EB%B0%8B%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "302호",
+                      "households":  "10세대"
                   },
                   {
                       "id":  "2025타경3006",
@@ -129,7 +137,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/3168",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%80%EC%95%85%EA%B5%AC%20%EC%8B%A0%EB%A6%BC%EB%8F%99%20%EA%B1%B4%EC%98%81%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%80%EC%95%85%EA%B5%AC%20%EC%8B%A0%EB%A6%BC%EB%8F%99%20%EA%B1%B4%EC%98%81%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "4동 1302호",
+                      "households":  "783세대"
                   },
                   {
                       "id":  "2025타경2768",
@@ -152,7 +162,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/107439",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%80%EC%95%85%EA%B5%AC%20%EB%B4%89%EC%B2%9C%EB%8F%99%20%EA%B4%80%EC%95%85%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A4"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%80%EC%95%85%EA%B5%AC%20%EB%B4%89%EC%B2%9C%EB%8F%99%20%EA%B4%80%EC%95%85%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A4",
+                      "dong_ho":  "119동 303호",
+                      "households":  "2,104세대"
                   },
                   {
                       "id":  "2025타경2485",
@@ -175,7 +187,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/26368",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%B4%88%EA%B5%AC%20%EC%96%91%EC%9E%AC%EB%8F%99%20%EB%A9%94%EB%A5%B4%EB%94%94%EC%95%88%ED%95%98%EC%9A%B0%EC%8A%A4"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%B4%88%EA%B5%AC%20%EC%96%91%EC%9E%AC%EB%8F%99%20%EB%A9%94%EB%A5%B4%EB%94%94%EC%95%88%ED%95%98%EC%9A%B0%EC%8A%A4",
+                      "dong_ho":  "602호",
+                      "households":  "16세대"
                   },
                   {
                       "id":  "2025타경104025",
@@ -198,7 +212,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/107457",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%9E%90%EA%B3%A1%EB%8F%99%20%EB%9E%98%EB%AF%B8%EC%95%88%ED%8F%AC%EB%A0%88"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%9E%90%EA%B3%A1%EB%8F%99%20%EB%9E%98%EB%AF%B8%EC%95%88%ED%8F%AC%EB%A0%88",
+                      "dong_ho":  "315동 104호",
+                      "households":  "1,070세대"
                   },
                   {
                       "id":  "2025타경103555",
@@ -221,7 +237,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/100344",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%80%EC%95%85%EA%B5%AC%20%EC%8B%A0%EB%A6%BC%EB%8F%99%20%EA%B4%80%EC%95%85%EC%82%B0%ED%9C%B4%EB%A8%BC%EC%8B%9C%EC%95%84"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%80%EC%95%85%EA%B5%AC%20%EC%8B%A0%EB%A6%BC%EB%8F%99%20%EA%B4%80%EC%95%85%EC%82%B0%ED%9C%B4%EB%A8%BC%EC%8B%9C%EC%95%84",
+                      "dong_ho":  "229동 704호",
+                      "households":  "2,810세대"
                   },
                   {
                       "id":  "2025타경101801",
@@ -244,7 +262,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/10828",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%82%A8%EB%B6%80%EC%88%9C%ED%99%98%EB%A1%9C379%EA%B8%B8%20%EC%82%BC%EC%84%B1%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%82%A8%EB%B6%80%EC%88%9C%ED%99%98%EB%A1%9C379%EA%B8%B8%20%EC%82%BC%EC%84%B1%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "1동 1003호",
+                      "households":  "237세대"
                   },
                   {
                       "id":  "2026타경50077",
@@ -267,7 +287,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/19578",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%8F%99%EA%B5%AC%20%EC%95%94%EC%82%AC%EB%8F%99%20%ED%94%84%EB%9D%BC%EC%9D%B4%EC%96%B4%ED%8C%B0%EB%A6%AC%EC%8A%A4"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%8F%99%EA%B5%AC%20%EC%95%94%EC%82%AC%EB%8F%99%20%ED%94%84%EB%9D%BC%EC%9D%B4%EC%96%B4%ED%8C%B0%EB%A6%AC%EC%8A%A4",
+                      "dong_ho":  "109동 1502호",
+                      "households":  "1,622세대"
                   },
                   {
                       "id":  "2026타경50047",
@@ -290,7 +312,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/127671",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%8F%99%EA%B5%AC%20%EA%B0%95%EC%9D%BC%EB%8F%99%20%EA%B0%95%EB%8F%99%EB%A6%AC%EB%B2%84%EC%8A%A4%ED%8A%B84%EB%8B%A8%EC%A7%80"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%8F%99%EA%B5%AC%20%EA%B0%95%EC%9D%BC%EB%8F%99%20%EA%B0%95%EB%8F%99%EB%A6%AC%EB%B2%84%EC%8A%A4%ED%8A%B84%EB%8B%A8%EC%A7%80",
+                      "dong_ho":  "401동 201호",
+                      "households":  "1,239세대"
                   },
                   {
                       "id":  "2025타경52589",
@@ -313,7 +337,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/355",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%86%A1%ED%8C%8C%EA%B5%AC%20%EA%B1%B0%EC%97%AC%EB%8F%99%20%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%86%A1%ED%8C%8C%EA%B5%AC%20%EA%B1%B0%EC%97%AC%EB%8F%99%20%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "202동 404호",
+                      "households":  "280세대"
                   },
                   {
                       "id":  "2025타경465",
@@ -336,7 +362,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/561",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%8F%99%EA%B5%AC%20%EC%84%B1%EC%88%98%EB%8F%991%EA%B0%80%20%EC%84%B1%EC%88%98%ED%98%84%EB%8C%80%EA%B7%B8%EB%A6%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%8F%99%EA%B5%AC%20%EC%84%B1%EC%88%98%EB%8F%991%EA%B0%80%20%EC%84%B1%EC%88%98%ED%98%84%EB%8C%80%EA%B7%B8%EB%A6%B0%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "101동 713호",
+                      "households":  "242세대"
                   },
                   {
                       "id":  "2026타경3433",
@@ -359,7 +387,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/22",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%B0%A9%ED%99%94%EB%8F%99%20%EC%9E%A5%EB%AF%B8%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%B0%A9%ED%99%94%EB%8F%99%20%EC%9E%A5%EB%AF%B8%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "101동 707호",
+                      "households":  "387세대"
                   },
                   {
                       "id":  "2025타경13877",
@@ -382,7 +412,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/869",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EC%84%9C%EA%B5%AC%20%EC%97%BC%EC%B0%BD%EB%8F%99%20%EC%97%BC%EC%B0%BD%EB%8F%99%EC%95%84%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EC%84%9C%EA%B5%AC%20%EC%97%BC%EC%B0%BD%EB%8F%99%20%EC%97%BC%EC%B0%BD%EB%8F%99%EC%95%84%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "101동 303호",
+                      "households":  "212세대"
                   },
                   {
                       "id":  "2026타경4958",
@@ -405,7 +437,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/17522",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%96%91%EC%B2%9C%EA%B5%AC%20%EC%8B%A0%EC%A0%95%EB%8F%99%20%ED%9E%90%ED%83%91%EC%9D%B4%EB%A3%A8%EB%AF%B8%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%96%91%EC%B2%9C%EA%B5%AC%20%EC%8B%A0%EC%A0%95%EB%8F%99%20%ED%9E%90%ED%83%91%EC%9D%B4%EB%A3%A8%EB%AF%B8%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "202호",
+                      "households":  "84세대"
                   },
                   {
                       "id":  "2026타경3063",
@@ -428,7 +462,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/10547",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B5%AC%EB%A1%9C%EA%B5%AC%20%EA%B5%AC%EB%A1%9C%EB%8F%99%20%EC%9A%B0%EB%A6%AC%EC%9C%A0%EC%95%A4%EB%AF%B8%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B5%AC%EB%A1%9C%EA%B5%AC%20%EA%B5%AC%EB%A1%9C%EB%8F%99%20%EC%9A%B0%EB%A6%AC%EC%9C%A0%EC%95%A4%EB%AF%B8%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "101동 902호",
+                      "households":  "216세대"
                   },
                   {
                       "id":  "2026타경84",
@@ -451,7 +487,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/27553",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EC%84%9C%EA%B5%AC%20%ED%99%94%EA%B3%A1%EB%8F%99%20%EA%B7%B8%EB%9E%9C%EB%93%9C%EC%95%84%EC%9D%B4%ED%8C%8C%ED%81%AC"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EC%84%9C%EA%B5%AC%20%ED%99%94%EA%B3%A1%EB%8F%99%20%EA%B7%B8%EB%9E%9C%EB%93%9C%EC%95%84%EC%9D%B4%ED%8C%8C%ED%81%AC",
+                      "dong_ho":  "102-1202호",
+                      "households":  "120세대"
                   },
                   {
                       "id":  "2023타경105218",
@@ -474,7 +512,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/24841",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%96%91%EC%B2%9C%EA%B5%AC%20%EC%98%A4%EB%AA%A9%EB%A1%9C%20%EB%AA%A9%EB%8F%99%ED%8A%B8%EB%9D%BC%ED%8C%B0%EB%A6%AC%EC%8A%A4%20%EC%9D%B4%EC%8A%A4%ED%84%B4%EC%97%90%EB%B9%84%EB%89%B4"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%96%91%EC%B2%9C%EA%B5%AC%20%EC%98%A4%EB%AA%A9%EB%A1%9C%20%EB%AA%A9%EB%8F%99%ED%8A%B8%EB%9D%BC%ED%8C%B0%EB%A6%AC%EC%8A%A4%20%EC%9D%B4%EC%8A%A4%ED%84%B4%EC%97%90%EB%B9%84%EB%89%B4",
+                      "dong_ho":  "비-904호",
+                      "households":  "258세대"
                   },
                   {
                       "id":  "2025타경57182",
@@ -497,7 +537,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/27006",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EB%B2%84%EB%93%A4%EC%B9%98%EB%A7%88%EC%9D%84%20%EC%84%B1%EB%B3%B5%EC%9E%90%EC%9D%B42%EC%B0%A8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EB%B2%84%EB%93%A4%EC%B9%98%EB%A7%88%EC%9D%84%20%EC%84%B1%EB%B3%B5%EC%9E%90%EC%9D%B42%EC%B0%A8",
+                      "dong_ho":  "207동 202호",
+                      "households":  "719세대"
                   },
                   {
                       "id":  "2025타경56714",
@@ -520,7 +562,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/104300",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%EC%84%9C%EC%88%98%EC%9B%90%EB%A0%88%EC%9D%B4%ED%81%AC%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A42%EB%8B%A8%EC%A7%80"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%EC%84%9C%EC%88%98%EC%9B%90%EB%A0%88%EC%9D%B4%ED%81%AC%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A42%EB%8B%A8%EC%A7%80",
+                      "dong_ho":  "208동 2301호",
+                      "households":  "797세대"
                   },
                   {
                       "id":  "2026타경50079",
@@ -543,7 +587,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/27707",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EA%B3%B5%EC%84%B8%20%ED%98%B8%EC%88%98%EB%A7%88%EC%9D%84%20%EA%B3%B5%EC%84%B8%EC%84%B1%EC%9B%90%EC%83%81%EB%96%BC%20%EB%A0%88%EC%9D%B4%ED%81%AC%EB%B7%B0"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EA%B3%B5%EC%84%B8%20%ED%98%B8%EC%88%98%EB%A7%88%EC%9D%84%20%EA%B3%B5%EC%84%B8%EC%84%B1%EC%9B%90%EC%83%81%EB%96%BC%20%EB%A0%88%EC%9D%B4%ED%81%AC%EB%B7%B0",
+                      "dong_ho":  "107동 801호",
+                      "households":  "345세대"
                   },
                   {
                       "id":  "2025타경59303",
@@ -566,7 +612,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/27707",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EA%B3%B5%EC%84%B8%20%ED%98%B8%EC%88%98%EB%A7%88%EC%9D%84%20%EA%B3%B5%EC%84%B8%EC%84%B1%EC%9B%90%EC%83%81%EB%96%BC%EB%A0%88%EC%9D%B4%ED%81%AC%EB%B7%B0"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EA%B3%B5%EC%84%B8%20%ED%98%B8%EC%88%98%EB%A7%88%EC%9D%84%20%EA%B3%B5%EC%84%B8%EC%84%B1%EC%9B%90%EC%83%81%EB%96%BC%EB%A0%88%EC%9D%B4%ED%81%AC%EB%B7%B0",
+                      "dong_ho":  "102동 601호",
+                      "households":  "345세대"
                   },
                   {
                       "id":  "2025타경57942",
@@ -589,7 +637,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/26925",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EB%B2%84%EB%93%A4%EC%B9%98%EB%A7%88%EC%9D%84%EC%84%B1%EB%B3%B5%EC%9E%90%EC%9D%B41%EC%B0%A8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EB%B2%84%EB%93%A4%EC%B9%98%EB%A7%88%EC%9D%84%EC%84%B1%EB%B3%B5%EC%9E%90%EC%9D%B41%EC%B0%A8",
+                      "dong_ho":  "101동 1002호",
+                      "households":  "719세대"
                   },
                   {
                       "id":  "2025타경55580",
@@ -612,7 +662,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/26926",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EB%B2%84%EB%93%A4%EC%B9%98%EB%A7%88%EC%9D%84%EC%84%B1%EB%B3%B5%ED%9E%90%EC%8A%A4%ED%85%8C%EC%9D%B4%ED%8A%B83%EC%B0%A8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EB%B2%84%EB%93%A4%EC%B9%98%EB%A7%88%EC%9D%84%EC%84%B1%EB%B3%B5%ED%9E%90%EC%8A%A4%ED%85%8C%EC%9D%B4%ED%8A%B83%EC%B0%A8",
+                      "dong_ho":  "304동 203호",
+                      "households":  "823세대"
                   },
                   {
                       "id":  "2025타경1743",
@@ -635,7 +687,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/104971",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%EC%84%9C%EC%88%98%EC%9B%90%EC%97%A0%EC%BD%94%ED%83%80%EC%9A%B4%EB%A5%B4%EB%B3%B8%EB%8A%90"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%EC%84%9C%EC%88%98%EC%9B%90%EC%97%A0%EC%BD%94%ED%83%80%EC%9A%B4%EB%A5%B4%EB%B3%B8%EB%8A%90",
+                      "dong_ho":  "101동 302호",
+                      "households":  "204세대"
                   },
                   {
                       "id":  "2025타경57392",
@@ -658,7 +712,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/11502",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EB%8F%99%EC%88%98%EC%9B%902%EC%B0%A8%EC%8C%8D%EC%9A%A9%EC%8A%A4%EC%9C%97%EB%8B%B7%ED%99%88"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EB%8F%99%EC%88%98%EC%9B%902%EC%B0%A8%EC%8C%8D%EC%9A%A9%EC%8A%A4%EC%9C%97%EB%8B%B7%ED%99%88",
+                      "dong_ho":  "204동 301호",
+                      "households":  "274세대"
                   },
                   {
                       "id":  "2025타경56987",
@@ -681,7 +737,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/115681",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%ED%8C%94%EB%8B%AC%EA%B5%AC%20%EC%9D%B8%EA%B3%84%ED%95%9C%EC%96%91%EC%88%98%EC%9E%90%EC%9D%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%ED%8C%94%EB%8B%AC%EA%B5%AC%20%EC%9D%B8%EA%B3%84%ED%95%9C%EC%96%91%EC%88%98%EC%9E%90%EC%9D%B8",
+                      "dong_ho":  "101동 404호",
+                      "households":  "279세대"
                   },
                   {
                       "id":  "2025타경3854",
@@ -704,7 +762,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/24625",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EC%A4%91%EC%9B%90%EA%B5%AC%20%EA%B8%88%EC%98%A4%EB%B2%A0%EC%8A%A4%ED%8A%B8%EC%83%B5%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EC%A4%91%EC%9B%90%EA%B5%AC%20%EA%B8%88%EC%98%A4%EB%B2%A0%EC%8A%A4%ED%8A%B8%EC%83%B5%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "1003호",
+                      "households":  "27세대"
                   },
                   {
                       "id":  "2025타경101431",
@@ -727,7 +787,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/9223",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EC%A3%BC%EA%B3%B5%EB%9C%A8%EB%9E%80%EC%B1%84"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EC%A3%BC%EA%B3%B5%EB%9C%A8%EB%9E%80%EC%B1%84",
+                      "dong_ho":  "109동 2004호",
+                      "households":  "1,093세대"
                   },
                   {
                       "id":  "2025타경1543",
@@ -750,7 +812,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/122093",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EC%A0%9C%EB%82%98%EC%8B%9C%ED%8B%B0"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EC%A0%9C%EB%82%98%EC%8B%9C%ED%8B%B0",
+                      "dong_ho":  "402호",
+                      "households":  "20세대"
                   },
                   {
                       "id":  "2024타경109310",
@@ -773,7 +837,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/8036",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%8F%99%EC%95%88%EA%B5%AC%20%ED%98%B8%EA%B3%84%EC%9D%B4-%ED%8E%B8%ED%95%9C%EC%84%B8%EC%83%81%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%8F%99%EC%95%88%EA%B5%AC%20%ED%98%B8%EA%B3%84%EC%9D%B4-%ED%8E%B8%ED%95%9C%EC%84%B8%EC%83%81%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "113동 302호",
+                      "households":  "1,752세대"
                   },
                   {
                       "id":  "2025타경101688",
@@ -796,7 +862,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/127667",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EB%91%90%EC%82%B0%EC%9C%84%EB%B8%8C%EB%8D%94%EC%95%84%ED%8B%B0%EC%9B%80"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EB%91%90%EC%82%B0%EC%9C%84%EB%B8%8C%EB%8D%94%EC%95%84%ED%8B%B0%EC%9B%80",
+                      "dong_ho":  "103동 701호",
+                      "households":  "558세대"
                   },
                   {
                       "id":  "2025타경101612",
@@ -819,7 +887,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/1985",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%8F%99%EC%95%88%EA%B5%AC%20%EA%B4%80%EC%95%85%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%8F%99%EC%95%88%EA%B5%AC%20%EA%B4%80%EC%95%85%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "125동 801호",
+                      "households":  "1,800세대"
                   },
                   {
                       "id":  "2025타경101578",
@@ -842,7 +912,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/1477",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%8F%99%EC%95%88%EA%B5%AC%20%EC%B4%88%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%8F%99%EC%95%88%EA%B5%AC%20%EC%B4%88%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "704동 911호",
+                      "households":  "1,743세대"
                   },
                   {
                       "id":  "2025타경101401",
@@ -865,7 +937,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/26739",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EB%8F%99%EC%8B%A0%EB%B2%A8%EB%A1%9C%EC%8A%A4"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EB%8F%99%EC%8B%A0%EB%B2%A8%EB%A1%9C%EC%8A%A4",
+                      "dong_ho":  "1104호",
+                      "households":  "77세대"
                   },
                   {
                       "id":  "2025타경101364",
@@ -888,7 +962,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/112054",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EB%9E%98%EB%AF%B8%EC%95%88%EC%95%88%EC%96%91%EB%A9%94%EA%B0%80%ED%8A%B8%EB%A6%AC%EC%95%84"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EB%9E%98%EB%AF%B8%EC%95%88%EC%95%88%EC%96%91%EB%A9%94%EA%B0%80%ED%8A%B8%EB%A6%AC%EC%95%84",
+                      "dong_ho":  "115동 1001호",
+                      "households":  "4,250세대"
                   },
                   {
                       "id":  "2025타경13622",
@@ -911,7 +987,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/18471",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%9B%94%EA%B3%84%EB%8F%99%20%EC%9B%94%EA%B3%84%EB%A1%9C%EC%A6%88%EB%B9%8C"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%9B%94%EA%B3%84%EB%8F%99%20%EC%9B%94%EA%B3%84%EB%A1%9C%EC%A6%88%EB%B9%8C",
+                      "dong_ho":  "801호",
+                      "households":  "28세대"
                   },
                   {
                       "id":  "2025타경13595",
@@ -934,7 +1012,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/27413",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%AF%B8%EC%95%84%EB%8F%99%20%EB%91%90%EC%82%B0%EC%9C%84%EB%B8%8C%ED%8A%B8%EB%A0%88%EC%A7%80%EC%9B%80%EC%95%84%ED%8C%8C%ED%8A%B8"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%AF%B8%EC%95%84%EB%8F%99%20%EB%91%90%EC%82%B0%EC%9C%84%EB%B8%8C%ED%8A%B8%EB%A0%88%EC%A7%80%EC%9B%80%EC%95%84%ED%8C%8C%ED%8A%B8",
+                      "dong_ho":  "305동 401호",
+                      "households":  "1,370세대"
                   },
                   {
                       "id":  "2025타경51029",
@@ -943,7 +1023,7 @@
                       "complex_name":  "철산래미안자이",
                       "region_group":  "광명",
                       "district":  "광명시 철산동",
-                      "address":  "경기도 광명시 철산동 634 철산래미안자이 107동 18층",
+                      "address":  "경기도 광명시 철산동 634 철산래미안자이 107동 18층1802호",
                       "area_m2":  84.95,
                       "area_pyeong":  25.7,
                       "floor_info":  "18층",
@@ -957,7 +1037,9 @@
                       "is_safe":  true,
                       "rights_badge":  "인수권리 없음 (안전)",
                       "naver_search_url":  "https://new.land.naver.com/complexes/25902",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%91%EB%AA%85%EC%8B%9C%20%EC%B2%A0%EC%82%B0%EB%8F%99%20%EC%B2%A0%EC%82%B0%EB%9E%98%EB%AF%B8%EC%95%88%EC%9E%90%EC%9D%B4"
+                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%91%EB%AA%85%EC%8B%9C%20%EC%B2%A0%EC%82%B0%EB%8F%99%20%EC%B2%A0%EC%82%B0%EB%9E%98%EB%AF%B8%EC%95%88%EC%9E%90%EC%9D%B4",
+                      "dong_ho":  "107동 1802호",
+                      "households":  "2,072세대"
                   }
               ]
 };
@@ -1018,6 +1100,50 @@
     "래미안안양메가트리아":  "112054",
     "월계로즈빌":  "18471",
     "두산위브트레지움아파트":  "27413"
+};
+
+  // 단지별 세대수 매핑
+  const COMPLEX_HOUSEHOLDS_MAP = {
+    "위례센트럴푸르지오":  "687세대",
+    "성원초원아파트":  "281세대",
+    "한라타운아파트":  "73세대",
+    "스카이써밋아파트":  "10세대",
+    "건영아파트":  "783세대",
+    "관악푸르지오":  "2,104세대",
+    "메르디안하우스":  "16세대",
+    "래미안포레":  "1,070세대",
+    "관악산휴먼시아":  "2,810세대",
+    "도곡삼성아파트":  "237세대",
+    "프라이어팰리스":  "1,622세대",
+    "강동리버스트4단지":  "1,239세대",
+    "현대아파트":  "280세대",
+    "성수현대그린아파트":  "242세대",
+    "장미아파트":  "387세대",
+    "염창동아아파트":  "212세대",
+    "힐탑이루미아파트":  "84세대",
+    "우리유앤미아파트":  "216세대",
+    "그랜드아이파크":  "120세대",
+    "목동트라팰리스 이스턴에비뉴":  "258세대",
+    "버들치마을 성복자이2차":  "719세대",
+    "서수원레이크푸르지오2단지":  "797세대",
+    "공세성원상떼레이크뷰":  "345세대",
+    "버들치마을성복자이1차":  "719세대",
+    "버들치마을성복힐스테이트3차":  "823세대",
+    "서수원엠코타운르본느":  "204세대",
+    "동수원2차쌍용스윗닷홈":  "274세대",
+    "인계한양수자인":  "279세대",
+    "금오베스트샵아파트":  "27세대",
+    "주공뜨란채":  "1,093세대",
+    "제나시티":  "20세대",
+    "호계e편한세상":  "1,752세대",
+    "두산위브더아티움":  "558세대",
+    "관악아파트":  "1,800세대",
+    "초원아파트":  "1,743세대",
+    "동신벨로스":  "77세대",
+    "래미안안양메가트리아":  "4,250세대",
+    "월계로즈빌":  "28세대",
+    "두산위브트레지움아파트":  "1,370세대",
+    "철산래미안자이":  "2,072세대"
 };
   // State
   let state = {
@@ -1202,6 +1328,28 @@
     return `https://land.naver.com/search/search.naver?query=${encodeURIComponent(q)}`;
   }
 
+  // Extract building & unit (동·호수) from item or address
+  function getDongHo(item) {
+    if (item && item.dong_ho) return item.dong_ho;
+    const addr = ((item && item.address) || '').replace(/\([^)]*\)/g, '').trim();
+    if (!addr) return '';
+    const dongM = addr.match(/(?:^|\s)제?(\d+동|[가-힣A-Za-z]동)(?=\s+제?\d+층|\s*$)/);
+    const hoM = addr.match(/제?(?:\d+층)?\s*제?([\d\-]+호|[가-힣A-Za-z]+-[\d]+호)/);
+    const dong = dongM ? dongM[1] : '';
+    const ho = hoM ? hoM[1] : '';
+    if (dong && ho) return `${dong} ${ho}`;
+    return dong || ho || '';
+  }
+
+  // Get total households (세대수) for complex
+  function getHouseholds(item) {
+    if (item && item.households) return item.households;
+    if (item && item.complex_name && COMPLEX_HOUSEHOLDS_MAP[item.complex_name]) {
+      return COMPLEX_HOUSEHOLDS_MAP[item.complex_name];
+    }
+    return '';
+  }
+
   // Render Card HTML (Clean & Informative)
   function renderCard(item) {
     const isBookmarked = state.bookmarks.has(item.id);
@@ -1218,6 +1366,8 @@
     const naverLink = getNaverComplexUrl(item);
     const hogangLink = item.hogang_url || item.hogang_search_url || '#';
     const rightsText = item.rights_badge || (item.is_safe ? '인수권리 없음 (안전)' : '권리확인 필요');
+    const dongHo = getDongHo(item);
+    const households = getHouseholds(item);
 
     return `
       <article class="auction-card" data-id="${item.id}">
@@ -1233,10 +1383,10 @@
           <div class="complex-header">
             <h3 class="complex-name">
               <a href="${auctionDetailUrl}" target="_blank" rel="noopener" class="complex-name-link" title="법원 매물 상세공고 확인 (새 탭)">
-                ${item.complex_name}
+                ${item.complex_name}${dongHo ? ` <span style="font-weight:600; font-size:0.88em; color:#4e5968;">${dongHo}</span>` : ''}
               </a>
             </h3>
-            <div class="complex-spec">${item.district} · 전용 ${item.area_m2}㎡ (${item.area_pyeong}평) · ${item.floor_info} · ${item.auction_round}</div>
+            <div class="complex-spec">${item.district}${households ? ` · ${households}` : ''} · 전용 ${item.area_m2}㎡ (${item.area_pyeong}평) · ${item.floor_info} · ${item.auction_round}</div>
           </div>
 
           <div class="price-section">
