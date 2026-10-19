@@ -18,6 +18,8 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_FILE_PATH = os.path.join(PROJECT_ROOT, "data", "auction_data.json")
 
 BASE_URL = "https://www.courtauction.go.kr"
+SEARCH_MAIN_URL = f"{BASE_URL}/pgj/pgjsearch/searchControllerMain.on"
+SEARCH_REFERER_URL = f"{BASE_URL}/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ151F00.xml"
 NOTICE_LIST_URL = f"{BASE_URL}/pgj/pgj143/selectRletDspslPbanc.on"
 NOTICE_DETAIL_URL = f"{BASE_URL}/pgj/pgj143/selectRletDspslPbancDtl.on"
 REFERER_URL = f"{BASE_URL}/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ143M01.xml&pgjId=143M01"
@@ -186,21 +188,16 @@ def resolve_naver_complex_url(session, headers: dict, district: str, complex_nam
         return f"https://new.land.naver.com/complexes/{KNOWN_NAVER_COMPLEX_IDS[complex_name]}"
 
     query = urllib.parse.quote(f"{district} {complex_name}".strip())
-    search_url = f"https://land.naver.com/search/search.naver?query={query}"
+    nexearch_url = f"https://search.naver.com/search.naver?where=nexearch&query={query}"
     try:
-        time.sleep(0.5)
-        nv_resp = session.get(search_url, headers={"User-Agent": headers["User-Agent"]}, timeout=5)
-        if "complexes/" in nv_resp.url:
-            m_url = re.search(r"complexes/(\d+)", nv_resp.url)
-            if m_url:
-                return f"https://new.land.naver.com/complexes/{m_url.group(1)}"
-        nv_match = re.search(r"rletNo=(\d+)|complexes/(\d+)|reSearchComplexTab\([^,]+,\s*'(\d+)'\)", nv_resp.text)
-        if nv_match:
-            c_id = nv_match.group(1) or nv_match.group(2) or nv_match.group(3)
-            return f"https://new.land.naver.com/complexes/{c_id}"
+        time.sleep(0.15)
+        nv_resp = session.get(nexearch_url, headers={"User-Agent": headers["User-Agent"]}, timeout=6)
+        m_cid = re.search(r"complexes/(\d+)", nv_resp.text)
+        if m_cid:
+            return f"https://new.land.naver.com/complexes/{m_cid.group(1)}"
     except Exception:
         pass
-    return search_url
+    return f"https://new.land.naver.com/search?sk={query}"
 
 
 def resolve_households(session, headers: dict, district: str, complex_name: str) -> str:
@@ -250,10 +247,167 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
         print(f"[!] 대법원 사이트 초기 접속 실패: {e}")
         return []
 
-    srch_ym = datetime.date.today().strftime("%Y%m")
+    today = datetime.date.today()
+    bgng_ymd = today.strftime("%Y%m%d")
+    end_ymd = (today + datetime.timedelta(days=30)).strftime("%Y%m%d")
+    srch_ym = today.strftime("%Y%m")
     collected_items: List[Dict[str, Any]] = []
     seen_cases = set()
 
+    search_headers = dict(headers)
+    search_headers["SC-Userid"] = "SYSTEM"
+    search_headers["Submissionid"] = "mf_wfm_mainFrame_sbm_selectGdsDtlSrch"
+    search_headers["Referer"] = SEARCH_REFERER_URL
+
+    # 1) 4주(30일) 기일 물건 통합 상세검색 (searchControllerMain.on - 아파트 전용코드 20000/20100/20104)
+    for court in TARGET_COURTS:
+        for page_no in range(1, 5):
+            try:
+                time.sleep(1.8)
+                srch_payload = {
+                    "dma_pageInfo": {
+                        "pageNo": page_no,
+                        "pageSize": 40,
+                        "bfPageNo": "",
+                        "startRowNo": "",
+                        "totalCnt": "",
+                        "totalYn": "Y",
+                        "groupTotalCount": "",
+                    },
+                    "dma_srchGdsDtlSrchInfo": {
+                        "rletDspslSpcCondCd": "",
+                        "bidDvsCd": "000331",
+                        "mvprpRletDvsCd": "00031R",
+                        "cortAuctnSrchCondCd": "0004601",
+                        "rprsAdongSdCd": "",
+                        "rprsAdongSggCd": "",
+                        "rprsAdongEmdCd": "",
+                        "rdnmSdCd": "",
+                        "rdnmSggCd": "",
+                        "rdnmNo": "",
+                        "cortOfcCd": court["cort_cd"],
+                        "jdbnCd": "",
+                        "execrOfcDvsCd": "",
+                        "lclDspslGdsLstUsgCd": "20000",
+                        "mclDspslGdsLstUsgCd": "20100",
+                        "sclDspslGdsLstUsgCd": "20104",
+                        "cortAuctnMbrsId": "",
+                        "theraExclAreaFrom": "",
+                        "theraExclAreaTo": "",
+                        "aeeEvlAmtFrom": "",
+                        "aeeEvlAmtTo": "",
+                        "lwsDspslPrcRateFrom": "",
+                        "lwsDspslPrcRateTo": "",
+                        "flbdNcntFrom": "",
+                        "flbdNcntTo": "",
+                        "objctArDts": "",
+                        "LafjOrderBy": "",
+                        "pgmId": "PGJ151F01",
+                        "csNo": "",
+                        "cortStDvs": "1",
+                        "statNum": 1,
+                        "bidBgngYmd": bgng_ymd,
+                        "bidEndYmd": end_ymd,
+                        "dspslDxdyYmd": "",
+                        "fstDspslYn": "",
+                        "scndDspslYn": "",
+                        "thrdDspslYn": "",
+                        "fothDspslYn": "",
+                        "dspslGdsSpcCondCd": "",
+                        "lwsDspslPrcFrom": "",
+                        "lwsDspslPrcTo": "",
+                        "sideDvsCd": "",
+                    },
+                }
+                s_resp = session.post(SEARCH_MAIN_URL, json=srch_payload, headers=search_headers, timeout=20)
+                if s_resp.status_code != 200:
+                    break
+                s_list = (s_resp.json().get("data") or {}).get("dlt_srchResult") or []
+                if not s_list:
+                    break
+
+                for r in s_list:
+                    case_no = str(r.get("srnSaNo") or "").strip()
+                    if not case_no or case_no in seen_cases:
+                        continue
+                    buld_nm = str(r.get("buldNm") or "").strip()
+                    if not buld_nm or re.search(r"오피스텔|다세대|빌라|연립|도시형|생활주택|해담채|원룸", buld_nm):
+                        continue
+                    bigo = str(r.get("mulBigo") or "").strip()
+                    if bigo and re.search(r"지분|미등기|유치권|법정지상권|분묘|선순위|건물만|토지별도|가처분|매각제외|맹지", bigo):
+                        continue
+
+                    addr_part = str(r.get("printSt") or "").strip()
+                    region_group = classify_region(addr_part)
+                    if not region_group:
+                        continue
+
+                    app_price = parse_korean_price(str(r.get("gamevalAmt") or "0"))
+                    if app_price < 350_000_000:
+                        continue
+                    min1 = parse_korean_price(str(r.get("minmaePrice") or "0"))
+                    min2 = parse_korean_price(str(r.get("notifyMinmaePrice1") or "0"))
+                    min_price = min2 if (0 < min2 < min1 or min1 == 0) else min1
+                    if min_price <= 0:
+                        min_price = app_price
+
+                    area_m2 = extract_area_m2(str(r.get("areaList") or ""))
+                    if area_m2 < 35 or area_m2 > 300:
+                        continue
+
+                    buld_list = str(r.get("buldList") or "").strip()
+                    dong_ho = extract_dong_ho(buld_list) or buld_list
+                    if "동" not in dong_ho and app_price < 700_000_000:
+                        continue
+
+                    sigu = str(r.get("hjguSigu") or "").strip()
+                    dong = str(r.get("hjguDong") or "").strip()
+                    district = f"서울 {sigu} {dong}".strip() if region_group == "서울" else f"{sigu} {dong}".strip()
+
+                    naver_url = resolve_naver_complex_url(session, headers, district, buld_nm)
+                    households = resolve_households(session, headers, district, buld_nm)
+
+                    seen_cases.add(case_no)
+                    area_pyeong = round(area_m2 * 0.3025, 1)
+                    floor_info = extract_floor(buld_list)
+                    discount_rate = max(0, round((1 - (min_price / app_price)) * 100))
+                    yuchal = int(str(r.get("yuchalCnt") or "0") or 0)
+                    auction_round = f"{yuchal + 1}회차 ({yuchal}회 유찰)" if yuchal > 0 else "1회차 (신건)"
+                    auction_date = format_ymd(r.get("maeGiil") or "")
+
+                    collected_items.append({
+                        "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", case_no),
+                        "case_no": case_no,
+                        "court": court["short_name"],
+                        "complex_name": buld_nm,
+                        "dong_ho": dong_ho,
+                        "households": households,
+                        "region_group": region_group,
+                        "district": district,
+                        "address": addr_part,
+                        "area_m2": area_m2,
+                        "area_pyeong": area_pyeong,
+                        "floor_info": floor_info,
+                        "appraisal_price": app_price,
+                        "minimum_price": min_price,
+                        "discount_rate": discount_rate,
+                        "auction_round": auction_round,
+                        "auction_date": auction_date,
+                        "d_day": calculate_d_day(auction_date),
+                        "bid_deposit": int(min_price * 0.1),
+                        "is_safe": True,
+                        "rights_badge": "인수권리 없음 (안전)",
+                        "naver_search_url": naver_url,
+                        "hogang_search_url": f"https://hogangnono.com/search?q={urllib.parse.quote(district + ' ' + buld_nm)}",
+                    })
+
+                if len(s_list) < 40:
+                    break
+            except Exception as e:
+                print(f"  - [{court['short_name']}] 4주 물건 검색 건너뜀: {e}")
+                break
+
+    # 2) 기일별 공고 상세 보조 수집
     for court in TARGET_COURTS:
         try:
             time.sleep(2.0)  # 대법원 서버 차단 방지 딜레이
