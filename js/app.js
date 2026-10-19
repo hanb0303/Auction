@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Seoul & Gyeonggi Auction Radar - Apple & Toss Design System Engine
  */
 
@@ -3869,6 +3869,26 @@
     "두산위브트레지움아파트":  "1,370세대",
     "철산래미안자이":  "2,072세대"
 };
+  // 서울 5대 생활권 자치구 매핑
+  const SEOUL_ZONES = {
+    SE: ['강남구', '서초구', '송파구', '강동구'],
+    CENTER: ['마포구', '용산구', '성동구', '광진구', '종로구', '중구'],
+    SW: ['양천구', '영등포구', '동작구', '강서구', '관악구', '구로구', '금천구'],
+    NE: ['노원구', '도봉구', '강북구', '성북구', '동대문구', '중랑구'],
+    NW: ['은평구', '서대문구']
+  };
+
+  function isSeoulItem(item) {
+    return item.region_group === '서울' || (item.court && item.court.includes('서울')) || (item.address && item.address.includes('서울'));
+  }
+
+  function matchSeoulZone(item, zoneKey) {
+    if (!zoneKey || zoneKey === 'ALL') return true;
+    const guList = SEOUL_ZONES[zoneKey] || [];
+    const targetText = `${item.district || ''} ${item.address || ''}`;
+    return guList.some(gu => targetText.includes(gu));
+  }
+
   // State
   let state = {
     items: [],
@@ -3877,6 +3897,8 @@
     bookmarks: new Set(JSON.parse(localStorage.getItem('sar_bookmarks') || '[]')),
     filters: {
       regionGroup: 'ALL',
+      seoulZone: 'ALL',
+      minHouseholds: 'ALL',
       priceRange: 'ALL',
       discount: 'ALL',
       safeOnly: false,
@@ -3895,6 +3917,9 @@
     statNew: document.getElementById('stat-new'),
     statImminent: document.getElementById('stat-imminent'),
     regionButtons: document.querySelectorAll('.pill-btn[data-region]'),
+    seoulSubWrapper: document.getElementById('seoul-sub-wrapper'),
+    seoulZoneButtons: document.querySelectorAll('.sub-pill-btn[data-seoul-zone]'),
+    selectHouseholds: document.getElementById('select-households'),
     selectPrice: document.getElementById('select-price'),
     selectDiscount: document.getElementById('select-discount'),
     selectSort: document.getElementById('select-sort'),
@@ -3975,6 +4000,25 @@
     renderCards();
   }
 
+  // Update live counts on Seoul 5-zone sub-buttons
+  function updateSeoulZoneCounts() {
+    const seoulItems = state.items.filter(isSeoulItem);
+    const labels = {
+      ALL: '서울 전체',
+      SE: '강남·동남권',
+      CENTER: '마용성·도심권',
+      SW: '목동·서남권',
+      NE: '노도강·동북권',
+      NW: '은평·서북권'
+    };
+    el.seoulZoneButtons.forEach(btn => {
+      const zk = btn.getAttribute('data-seoul-zone');
+      const cnt = zk === 'ALL' ? seoulItems.length : seoulItems.filter(it => matchSeoulZone(it, zk)).length;
+      const baseLabel = labels[zk] || btn.textContent;
+      btn.innerHTML = `${baseLabel} <span class="zone-count">${cnt}</span>`;
+    });
+  }
+
   // Render Header & Stats
   function renderHeader() {
     let dateLabel = '26.10.19';
@@ -3989,6 +4033,15 @@
     el.statDiscount.textContent = `${state.stats.discounted_count || 0}`;
     el.statNew.textContent = `${state.stats.new_count || 0}`;
     el.statImminent.textContent = `${state.stats.imminent_count || 0}`;
+    updateSeoulZoneCounts();
+  }
+
+  // Parse numeric household count (e.g. "1,608세대" -> 1608)
+  function getHouseholdCountNum(item) {
+    const hhStr = getHouseholds(item);
+    if (!hhStr) return 0;
+    const digits = hhStr.replace(/[^\d]/g, '');
+    return parseInt(digits, 10) || 0;
   }
 
   // Filter Items
@@ -3997,12 +4050,17 @@
       // Region Filter
       if (state.filters.regionGroup !== 'ALL') {
         if (state.filters.regionGroup === '서울') {
-          if (item.region_group !== '서울' && !item.court?.includes('서울') && !item.address?.includes('서울')) {
-            return false;
-          }
+          if (!isSeoulItem(item)) return false;
+          if (!matchSeoulZone(item, state.filters.seoulZone)) return false;
         } else if (item.region_group !== state.filters.regionGroup) {
           return false;
         }
+      }
+
+      // Households Filter (300 / 500 / 1000세대 이상)
+      if (state.filters.minHouseholds !== 'ALL') {
+        const minHh = parseInt(state.filters.minHouseholds, 10) || 0;
+        if (getHouseholdCountNum(item) < minHh) return false;
       }
 
       // Price Range Filter
@@ -4217,12 +4275,44 @@
       btn.addEventListener('click', () => {
         el.regionButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        state.filters.regionGroup = btn.getAttribute('data-region');
+        const region = btn.getAttribute('data-region');
+        state.filters.regionGroup = region;
+
+        if (el.seoulSubWrapper) {
+          if (region === '서울') {
+            el.seoulSubWrapper.style.display = 'block';
+          } else {
+            el.seoulSubWrapper.style.display = 'none';
+            state.filters.seoulZone = 'ALL';
+            el.seoulZoneButtons.forEach(sb => {
+              sb.classList.toggle('active', sb.getAttribute('data-seoul-zone') === 'ALL');
+            });
+          }
+        }
         renderCards();
       });
     });
 
+    // Seoul 5-Zone Sub-Pills
+    if (el.seoulZoneButtons) {
+      el.seoulZoneButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          el.seoulZoneButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.filters.seoulZone = btn.getAttribute('data-seoul-zone');
+          renderCards();
+        });
+      });
+    }
+
     // Selects
+    if (el.selectHouseholds) {
+      el.selectHouseholds.addEventListener('change', e => {
+        state.filters.minHouseholds = e.target.value;
+        renderCards();
+      });
+    }
+
     el.selectPrice.addEventListener('change', e => {
       state.filters.priceRange = e.target.value;
       renderCards();

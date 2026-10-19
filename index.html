@@ -51,12 +51,31 @@
       </nav>
     </div>
 
+    <!-- Seoul 5-Zone Sub-Pills (Shown when 서울 is selected) -->
+    <div class="sub-segmented-wrapper" id="seoul-sub-wrapper" style="display: none;">
+      <nav class="sub-segmented-control" aria-label="서울 생활권 선택">
+        <button type="button" class="sub-pill-btn active" data-seoul-zone="ALL">서울 전체</button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="SE" title="강남구 · 서초구 · 송파구 · 강동구">강남·동남권 <span class="zone-sub">강남4구</span></button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="CENTER" title="마포구 · 용산구 · 성동구 · 광진구 · 종로구 · 중구">마용성·도심권</button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="SW" title="양천구 · 영등포구 · 동작구 · 강서구 · 관악구 · 구로구 · 금천구">목동·서남권</button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="NE" title="노원구 · 도봉구 · 강북구 · 성북구 · 동대문구 · 중랑구">노도강·동북권</button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="NW" title="은평구 · 서대문구">은평·서북권</button>
+      </nav>
+    </div>
+
     <!-- Minimal Filter & Search Bar -->
     <section class="filter-bar" aria-label="상세 필터">
       <div class="search-box">
         <input type="text" id="input-search" class="search-input" placeholder="아파트명, 동네 검색">
       </div>
       <div class="filter-selects">
+        <select id="select-households" class="select-clean" aria-label="세대수 필터">
+          <option value="ALL">세대수 전체</option>
+          <option value="300">300세대 이상</option>
+          <option value="500">500세대 이상</option>
+          <option value="1000">1,000세대 이상</option>
+        </select>
+
         <select id="select-price" class="select-clean" aria-label="가격 필터">
           <option value="ALL">가격 전체</option>
           <option value="under5">5억 이하</option>

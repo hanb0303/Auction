@@ -151,6 +151,67 @@ body {
   color: #ffffff;
 }
 
+/* Seoul 5-Zone Sub-Pills */
+.sub-segmented-wrapper {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin-top: -6px;
+  margin-bottom: 16px;
+  padding-bottom: 4px;
+}
+.sub-segmented-wrapper::-webkit-scrollbar { display: none; }
+
+.sub-segmented-control {
+  display: inline-flex;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 6px 8px;
+}
+
+.sub-pill-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-sub);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 7px 13px;
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.sub-pill-btn:hover {
+  background: var(--bg-tag);
+  color: var(--text-main);
+}
+
+.sub-pill-btn.active {
+  background: var(--toss-blue-light);
+  border-color: rgba(49, 130, 246, 0.25);
+  color: var(--toss-blue);
+  font-weight: 700;
+}
+
+.zone-sub {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.78;
+}
+
+.zone-count {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
 /* Filter & Search Bar */
 .filter-bar {
   background: var(--bg-card);
