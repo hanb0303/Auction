@@ -65,38 +65,58 @@
 
     <!-- Minimal Filter & Search Bar -->
     <section class="filter-bar" aria-label="상세 필터">
-      <div class="search-box">
-        <input type="text" id="input-search" class="search-input" placeholder="아파트명, 동네 검색">
+      <div class="filter-top-row">
+        <div class="search-box">
+          <input type="text" id="input-search" class="search-input" placeholder="아파트명, 동네 검색">
+        </div>
+        <div class="filter-selects">
+          <select id="select-households" class="select-clean" aria-label="세대수 필터">
+            <option value="ALL">세대수 전체</option>
+            <option value="300">300세대 이상</option>
+            <option value="500">500세대 이상</option>
+            <option value="1000">1,000세대 이상</option>
+          </select>
+
+          <select id="select-discount" class="select-clean" aria-label="할인율 필터">
+            <option value="ALL">할인 전체</option>
+            <option value="disc20">20% 이상 할인</option>
+            <option value="disc36">36% 이상 할인</option>
+            <option value="new">신건만</option>
+          </select>
+
+          <select id="select-sort" class="select-clean" aria-label="정렬">
+            <option value="dday_asc">마감 빠른순</option>
+            <option value="discount_desc">할인율 높은순</option>
+            <option value="min_price_asc">가격 낮은순</option>
+            <option value="appraisal_desc">감정가 높은순</option>
+          </select>
+        </div>
       </div>
-      <div class="filter-selects">
-        <select id="select-households" class="select-clean" aria-label="세대수 필터">
-          <option value="ALL">세대수 전체</option>
-          <option value="300">300세대 이상</option>
-          <option value="500">500세대 이상</option>
-          <option value="1000">1,000세대 이상</option>
-        </select>
 
-        <select id="select-price" class="select-clean" aria-label="가격 필터">
-          <option value="ALL">가격 전체</option>
-          <option value="under5">5억 이하</option>
-          <option value="5to9">5억 ~ 9억</option>
-          <option value="9to15">9억 ~ 15억</option>
-          <option value="over15">15억 초과</option>
-        </select>
-
-        <select id="select-discount" class="select-clean" aria-label="할인율 필터">
-          <option value="ALL">할인 전체</option>
-          <option value="disc20">20% 이상 할인</option>
-          <option value="disc36">36% 이상 할인</option>
-          <option value="new">신건만</option>
-        </select>
-
-        <select id="select-sort" class="select-clean" aria-label="정렬">
-          <option value="dday_asc">마감 빠른순</option>
-          <option value="discount_desc">할인율 높은순</option>
-          <option value="min_price_asc">가격 낮은순</option>
-          <option value="appraisal_desc">감정가 높은순</option>
-        </select>
+      <!-- 5천만원 단위 양방향 가격 구간 슬라이더 -->
+      <div class="price-slider-box">
+        <div class="price-slider-header">
+          <span class="price-slider-title">최저가 구간 <span class="price-unit-hint">(5,000만 원 단위)</span></span>
+          <div class="price-slider-status">
+            <strong id="price-range-label" class="price-range-val">가격 전체</strong>
+            <button type="button" id="btn-price-reset" class="btn-price-reset" style="display: none;">초기화</button>
+          </div>
+        </div>
+        <div class="dual-range-wrap">
+          <div class="dual-range-track"></div>
+          <div class="dual-range-fill" id="price-slider-fill"></div>
+          <input type="range" id="range-price-min" class="dual-range-input" min="0" max="3000000000" step="50000000" value="0" aria-label="최소 최저가">
+          <input type="range" id="range-price-max" class="dual-range-input" min="0" max="3000000000" step="50000000" value="3000000000" aria-label="최대 최저가">
+        </div>
+        <div class="price-slider-ticks">
+          <span>0원</span>
+          <span>5억</span>
+          <span>10억</span>
+          <span>15억</span>
+          <span>20억</span>
+          <span>25억</span>
+          <span>30억+</span>
+        </div>
       </div>
     </section>
 

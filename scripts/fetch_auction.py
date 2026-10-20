@@ -564,17 +564,54 @@ def run():
     print("  대법원 경매 사이트(courtauction.go.kr) 직접 수집기")
     print("==================================================")
 
+    # 기존 데이터에서 세대수(households) 및 네이버 단지번호(naver_search_url) 캐시 로드
+    existing_items = []
+    hh_cache: Dict[str, str] = {}
+    url_cache: Dict[str, str] = {}
+    if os.path.exists(DATA_FILE_PATH):
+        try:
+            with open(DATA_FILE_PATH, "r", encoding="utf-8") as f:
+                existing_data = json.load(f)
+                existing_items = existing_data.get("items", [])
+                for ex in existing_items:
+                    c_no = ex.get("case_no", "")
+                    k_dc = f"{ex.get('district', '')}|{ex.get('complex_name', '')}"
+                    c_nm = ex.get("complex_name", "")
+                    hh = ex.get("households", "")
+                    n_url = ex.get("naver_search_url", "")
+                    if hh:
+                        if c_no:
+                            hh_cache[c_no] = hh
+                        hh_cache[k_dc] = hh
+                        if c_nm not in hh_cache:
+                            hh_cache[c_nm] = hh
+                    if "complexes/" in n_url:
+                        if c_no:
+                            url_cache[c_no] = n_url
+                        url_cache[k_dc] = n_url
+                        if c_nm not in url_cache:
+                            url_cache[c_nm] = n_url
+        except Exception:
+            pass
+
     scraped_items = scrape_court_auction()
 
     # 크롤링 결과가 적거나 없을 경우(법원 서버 점검 시간 등) 기존 데이터 유지
-    if len(scraped_items) < 5 and os.path.exists(DATA_FILE_PATH):
+    if len(scraped_items) < 5 and existing_items:
         print("[*] 법원 서버 점검 또는 응답 지연으로 기존 정제 데이터를 유지합니다.")
-        with open(DATA_FILE_PATH, "r", encoding="utf-8") as f:
-            existing_data = json.load(f)
-            scraped_items = existing_data.get("items", [])
+        scraped_items = existing_items
 
-    # D-Day 재계산
+    # 해외 GitHub Actions 서버에서 네이버 검색 차단 시 기존 캐시된 세대수/단지링크 복원 및 D-Day 재계산
     for item in scraped_items:
+        c_no = item.get("case_no", "")
+        k_dc = f"{item.get('district', '')}|{item.get('complex_name', '')}"
+        c_nm = item.get("complex_name", "")
+        if not item.get("households"):
+            item["households"] = hh_cache.get(c_no) or hh_cache.get(k_dc) or hh_cache.get(c_nm, "")
+        if "complexes/" not in str(item.get("naver_search_url", "")):
+            cached_url = url_cache.get(c_no) or url_cache.get(k_dc) or url_cache.get(c_nm, "")
+            if cached_url:
+                item["naver_search_url"] = cached_url
         item["d_day"] = calculate_d_day(item.get("auction_date", ""))
         item["bid_deposit"] = int(item.get("minimum_price", 0) * 0.1)
 
