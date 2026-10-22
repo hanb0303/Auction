@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>서울 아파트 경매</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css">
-  <link rel="stylesheet" href="css/style.css?v=20261022_03">
+  <link rel="stylesheet" href="css/style.css?v=20261022_05">
 </head>
 <body>
 
@@ -93,12 +93,19 @@
               <span id="price-range-label" class="popover-price-val">가격 전체</span>
             </div>
 
+            <div class="popover-presets">
+              <button type="button" class="preset-chip" data-min="0" data-max="500000000">5억 이하</button>
+              <button type="button" class="preset-chip" data-min="500000000" data-max="900000000">5억~9억</button>
+              <button type="button" class="preset-chip" data-min="900000000" data-max="1500000000">9억~15억</button>
+              <button type="button" class="preset-chip" data-min="1500000000" data-max="3000000000">15억+</button>
+            </div>
+
             <div class="popover-slider-body">
-              <div class="dual-range-wrap">
+              <div class="dual-range-wrap" id="price-slider-wrap">
                 <div class="dual-range-track"></div>
                 <div class="dual-range-fill" id="price-slider-fill"></div>
-                <input type="range" id="range-price-min" class="dual-range-input" min="0" max="3000000000" step="50000000" value="0" aria-label="최소 최저가">
-                <input type="range" id="range-price-max" class="dual-range-input" min="0" max="3000000000" step="50000000" value="3000000000" aria-label="최대 최저가">
+                <div class="dual-range-thumb" id="thumb-price-min" tabindex="0" role="slider" aria-label="최소 최저가"></div>
+                <div class="dual-range-thumb" id="thumb-price-max" tabindex="0" role="slider" aria-label="최대 최저가"></div>
               </div>
               <div class="price-slider-ticks">
                 <span>0원</span>
@@ -205,6 +212,6 @@
   <!-- Toast -->
   <div id="toast" class="toss-toast"></div>
 
-  <script src="js/app.js?v=20261022_03"></script>
+  <script src="js/app.js?v=20261022_05"></script>
 </body>
 </html>

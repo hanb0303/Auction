@@ -362,72 +362,103 @@ body {
   padding: 4px 0;
 }
 
+.popover-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 2px 0 6px;
+}
+
+.preset-chip {
+  background: var(--bg-tag);
+  border: 1px solid transparent;
+  color: var(--text-sub);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-chip:hover {
+  background: #e2e5e9;
+  color: var(--text-main);
+}
+
+.preset-chip.active {
+  background: var(--toss-blue-light);
+  border-color: rgba(49, 130, 246, 0.35);
+  color: var(--toss-blue);
+  font-weight: 700;
+}
+
 .dual-range-wrap {
   position: relative;
   width: 100%;
-  height: 20px;
+  height: 32px;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
 }
 
 .dual-range-track {
   position: absolute;
   left: 0;
   right: 0;
-  height: 5px;
+  height: 6px;
   background: var(--bg-tag);
   border-radius: 9999px;
+  pointer-events: none;
 }
 
 .dual-range-fill {
   position: absolute;
-  height: 5px;
+  height: 6px;
   background: var(--toss-blue);
   border-radius: 9999px;
+  pointer-events: none;
   left: 0%;
-  right: 0%;
+  width: 100%;
 }
 
-.dual-range-input {
+.dual-range-thumb {
   position: absolute;
-  left: 0;
-  width: 100%;
+  top: 50%;
+  width: 20px;
   height: 20px;
-  margin: 0;
-  background: transparent;
-  pointer-events: none;
-  -webkit-appearance: none;
-  appearance: none;
+  margin-left: -10px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid var(--toss-blue);
+  cursor: grab;
+  z-index: 10;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  touch-action: none;
   outline: none;
 }
 
-.dual-range-input::-webkit-slider-thumb {
-  pointer-events: auto;
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid var(--toss-blue);
-  cursor: pointer;
-  transition: transform 0.1s ease;
+.dual-range-thumb:hover {
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 2px 8px rgba(49, 130, 246, 0.35);
 }
 
-.dual-range-input::-webkit-slider-thumb:hover,
-.dual-range-input::-webkit-slider-thumb:active {
-  transform: scale(1.15);
+.dual-range-thumb:focus-visible {
+  box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.35);
+}
+
+.dual-range-thumb:active,
+.dual-range-thumb.dragging {
+  cursor: grabbing;
+  transform: translateY(-50%) scale(1.25);
   background: var(--toss-blue-light);
-}
-
-.dual-range-input::-moz-range-thumb {
-  pointer-events: auto;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid var(--toss-blue);
-  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.5);
+  z-index: 20;
 }
 
 .price-slider-ticks {

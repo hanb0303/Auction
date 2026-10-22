@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Seoul & Gyeonggi Auction Radar - Apple & Toss Design System Engine
  */
 
@@ -4130,8 +4130,10 @@
     priceBtnLabel: document.getElementById('price-btn-label'),
     btnPriceApply: document.getElementById('btn-price-apply'),
     popoverBackdrop: document.getElementById('popover-backdrop'),
-    rangePriceMin: document.getElementById('range-price-min'),
-    rangePriceMax: document.getElementById('range-price-max'),
+    priceSliderWrap: document.getElementById('price-slider-wrap'),
+    thumbPriceMin: document.getElementById('thumb-price-min'),
+    thumbPriceMax: document.getElementById('thumb-price-max'),
+    presetChips: document.querySelectorAll('.preset-chip'),
     priceSliderFill: document.getElementById('price-slider-fill'),
     priceRangeLabel: document.getElementById('price-range-label'),
     btnPriceReset: document.getElementById('btn-price-reset'),
@@ -4526,75 +4528,198 @@
     }
 
     // 5천만원 단위 양방향 가격 슬라이더
-    function updatePriceSlider(changedSide) {
-      if (!el.rangePriceMin || !el.rangePriceMax) return;
-      let minVal = parseInt(el.rangePriceMin.value, 10) || 0;
-      let maxVal = parseInt(el.rangePriceMax.value, 10) || 0;
+    // 5천만원 단위 양방향 가격 슬라이더 (완전 커스텀 포인터 캡처 방식 - 오동작/튕김 제로)
+    let renderDebounceTimer = null;
+    let activeDragThumb = null;
 
-      if (minVal > maxVal) {
-        if (changedSide === 'min') {
-          minVal = maxVal;
-          el.rangePriceMin.value = minVal;
-        } else {
-          maxVal = minVal;
-          el.rangePriceMax.value = maxVal;
-        }
+    function formatSliderPriceText(minVal, maxVal) {
+      const isFull = minVal <= 0 && maxVal >= PRICE_SLIDER_MAX;
+      if (isFull) return '가격 전체';
+      if (minVal > 0 && maxVal >= PRICE_SLIDER_MAX) {
+        return `${formatMoney(minVal)} 이상`;
       }
+      if (minVal <= 0 && maxVal < PRICE_SLIDER_MAX) {
+        return `${formatMoney(maxVal)} 이하`;
+      }
+      if (minVal === maxVal) {
+        return formatMoney(minVal);
+      }
+      return `${formatMoney(minVal)} ~ ${formatMoney(maxVal)}`;
+    }
 
-      // 겹쳤을 때 우측 끝에서는 왼쪽 핸들이, 좌측 끝에서는 오른쪽 핸들이 잡히도록 z-index 조정
-      el.rangePriceMin.style.zIndex = minVal >= PRICE_SLIDER_MAX - PRICE_SLIDER_STEP ? '4' : '2';
-      el.rangePriceMax.style.zIndex = '3';
+    function updateSliderVisuals(minVal, maxVal) {
+      const minPct = Math.max(0, Math.min(100, (minVal / PRICE_SLIDER_MAX) * 100));
+      const maxPct = Math.max(0, Math.min(100, (maxVal / PRICE_SLIDER_MAX) * 100));
 
-      state.filters.minPrice = minVal;
-      state.filters.maxPrice = maxVal;
-
-      const leftPct = (minVal / PRICE_SLIDER_MAX) * 100;
-      const rightPct = 100 - (maxVal / PRICE_SLIDER_MAX) * 100;
+      if (el.thumbPriceMin) {
+        el.thumbPriceMin.style.left = `${minPct}%`;
+        el.thumbPriceMin.setAttribute('aria-valuenow', minVal);
+      }
+      if (el.thumbPriceMax) {
+        el.thumbPriceMax.style.left = `${maxPct}%`;
+        el.thumbPriceMax.setAttribute('aria-valuenow', maxVal);
+      }
       if (el.priceSliderFill) {
-        el.priceSliderFill.style.left = `${leftPct}%`;
-        el.priceSliderFill.style.right = `${rightPct}%`;
+        el.priceSliderFill.style.left = `${minPct}%`;
+        el.priceSliderFill.style.width = `${Math.max(0, maxPct - minPct)}%`;
       }
 
-      const isFull = minVal === 0 && maxVal === PRICE_SLIDER_MAX;
-      let text = '가격 전체';
-      if (!isFull) {
-        if (minVal > 0 && maxVal === PRICE_SLIDER_MAX) {
-          text = `${formatMoney(minVal)} 이상`;
-        } else if (minVal === 0 && maxVal < PRICE_SLIDER_MAX) {
-          text = `${formatMoney(maxVal)} 이하`;
-        } else if (minVal === maxVal) {
-          text = `${formatMoney(minVal)}`;
-        } else {
-          text = `${formatMoney(minVal)} ~ ${formatMoney(maxVal)}`;
-        }
-      }
+      const text = formatSliderPriceText(minVal, maxVal);
+      if (el.priceRangeLabel) el.priceRangeLabel.textContent = text;
+      if (el.priceBtnLabel) el.priceBtnLabel.textContent = text;
 
-      if (el.priceRangeLabel) {
-        el.priceRangeLabel.textContent = text;
-      }
-      if (el.priceBtnLabel) {
-        el.priceBtnLabel.textContent = text;
-      }
+      const isFull = minVal <= 0 && maxVal >= PRICE_SLIDER_MAX;
       if (el.btnPricePopover) {
         el.btnPricePopover.classList.toggle('active', !isFull);
       }
 
+      if (el.presetChips) {
+        el.presetChips.forEach(chip => {
+          const cMin = parseInt(chip.dataset.min, 10);
+          const cMax = parseInt(chip.dataset.max, 10);
+          chip.classList.toggle('active', cMin === minVal && cMax === maxVal);
+        });
+      }
+    }
+
+    function setPriceRange(newMin, newMax, triggerRender = true) {
+      let min = Math.max(0, Math.min(PRICE_SLIDER_MAX, Math.round(newMin / PRICE_SLIDER_STEP) * PRICE_SLIDER_STEP));
+      let max = Math.max(0, Math.min(PRICE_SLIDER_MAX, Math.round(newMax / PRICE_SLIDER_STEP) * PRICE_SLIDER_STEP));
+      if (min > max) min = max;
+
+      state.filters.minPrice = min;
+      state.filters.maxPrice = max;
+      updateSliderVisuals(min, max);
+
+      if (triggerRender) {
+        clearTimeout(renderDebounceTimer);
+        renderCards();
+      }
+    }
+
+    function getValueFromClientX(clientX) {
+      if (!el.priceSliderWrap) return 0;
+      const rect = el.priceSliderWrap.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const rawVal = ratio * PRICE_SLIDER_MAX;
+      return Math.round(rawVal / PRICE_SLIDER_STEP) * PRICE_SLIDER_STEP;
+    }
+
+    function startSliderDrag(thumbType, e) {
+      e.preventDefault();
+      e.stopPropagation();
+      activeDragThumb = thumbType;
+      const targetThumb = thumbType === 'min' ? el.thumbPriceMin : el.thumbPriceMax;
+      if (targetThumb) {
+        targetThumb.classList.add('dragging');
+        try {
+          targetThumb.setPointerCapture(e.pointerId);
+        } catch (_) {}
+      }
+    }
+
+    function onPointerMove(e) {
+      if (!activeDragThumb) return;
+      const val = getValueFromClientX(e.clientX);
+      if (activeDragThumb === 'min') {
+        const clampedMin = Math.min(val, state.filters.maxPrice);
+        setPriceRange(clampedMin, state.filters.maxPrice, false);
+      } else if (activeDragThumb === 'max') {
+        const clampedMax = Math.max(val, state.filters.minPrice);
+        setPriceRange(state.filters.minPrice, clampedMax, false);
+      }
+
+      // 드래그 중 부드러운 반응을 위한 디바운스 렌더링 (50ms)
+      clearTimeout(renderDebounceTimer);
+      renderDebounceTimer = setTimeout(() => {
+        renderCards();
+      }, 50);
+    }
+
+    function onPointerEnd(e) {
+      if (!activeDragThumb) return;
+      const targetThumb = activeDragThumb === 'min' ? el.thumbPriceMin : el.thumbPriceMax;
+      if (targetThumb) {
+        targetThumb.classList.remove('dragging');
+        try {
+          if (targetThumb.hasPointerCapture(e.pointerId)) {
+            targetThumb.releasePointerCapture(e.pointerId);
+          }
+        } catch (_) {}
+      }
+      activeDragThumb = null;
+      clearTimeout(renderDebounceTimer);
       renderCards();
     }
 
-    if (el.rangePriceMin && el.rangePriceMax) {
-      el.rangePriceMin.addEventListener('input', () => updatePriceSlider('min'));
-      el.rangePriceMax.addEventListener('input', () => updatePriceSlider('max'));
+    if (el.thumbPriceMin && el.thumbPriceMax && el.priceSliderWrap) {
+      el.thumbPriceMin.addEventListener('pointerdown', e => startSliderDrag('min', e));
+      el.thumbPriceMax.addEventListener('pointerdown', e => startSliderDrag('max', e));
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerEnd);
+      window.addEventListener('pointercancel', onPointerEnd);
+
+      // 트랙 영역 클릭 시 더 가까운 핸들 이동
+      el.priceSliderWrap.addEventListener('pointerdown', e => {
+        if (e.target === el.thumbPriceMin || e.target === el.thumbPriceMax) return;
+        e.preventDefault();
+        const val = getValueFromClientX(e.clientX);
+        const distToMin = Math.abs(val - state.filters.minPrice);
+        const distToMax = Math.abs(val - state.filters.maxPrice);
+        if (distToMin <= distToMax) {
+          setPriceRange(val, state.filters.maxPrice, true);
+          startSliderDrag('min', e);
+        } else {
+          setPriceRange(state.filters.minPrice, val, true);
+          startSliderDrag('max', e);
+        }
+      });
+
+      // 키보드 방향키 조작 지원
+      function handleThumbKey(thumbType, e) {
+        let delta = 0;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') delta = PRICE_SLIDER_STEP;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') delta = -PRICE_SLIDER_STEP;
+        else if (e.key === 'Home') delta = -PRICE_SLIDER_MAX;
+        else if (e.key === 'End') delta = PRICE_SLIDER_MAX;
+        else return;
+
+        e.preventDefault();
+        if (thumbType === 'min') {
+          const newMin = Math.max(0, Math.min(state.filters.maxPrice, state.filters.minPrice + delta));
+          setPriceRange(newMin, state.filters.maxPrice, true);
+        } else {
+          const newMax = Math.max(state.filters.minPrice, Math.min(PRICE_SLIDER_MAX, state.filters.maxPrice + delta));
+          setPriceRange(state.filters.minPrice, newMax, true);
+        }
+      }
+
+      el.thumbPriceMin.addEventListener('keydown', e => handleThumbKey('min', e));
+      el.thumbPriceMax.addEventListener('keydown', e => handleThumbKey('max', e));
     }
 
+    // 프리셋 버튼 클릭 이벤트
+    if (el.presetChips) {
+      el.presetChips.forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const pMin = parseInt(chip.dataset.min, 10);
+          const pMax = parseInt(chip.dataset.max, 10);
+          setPriceRange(pMin, pMax, true);
+        });
+      });
+    }
+
+    // 가격 초기화 버튼 클릭 이벤트
     if (el.btnPriceReset) {
       el.btnPriceReset.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (el.rangePriceMin) el.rangePriceMin.value = 0;
-        if (el.rangePriceMax) el.rangePriceMax.value = PRICE_SLIDER_MAX;
-        updatePriceSlider('reset');
+        setPriceRange(0, PRICE_SLIDER_MAX, true);
       });
     }
+
+    // 초기 시각적 상태 반영
+    updateSliderVisuals(state.filters.minPrice, state.filters.maxPrice);
 
     // Popover Open / Close
     function togglePricePopover(forceOpen) {
