@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Seoul & Gyeonggi Court Auction Direct Scraper (No API Key Required)
@@ -167,10 +167,23 @@ def classify_region(address: str) -> str:
     return ""
 
 
+KST = datetime.timezone(datetime.timedelta(hours=9))
+
+
+def get_kst_now() -> datetime.datetime:
+    """?쒓뎅 ?쒖???KST, UTC+9) ?꾩옱 ?쒓컖 (GitHub Actions UTC ?쒕쾭 ?명솚)"""
+    return datetime.datetime.now(KST)
+
+
+def get_kst_today() -> datetime.date:
+    """?쒓뎅 ?쒖???KST, UTC+9) ?ㅻ뒛 ?좎쭨"""
+    return get_kst_now().date()
+
+
 def calculate_d_day(auction_date_str: str) -> int:
     try:
         auction_date = datetime.datetime.strptime(auction_date_str, "%Y-%m-%d").date()
-        return (auction_date - datetime.date.today()).days
+        return (auction_date - get_kst_today()).days
     except Exception:
         return 0
 
@@ -179,7 +192,7 @@ def format_ymd(ymd: str) -> str:
     s = re.sub(r"[^\d]", "", str(ymd or ""))
     if len(s) == 8:
         return f"{s[:4]}-{s[4:6]}-{s[6:8]}"
-    return datetime.date.today().strftime("%Y-%m-%d")
+    return get_kst_today().strftime("%Y-%m-%d")
 
 
 def resolve_naver_complex_url(session, headers: dict, district: str, complex_name: str) -> str:
@@ -247,7 +260,7 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
         print(f"[!] 대법원 사이트 초기 접속 실패: {e}")
         return []
 
-    today = datetime.date.today()
+    today = get_kst_today()
     bgng_ymd = today.strftime("%Y%m%d")
     end_ymd = (today + datetime.timedelta(days=30)).strftime("%Y%m%d")
     srch_ym = today.strftime("%Y%m")
@@ -620,7 +633,7 @@ def run():
     imminent_count = sum(1 for i in scraped_items if 0 <= i.get("d_day", 999) <= 7)
 
     payload = {
-        "updated_at": datetime.datetime.now().strftime("%Y-%m-%d"),
+        "updated_at": get_kst_today().strftime("%Y-%m-%d"),
         "total_count": len(scraped_items),
         "stats": {
             "total": len(scraped_items),
