@@ -1,4 +1,4 @@
-﻿/* ===== Soft Apple & Toss Clean Design (Zero Shadow & SUIT Font) ===== */
+/* ===== Soft Apple & Toss Clean Design (Zero Shadow & SUIT Font) ===== */
 @import url('https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css');
 
 :root {
@@ -229,6 +229,7 @@ body {
 .popover-wrapper {
   position: relative;
   display: inline-flex;
+  flex-shrink: 0;
 }
 
 .popover-trigger {
@@ -237,15 +238,24 @@ body {
   color: var(--text-sub);
   font-size: 13px;
   font-weight: 600;
-  padding: 9px 13px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 8px;
   user-select: none;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   outline: none;
+  min-width: 105px;
+  white-space: nowrap;
+}
+
+#price-btn-label {
+  display: inline-block;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .popover-trigger:hover {
@@ -345,7 +355,11 @@ body {
   text-align: center;
   background: var(--bg-subtle);
   border-radius: var(--radius-xs);
-  padding: 6px 10px;
+  padding: 8px 10px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .popover-price-val {
