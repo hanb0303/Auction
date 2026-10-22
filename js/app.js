@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Seoul & Gyeonggi Auction Radar - Apple & Toss Design System Engine
  */
 
@@ -3579,6 +3579,7 @@
     pricePopoverMenu: document.getElementById('price-popover-menu'),
     priceBtnLabel: document.getElementById('price-btn-label'),
     btnPriceApply: document.getElementById('btn-price-apply'),
+    popoverBackdrop: document.getElementById('popover-backdrop'),
     rangePriceMin: document.getElementById('range-price-min'),
     rangePriceMax: document.getElementById('range-price-max'),
     priceSliderFill: document.getElementById('price-slider-fill'),
@@ -4048,11 +4049,22 @@
     // Popover Open / Close
     function togglePricePopover(forceOpen) {
       if (!el.pricePopoverMenu) return;
-      const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !el.pricePopoverMenu.classList.contains('show');
+      const isCurrentlyOpen = el.pricePopoverMenu.style.display !== 'none' && el.pricePopoverMenu.classList.contains('show');
+      const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !isCurrentlyOpen;
+
+      el.pricePopoverMenu.style.display = shouldOpen ? 'flex' : 'none';
       el.pricePopoverMenu.classList.toggle('show', shouldOpen);
+
+      if (el.popoverBackdrop) {
+        el.popoverBackdrop.style.display = shouldOpen ? 'block' : 'none';
+      }
       if (el.btnPricePopover) {
         el.btnPricePopover.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
       }
+    }
+
+    if (el.popoverBackdrop) {
+      el.popoverBackdrop.addEventListener('click', () => togglePricePopover(false));
     }
 
     if (el.btnPricePopover) {

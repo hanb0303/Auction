@@ -1,4 +1,4 @@
-/* ===== Soft Apple & Toss Clean Design (Zero Shadow & SUIT Font) ===== */
+﻿/* ===== Soft Apple & Toss Clean Design (Zero Shadow & SUIT Font) ===== */
 @import url('https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css');
 
 :root {
@@ -228,7 +228,7 @@ body {
 /* Compact Price Range Popover (클릭 시 팝업) */
 .popover-wrapper {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
 }
 
 .popover-trigger {
@@ -275,7 +275,7 @@ body {
   top: calc(100% + 8px);
   left: 0;
   z-index: 120;
-  width: 270px;
+  width: 280px;
   background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
@@ -290,6 +290,16 @@ body {
 @keyframes popoverFadeIn {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.popover-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: transparent;
 }
 
 .popover-menu.show {
@@ -941,6 +951,25 @@ body {
   .auction-grid { grid-template-columns: 1fr; }
   .app-title { font-size: 22px; }
   .filter-bar { padding: 12px; }
-  .filter-selects { width: 100%; }
-  .select-clean { flex: 1; }
+  .filter-selects { width: 100%; display: flex; gap: 6px; }
+  .select-clean, .popover-wrapper { flex: 1; min-width: 0; }
+  .popover-trigger { width: 100%; padding: 10px 6px; font-size: 12px; justify-content: center; }
+  .popover-menu {
+    position: fixed;
+    top: auto;
+    bottom: 24px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-width: 360px;
+    margin: 0 auto;
+    z-index: 3000;
+    border-radius: var(--radius-md);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+  }
+  .popover-backdrop {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    z-index: 2999;
+  }
 }
