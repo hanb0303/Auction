@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Seoul & Gyeonggi Auction Radar - Apple & Toss Design System Engine
  */
 
@@ -3574,6 +3574,11 @@
     seoulSubWrapper: document.getElementById('seoul-sub-wrapper'),
     seoulZoneButtons: document.querySelectorAll('.sub-pill-btn[data-seoul-zone]'),
     selectHouseholds: document.getElementById('select-households'),
+    btnPricePopover: document.getElementById('btn-price-popover'),
+    pricePopoverWrapper: document.getElementById('price-popover-wrapper'),
+    pricePopoverMenu: document.getElementById('price-popover-menu'),
+    priceBtnLabel: document.getElementById('price-btn-label'),
+    btnPriceApply: document.getElementById('btn-price-apply'),
     rangePriceMin: document.getElementById('range-price-min'),
     rangePriceMax: document.getElementById('range-price-max'),
     priceSliderFill: document.getElementById('price-slider-fill'),
@@ -3999,22 +4004,28 @@
         el.priceSliderFill.style.right = `${rightPct}%`;
       }
 
-      if (el.priceRangeLabel) {
-        const isFull = minVal === 0 && maxVal === PRICE_SLIDER_MAX;
-        if (isFull) {
-          el.priceRangeLabel.textContent = '가격 전체';
-        } else if (minVal > 0 && maxVal === PRICE_SLIDER_MAX) {
-          el.priceRangeLabel.textContent = `${formatMoney(minVal)} 이상`;
+      const isFull = minVal === 0 && maxVal === PRICE_SLIDER_MAX;
+      let text = '가격 전체';
+      if (!isFull) {
+        if (minVal > 0 && maxVal === PRICE_SLIDER_MAX) {
+          text = `${formatMoney(minVal)} 이상`;
         } else if (minVal === 0 && maxVal < PRICE_SLIDER_MAX) {
-          el.priceRangeLabel.textContent = `${formatMoney(maxVal)} 이하`;
+          text = `${formatMoney(maxVal)} 이하`;
         } else if (minVal === maxVal) {
-          el.priceRangeLabel.textContent = `${formatMoney(minVal)}`;
+          text = `${formatMoney(minVal)}`;
         } else {
-          el.priceRangeLabel.textContent = `${formatMoney(minVal)} ~ ${formatMoney(maxVal)}`;
+          text = `${formatMoney(minVal)} ~ ${formatMoney(maxVal)}`;
         }
-        if (el.btnPriceReset) {
-          el.btnPriceReset.style.display = isFull ? 'none' : 'inline-block';
-        }
+      }
+
+      if (el.priceRangeLabel) {
+        el.priceRangeLabel.textContent = text;
+      }
+      if (el.priceBtnLabel) {
+        el.priceBtnLabel.textContent = text;
+      }
+      if (el.btnPricePopover) {
+        el.btnPricePopover.classList.toggle('active', !isFull);
       }
 
       renderCards();
@@ -4026,12 +4037,55 @@
     }
 
     if (el.btnPriceReset) {
-      el.btnPriceReset.addEventListener('click', () => {
+      el.btnPriceReset.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (el.rangePriceMin) el.rangePriceMin.value = 0;
         if (el.rangePriceMax) el.rangePriceMax.value = PRICE_SLIDER_MAX;
         updatePriceSlider('reset');
       });
     }
+
+    // Popover Open / Close
+    function togglePricePopover(forceOpen) {
+      if (!el.pricePopoverMenu) return;
+      const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !el.pricePopoverMenu.classList.contains('show');
+      el.pricePopoverMenu.classList.toggle('show', shouldOpen);
+      if (el.btnPricePopover) {
+        el.btnPricePopover.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+      }
+    }
+
+    if (el.btnPricePopover) {
+      el.btnPricePopover.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePricePopover();
+      });
+    }
+
+    if (el.btnPriceApply) {
+      el.btnPriceApply.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePricePopover(false);
+      });
+    }
+
+    if (el.pricePopoverMenu) {
+      el.pricePopoverMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (el.pricePopoverWrapper && !el.pricePopoverWrapper.contains(e.target)) {
+        togglePricePopover(false);
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        togglePricePopover(false);
+      }
+    });
 
     el.selectDiscount.addEventListener('change', e => {
       state.filters.discount = e.target.value;

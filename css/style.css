@@ -215,84 +215,147 @@ body {
 /* Filter & Search Bar */
 .filter-bar {
   background: var(--bg-card);
-  padding: 16px 18px;
+  padding: 12px 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
   margin-bottom: 24px;
 }
 
-.filter-top-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+/* Compact Price Range Popover (클릭 시 팝업) */
+.popover-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.popover-trigger {
+  border: 1px solid transparent;
+  background: var(--bg-tag);
+  color: var(--text-sub);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 13px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
-  width: 100%;
+  gap: 6px;
+  user-select: none;
+  transition: all 0.15s ease;
+  outline: none;
 }
 
-/* Dual-Thumb Price Range Slider (5천만원 단위) */
-.price-slider-box {
-  width: 100%;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-subtle);
-  display: flex;
+.popover-trigger:hover {
+  background: #e2e5e9;
+  color: var(--text-main);
+}
+
+.popover-trigger.active {
+  background: var(--toss-blue-light);
+  border-color: rgba(49, 130, 246, 0.3);
+  color: var(--toss-blue);
+  font-weight: 700;
+}
+
+.dropdown-chevron {
+  font-size: 10px;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.popover-trigger[aria-expanded="true"] .dropdown-chevron {
+  transform: rotate(180deg);
+}
+
+.popover-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 120;
+  width: 270px;
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  display: none;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  animation: popoverFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.price-slider-header {
+@keyframes popoverFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.popover-menu.show {
+  display: flex;
+}
+
+@media (max-width: 640px) {
+  .popover-menu {
+    left: auto;
+    right: 0;
+    width: 260px;
+  }
+}
+
+.popover-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.price-slider-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-sub);
-}
-
-.price-unit-hint {
+.popover-title {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text-muted);
 }
 
-.price-slider-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.popover-reset-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
 }
 
-.price-range-val {
+.popover-reset-btn:hover {
+  color: var(--toss-red);
+  text-decoration: underline;
+}
+
+.popover-value-display {
+  text-align: center;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-xs);
+  padding: 6px 10px;
+}
+
+.popover-price-val {
   font-size: 14px;
   font-weight: 800;
   color: var(--toss-blue);
+  letter-spacing: -0.01em;
 }
 
-.btn-price-reset {
-  background: var(--bg-tag);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-sub);
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 9999px;
-  cursor: pointer;
-}
-
-.btn-price-reset:hover {
-  background: #e2e5e9;
-  color: var(--text-main);
+.popover-slider-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
 }
 
 .dual-range-wrap {
   position: relative;
   width: 100%;
-  height: 24px;
+  height: 20px;
   display: flex;
   align-items: center;
 }
@@ -301,14 +364,14 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  height: 6px;
+  height: 5px;
   background: var(--bg-tag);
   border-radius: 9999px;
 }
 
 .dual-range-fill {
   position: absolute;
-  height: 6px;
+  height: 5px;
   background: var(--toss-blue);
   border-radius: 9999px;
   left: 0%;
@@ -319,7 +382,7 @@ body {
   position: absolute;
   left: 0;
   width: 100%;
-  height: 24px;
+  height: 20px;
   margin: 0;
   background: transparent;
   pointer-events: none;
@@ -332,38 +395,67 @@ body {
   pointer-events: auto;
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #ffffff;
-  border: 2.5px solid var(--toss-blue);
+  border: 2px solid var(--toss-blue);
   cursor: pointer;
-  transition: transform 0.1s ease, background-color 0.1s ease;
+  transition: transform 0.1s ease;
 }
 
 .dual-range-input::-webkit-slider-thumb:hover,
 .dual-range-input::-webkit-slider-thumb:active {
-  transform: scale(1.12);
+  transform: scale(1.15);
   background: var(--toss-blue-light);
 }
 
 .dual-range-input::-moz-range-thumb {
   pointer-events: auto;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #ffffff;
-  border: 2.5px solid var(--toss-blue);
+  border: 2px solid var(--toss-blue);
   cursor: pointer;
 }
 
 .price-slider-ticks {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   color: var(--text-muted);
   padding: 0 2px;
+}
+
+.popover-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.popover-step-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.popover-apply-btn {
+  background: var(--toss-blue);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-xs);
+  padding: 5px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.popover-apply-btn:hover {
+  background: #2270e0;
 }
 
 .search-box {
