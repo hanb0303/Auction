@@ -16,6 +16,7 @@ from typing import List, Dict, Any
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_FILE_PATH = os.path.join(PROJECT_ROOT, "data", "auction_data.json")
+COMPLEX_CACHE_PATH = os.path.join(PROJECT_ROOT, "data", "complex_cache.json")
 
 BASE_URL = "https://www.courtauction.go.kr"
 SEARCH_MAIN_URL = f"{BASE_URL}/pgj/pgjsearch/searchControllerMain.on"
@@ -581,6 +582,14 @@ def run():
     existing_items = []
     hh_cache: Dict[str, str] = {}
     url_cache: Dict[str, str] = {}
+    if os.path.exists(COMPLEX_CACHE_PATH):
+        try:
+            with open(COMPLEX_CACHE_PATH, "r", encoding="utf-8") as f:
+                c_cache = json.load(f)
+                hh_cache.update(c_cache)
+        except Exception:
+            pass
+
     if os.path.exists(DATA_FILE_PATH):
         try:
             with open(DATA_FILE_PATH, "r", encoding="utf-8") as f:
@@ -647,6 +656,23 @@ def run():
     os.makedirs(os.path.dirname(DATA_FILE_PATH), exist_ok=True)
     with open(DATA_FILE_PATH, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
+
+    # 영구 단지 캐시 DB 업데이트
+    for item in scraped_items:
+        hh = item.get("households", "")
+        c_nm = item.get("complex_name", "")
+        c_no = item.get("case_no", "")
+        k_dc = f"{item.get('district', '')}|{c_nm}"
+        if hh and c_nm:
+            hh_cache[c_nm] = hh
+            hh_cache[k_dc] = hh
+            if c_no:
+                hh_cache[c_no] = hh
+    try:
+        with open(COMPLEX_CACHE_PATH, "w", encoding="utf-8") as f:
+            json.dump(hh_cache, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
 
     print(f"[✓] 총 {len(scraped_items)}건 업데이트 완료 -> {DATA_FILE_PATH}")
 
