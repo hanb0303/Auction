@@ -632,23 +632,6 @@ body {
 }
 
 
-/* New Item Left Accent Bar (1번 방안: 오늘자 신건 좌측 포인트 바) */
-.auction-card.card-new {
-  border-color: rgba(49, 130, 246, 0.22);
-  border-left: 4px solid var(--toss-blue);
-  background: linear-gradient(90deg, rgba(49, 130, 246, 0.025) 0%, var(--bg-card) 24px);
-}
-
-.auction-card.card-new:hover {
-  border-color: rgba(49, 130, 246, 0.45);
-  border-left-color: var(--toss-blue);
-}
-
-.card-new .chip-new {
-  background: var(--toss-blue-light);
-  color: var(--toss-blue);
-  font-weight: 800;
-}
 
 .auction-card:hover {
   border-color: var(--border-active);
@@ -692,6 +675,16 @@ body {
 .chip-discount {
   background: var(--toss-red-light);
   color: var(--toss-red);
+}
+
+
+.chip-badge-new {
+  background: #e5e8eb;
+  color: #4e5968;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 4px 8px;
 }
 
 .chip-new {

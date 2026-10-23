@@ -4366,7 +4366,7 @@
     const households = getHouseholds(item);
 
     return `
-      <article class="${item.discount_rate === 0 ? 'auction-card card-new' : 'auction-card'}" data-id="${item.id}">
+      <article class="auction-card" data-id="${item.id}">
         <div>
           <div class="card-top">
             <span class="meta-case">${item.case_no} · ${item.court}</span>
