@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>서울 아파트 경매</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css">
-  <link rel="stylesheet" href="css/style.css?v=20261023_05">
+  <link rel="stylesheet" href="css/style.css?v=20261023_07">
 </head>
 <body>
 
@@ -20,19 +20,19 @@
 
     <!-- Key Metrics (Toss-style clean cards) -->
     <section class="summary-bar" aria-label="요약 지표">
-      <div class="summary-item">
+      <div class="summary-item active" data-filter="all" tabindex="0" role="button" title="전체 물건 보기 (필터 초기화)">
         <span class="summary-label">전체 물건</span>
         <span class="summary-num" id="stat-total">-</span>
       </div>
-      <div class="summary-item">
+      <div class="summary-item" data-filter="discount" tabindex="0" role="button" title="할인 물건만 모아보기">
         <span class="summary-label">할인 물건</span>
         <span class="summary-num red" id="stat-discount">-</span>
       </div>
-      <div class="summary-item">
+      <div class="summary-item" data-filter="new" tabindex="0" role="button" title="신건만 모아보기">
         <span class="summary-label">신건</span>
         <span class="summary-num" id="stat-new">-</span>
       </div>
-      <div class="summary-item">
+      <div class="summary-item" data-filter="imminent" tabindex="0" role="button" title="이번주 마감 임박 물건만 모아보기">
         <span class="summary-label">이번주 마감</span>
         <span class="summary-num blue" id="stat-imminent">-</span>
       </div>
@@ -84,6 +84,7 @@
           </button>
 
           <div class="popover-menu" id="price-popover-menu" style="display: none;">
+            <div class="popover-handle-bar" aria-hidden="true"></div>
             <div class="popover-header">
               <span class="popover-title">최저가 구간 설정</span>
               <button type="button" id="btn-price-reset" class="popover-reset-btn">초기화</button>
@@ -131,6 +132,7 @@
 
         <select id="select-sort" class="select-clean" aria-label="정렬">
           <option value="dday_asc">마감 빠른순</option>
+          <option value="created_desc">신규 등록순</option>
           <option value="discount_desc">할인율 높은순</option>
           <option value="min_price_asc">가격 낮은순</option>
           <option value="appraisal_desc">감정가 높은순</option>
@@ -212,6 +214,6 @@
   <!-- Toast -->
   <div id="toast" class="toss-toast"></div>
 
-  <script src="js/app.js?v=20261023_05"></script>
+  <script src="js/app.js?v=20261023_07"></script>
 </body>
 </html>

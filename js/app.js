@@ -4105,6 +4105,7 @@
       minPrice: 0,
       maxPrice: PRICE_SLIDER_MAX,
       discount: 'ALL',
+      imminentOnly: false,
       safeOnly: false,
       bookmarkedOnly: false,
       sort: 'dday_asc',
@@ -4116,6 +4117,7 @@
   // DOM Elements
   const el = {
     headerMeta: document.getElementById('header-meta'),
+    summaryItems: document.querySelectorAll('.summary-item'),
     statTotal: document.getElementById('stat-total'),
     statDiscount: document.getElementById('stat-discount'),
     statNew: document.getElementById('stat-new'),
@@ -4289,6 +4291,9 @@
       if (state.filters.discount === 'disc20' && item.discount_rate < 20) return false;
       if (state.filters.discount === 'disc36' && item.discount_rate < 30) return false;
 
+      // Imminent Only (이번주 마감 기일 7일 이내)
+      if (state.filters.imminentOnly && (item.d_day < 0 || item.d_day > 7)) return false;
+
       // Safe rights only
       if (state.filters.safeOnly && !item.is_safe) return false;
 
@@ -4303,6 +4308,16 @@
       }
       return true;
     }).sort((a, b) => {
+      if (state.filters.sort === 'created_desc') {
+        // 오늘 신규 유입(is_today_new) 1순위 -> 최신 등록일 -> 사건번호 순
+        const newA = Boolean(a.is_today_new || a.first_seen === (state.updated_at || '2026-10-23'));
+        const newB = Boolean(b.is_today_new || b.first_seen === (state.updated_at || '2026-10-23'));
+        if (newA !== newB) return (newB ? 1 : 0) - (newA ? 1 : 0);
+        const dateA = a.first_seen || '';
+        const dateB = b.first_seen || '';
+        if (dateA !== dateB) return dateB.localeCompare(dateA);
+        return (b.case_no || '').localeCompare(a.case_no || '');
+      }
       if (state.filters.sort === 'dday_asc') return a.d_day - b.d_day;
       if (state.filters.sort === 'discount_desc') return b.discount_rate - a.discount_rate;
       if (state.filters.sort === 'min_price_asc') return a.minimum_price - b.minimum_price;
@@ -4371,7 +4386,7 @@
       <article class="auction-card" data-id="${item.id}">
         <div>
           <div class="card-top">
-            <span class="meta-case">${item.case_no} · ${item.court}</span>
+            <span class="meta-case"><span class="meta-case-no" data-action="copy-case" data-case="${item.case_no}" title="클릭하여 사건번호 복사">${item.case_no}</span> · ${item.court}</span>
             <div class="badge-row">
               ${newBadge}${discountChip}
               <span class="${dDayClass}" title="매각기일">${dateLabel}</span>
@@ -4866,6 +4881,18 @@
 
       if (action === 'fav') toggleFav(id);
       else if (action === 'calc') openCalculator(id);
+      else if (action === 'copy-case') {
+        const caseNo = btn.getAttribute('data-case');
+        if (caseNo) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(caseNo).then(() => {
+              toast(`사건번호 [${caseNo}] 복사되었습니다.`);
+            }).catch(() => fallbackCopy(caseNo));
+          } else {
+            fallbackCopy(caseNo);
+          }
+        }
+      }
     });
 
     // Modal
@@ -4878,6 +4905,74 @@
     });
 
     el.calcInput.addEventListener('input', updateCalcMath);
+
+    // 사건번호 텍스트 클립보드 복사 폴백
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        toast(`사건번호 [${text}] 복사되었습니다.`);
+      } catch (_) {}
+      document.body.removeChild(ta);
+    }
+
+    // 상단 4대 핵심 지표 카드 클릭 필터링
+    function updateSummaryActiveState() {
+      if (!el.summaryItems) return;
+      el.summaryItems.forEach(item => {
+        const ft = item.getAttribute('data-filter');
+        let isActive = false;
+        if (ft === 'all') {
+          isActive = state.filters.discount === 'ALL' && !state.filters.imminentOnly;
+        } else if (ft === 'discount') {
+          isActive = state.filters.discount === 'disc20' || state.filters.discount === 'disc36';
+        } else if (ft === 'new') {
+          isActive = state.filters.discount === 'new';
+        } else if (ft === 'imminent') {
+          isActive = state.filters.imminentOnly;
+        }
+        item.classList.toggle('active', isActive);
+      });
+    }
+
+    if (el.summaryItems) {
+      el.summaryItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const filterType = item.getAttribute('data-filter');
+          if (filterType === 'all') {
+            state.filters.discount = 'ALL';
+            state.filters.imminentOnly = false;
+            if (el.selectDiscount) el.selectDiscount.value = 'ALL';
+          } else if (filterType === 'discount') {
+            const isAlready = state.filters.discount === 'disc20';
+            state.filters.discount = isAlready ? 'ALL' : 'disc20';
+            state.filters.imminentOnly = false;
+            if (el.selectDiscount) el.selectDiscount.value = state.filters.discount;
+          } else if (filterType === 'new') {
+            const isAlready = state.filters.discount === 'new';
+            state.filters.discount = isAlready ? 'ALL' : 'new';
+            state.filters.imminentOnly = false;
+            if (el.selectDiscount) el.selectDiscount.value = state.filters.discount;
+          } else if (filterType === 'imminent') {
+            state.filters.imminentOnly = !state.filters.imminentOnly;
+          }
+          updateSummaryActiveState();
+          renderCards();
+        });
+      });
+    }
+
+    if (el.selectDiscount) {
+      el.selectDiscount.addEventListener('change', () => {
+        state.filters.imminentOnly = false;
+        updateSummaryActiveState();
+      });
+    }
   }
 
   // Init

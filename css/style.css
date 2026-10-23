@@ -95,6 +95,32 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.summary-item:hover {
+  border-color: #d1d6db;
+  transform: translateY(-2px);
+  background: #fafbfc;
+}
+
+.summary-item:focus-visible {
+  border-color: var(--toss-blue);
+  box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.25);
+}
+
+.summary-item.active {
+  border-color: var(--toss-blue);
+  background: var(--toss-blue-light);
+  box-shadow: 0 3px 12px rgba(49, 130, 246, 0.14);
+}
+
+.summary-item.active .summary-label {
+  color: var(--toss-blue);
+  font-weight: 700;
 }
 
 .summary-label {
@@ -278,6 +304,10 @@ body {
 
 .popover-trigger[aria-expanded="true"] .dropdown-chevron {
   transform: rotate(180deg);
+}
+
+.popover-handle-bar {
+  display: none;
 }
 
 .popover-menu {
@@ -642,6 +672,24 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+}
+
+
+.meta-case-no {
+  cursor: pointer;
+  padding: 2px 4px;
+  margin-left: -4px;
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 0, 0, 0.18);
+  text-underline-offset: 3px;
+}
+
+.meta-case-no:hover {
+  background: var(--bg-tag);
+  color: var(--toss-blue);
+  text-decoration-color: var(--toss-blue);
 }
 
 .meta-case {
@@ -1011,18 +1059,33 @@ body {
   .filter-selects { width: 100%; display: flex; gap: 6px; }
   .select-clean, .popover-wrapper { flex: 1; min-width: 0; }
   .popover-trigger { width: 100%; padding: 10px 6px; font-size: 12px; justify-content: center; }
+  .popover-handle-bar {
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: #e5e8eb;
+    border-radius: 9999px;
+    margin: 0 auto 10px;
+  }
   .popover-menu {
     position: fixed;
     top: auto;
-    bottom: 24px;
-    left: 16px;
-    right: 16px;
-    width: auto;
-    max-width: 360px;
-    margin: 0 auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 20px 20px 0 0;
+    padding: 16px 20px 32px;
+    border: none;
+    box-shadow: 0 -8px 36px rgba(0, 0, 0, 0.2);
     z-index: 3000;
-    border-radius: var(--radius-md);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+    animation: sheetSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes sheetSlideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
   }
   .popover-backdrop {
     background: rgba(0, 0, 0, 0.35);
