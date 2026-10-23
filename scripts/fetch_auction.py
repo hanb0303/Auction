@@ -649,6 +649,7 @@ def run():
             "new_count": new_count,
             "discounted_count": discounted_count,
             "imminent_count": imminent_count,
+            "today_new_count": sum(1 for i in scraped_items if i.get("is_today_new")),
         },
         "items": scraped_items,
     }

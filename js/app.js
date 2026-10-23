@@ -4348,6 +4348,8 @@
 
   // Render Card HTML (Clean & Informative)
   function renderCard(item) {
+    const isTodayNew = Boolean(item.is_today_new || item.first_seen === (state.updated_at || "2026-10-23"));
+    const newBadge = isTodayNew ? '<span class="chip chip-badge-new">NEW</span>' : '';
     const isBookmarked = state.bookmarks.has(item.id);
     const dDayClass = item.d_day <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday';
     // 100% Guaranteed YY.MM.DD Format
@@ -4371,7 +4373,7 @@
           <div class="card-top">
             <span class="meta-case">${item.case_no} · ${item.court}</span>
             <div class="badge-row">
-              ${discountChip}
+              ${newBadge}${discountChip}
               <span class="${dDayClass}" title="매각기일">${dateLabel}</span>
             </div>
           </div>
