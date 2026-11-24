@@ -342,7 +342,9 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
 
                 for r in s_list:
                     case_no = str(r.get("srnSaNo") or "").strip()
-                    if not case_no or case_no in seen_cases:
+                    maemul_ser = str(r.get("maemulSer") or "1").strip()
+                    seen_key = f"{court['short_name']}|{case_no}|{maemul_ser}"
+                    if not case_no or seen_key in seen_cases:
                         continue
                     buld_nm = str(r.get("buldNm") or "").strip()
                     if not buld_nm or re.search(r"오피스텔|다세대|빌라|연립|도시형|생활주택|해담채|원룸", buld_nm):
@@ -381,7 +383,8 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                     naver_url = resolve_naver_complex_url(session, headers, district, buld_nm)
                     households = resolve_households(session, headers, district, buld_nm)
 
-                    seen_cases.add(case_no)
+                    seen_cases.add(seen_key)
+                    seen_cases.add(f"{court['short_name']}|{case_no}")
                     area_pyeong = round(area_m2 * 0.3025, 1)
                     floor_info = extract_floor(buld_list)
                     discount_rate = max(0, round((1 - (min_price / app_price)) * 100))
@@ -390,7 +393,7 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                     auction_date = format_ymd(r.get("maeGiil") or "")
 
                     collected_items.append({
-                        "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", case_no),
+                        "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", f"{court['cort_cd']}_{case_no}_{maemul_ser}"),
                         "case_no": case_no,
                         "court": court["short_name"],
                         "complex_name": buld_nm,
@@ -483,7 +486,8 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
 
                     raw_cs = str(row.get("csNo") or "")
                     case_no = re.split(r"<br\s*/?>", raw_cs, flags=re.IGNORECASE)[0].strip()
-                    if not case_no or case_no in seen_cases:
+                    seen_court_case = f"{court['short_name']}|{case_no}"
+                    if not case_no or seen_court_case in seen_cases:
                         continue
 
                     rmk = strip_html(row.get("dspslRmk") or "")
@@ -515,7 +519,7 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                     if area_m2 < 30 or area_m2 > 300:
                         continue
 
-                    seen_cases.add(case_no)
+                    seen_cases.add(seen_court_case)
                     area_pyeong = round(area_m2 * 0.3025, 1)
                     floor_info = extract_floor(addr_part)
                     discount_rate = round((1 - (minimum_price / appraisal_price)) * 100)
@@ -540,7 +544,7 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                     households = resolve_households(session, headers, district, complex_name)
 
                     item = {
-                        "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", case_no),
+                        "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", f"{court['cort_cd']}_{case_no}"),
                         "case_no": case_no,
                         "court": court["short_name"],
                         "complex_name": complex_name,
@@ -601,15 +605,16 @@ def run():
                     c_nm = ex.get("complex_name", "")
                     hh = ex.get("households", "")
                     n_url = ex.get("naver_search_url", "")
+                    cc_ex = f"{ex.get('court', '')}|{c_no}"
                     if hh:
                         if c_no:
-                            hh_cache[c_no] = hh
+                            hh_cache[cc_ex] = hh
                         hh_cache[k_dc] = hh
                         if c_nm not in hh_cache:
                             hh_cache[c_nm] = hh
                     if "complexes/" in n_url:
                         if c_no:
-                            url_cache[c_no] = n_url
+                            url_cache[cc_ex] = n_url
                         url_cache[k_dc] = n_url
                         if c_nm not in url_cache:
                             url_cache[c_nm] = n_url
