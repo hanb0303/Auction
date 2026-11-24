@@ -628,15 +628,26 @@ def run():
         print("[*] 법원 서버 점검 또는 응답 지연으로 기존 정제 데이터를 유지합니다.")
         scraped_items = existing_items
 
+    first_seen_map = {}
+    today_str = get_kst_today().strftime("%Y-%m-%d")
+    for ex in existing_items:
+        if ex.get("case_no"):
+            ex_cc_key = f"{ex.get('court', '')}|{ex['case_no']}"
+            first_seen_map[ex_cc_key] = ex.get("first_seen", today_str)
+
     # 해외 GitHub Actions 서버에서 네이버 검색 차단 시 기존 캐시된 세대수/단지링크 복원 및 D-Day 재계산
     for item in scraped_items:
         c_no = item.get("case_no", "")
+        cc_key = f"{item.get('court', '')}|{c_no}"
+        fs = first_seen_map.get(cc_key, today_str)
+        item["first_seen"] = fs
+        item["is_today_new"] = (fs == today_str)
         k_dc = f"{item.get('district', '')}|{item.get('complex_name', '')}"
         c_nm = item.get("complex_name", "")
         if not item.get("households"):
-            item["households"] = hh_cache.get(c_no) or hh_cache.get(k_dc) or hh_cache.get(c_nm, "")
+            item["households"] = hh_cache.get(cc_key) or hh_cache.get(k_dc) or hh_cache.get(c_nm, "")
         if "complexes/" not in str(item.get("naver_search_url", "")):
-            cached_url = url_cache.get(c_no) or url_cache.get(k_dc) or url_cache.get(c_nm, "")
+            cached_url = url_cache.get(cc_key) or url_cache.get(k_dc) or url_cache.get(c_nm, "")
             if cached_url:
                 item["naver_search_url"] = cached_url
         item["d_day"] = calculate_d_day(item.get("auction_date", ""))
@@ -673,7 +684,7 @@ def run():
             hh_cache[c_nm] = hh
             hh_cache[k_dc] = hh
             if c_no:
-                hh_cache[c_no] = hh
+                hh_cache[f"{item.get('court', '')}|{c_no}"] = hh
     try:
         with open(COMPLEX_CACHE_PATH, "w", encoding="utf-8") as f:
             json.dump(hh_cache, f, ensure_ascii=False, indent=2)

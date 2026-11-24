@@ -4289,7 +4289,7 @@
       // Discount Filter
       if (state.filters.discount === 'new' && item.discount_rate !== 0) return false;
       if (state.filters.discount === 'disc20' && item.discount_rate < 20) return false;
-      if (state.filters.discount === 'disc36' && item.discount_rate < 30) return false;
+      if (state.filters.discount === 'disc36' && item.discount_rate < 36) return false;
 
       // Imminent Only (이번주 마감 기일 7일 이내)
       if (state.filters.imminentOnly && (item.d_day < 0 || item.d_day > 7)) return false;
@@ -4310,8 +4310,8 @@
     }).sort((a, b) => {
       if (state.filters.sort === 'created_desc') {
         // 오늘 신규 유입(is_today_new) 1순위 -> 최신 등록일 -> 사건번호 순
-        const newA = Boolean(a.is_today_new || a.first_seen === (state.updated_at || '2026-10-23'));
-        const newB = Boolean(b.is_today_new || b.first_seen === (state.updated_at || '2026-10-23'));
+        const newA = Boolean(a.is_today_new || (state.updatedAt && a.first_seen === state.updatedAt));
+        const newB = Boolean(b.is_today_new || (state.updatedAt && b.first_seen === state.updatedAt));
         if (newA !== newB) return (newB ? 1 : 0) - (newA ? 1 : 0);
         const dateA = a.first_seen || '';
         const dateB = b.first_seen || '';
@@ -4363,7 +4363,7 @@
 
   // Render Card HTML (Clean & Informative)
   function renderCard(item) {
-    const isTodayNew = Boolean(item.is_today_new || item.first_seen === (state.updated_at || "2026-10-23"));
+    const isTodayNew = Boolean(item.is_today_new || (state.updatedAt && item.first_seen === state.updatedAt));
     const newBadge = isTodayNew ? '<span class="chip chip-badge-new">NEW</span>' : '';
     const isBookmarked = state.bookmarks.has(item.id);
     const dDayClass = item.d_day <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday';
@@ -4960,9 +4960,19 @@
             if (el.selectDiscount) el.selectDiscount.value = state.filters.discount;
           } else if (filterType === 'imminent') {
             state.filters.imminentOnly = !state.filters.imminentOnly;
+            if (state.filters.imminentOnly) {
+              state.filters.discount = 'ALL';
+              if (el.selectDiscount) el.selectDiscount.value = 'ALL';
+            }
           }
           updateSummaryActiveState();
           renderCards();
+        });
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            item.click();
+          }
         });
       });
     }
