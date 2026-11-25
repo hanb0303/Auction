@@ -750,58 +750,8 @@ select.select-clean::-ms-expand {
 
 .sub-toggles {
   display: flex;
-  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-}
-
-.sync-pill-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 36px;
-  padding: 0 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 9999px;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-sub);
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-}
-
-.sync-pill-btn:hover {
-  background: var(--bg-tag);
-  border-color: var(--border-active);
-  color: var(--text-main);
-}
-
-.sync-pill-btn:active {
-  transform: scale(0.97);
-}
-
-.sync-desc {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text-sub);
-  margin-bottom: 18px;
-}
-
-.sync-section {
-  margin-bottom: 18px;
-}
-
-.sync-btn-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.sync-btn-row .btn-primary,
-.sync-btn-row .btn-secondary {
-  flex: 1;
 }
 
 .check-label {
