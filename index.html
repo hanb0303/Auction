@@ -2,14 +2,14 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>서울 아파트 경매</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>수도권 아파트 경매</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233182f6'/%3E%3Cpath d='M16 7l9 8h-2.5v9h-5v-5.5h-3V24h-5v-9H7z' fill='%23fff'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preload" href="data/auction_data.json" as="fetch" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261125_08">
+  <link rel="stylesheet" href="css/style.css?v=20261125_09">
 </head>
 <body>
 
@@ -92,12 +92,12 @@
     <!-- Seoul 5-Zone Sub-Pills (Shown when 서울 is selected) -->
     <div class="sub-segmented-wrapper" id="seoul-sub-wrapper" style="display: none;">
       <nav class="sub-segmented-control" aria-label="서울 생활권 선택">
-        <button type="button" class="sub-pill-btn active" data-seoul-zone="ALL">서울 전체</button>
-        <button type="button" class="sub-pill-btn" data-seoul-zone="SE" title="강남구 · 서초구 · 송파구 · 강동구">강남·동남권 <span class="zone-sub">강남4구</span></button>
-        <button type="button" class="sub-pill-btn" data-seoul-zone="CENTER" title="마포구 · 용산구 · 성동구 · 광진구 · 종로구 · 중구">마용성·도심권</button>
-        <button type="button" class="sub-pill-btn" data-seoul-zone="SW" title="양천구 · 영등포구 · 동작구 · 강서구 · 관악구 · 구로구 · 금천구">목동·서남권</button>
-        <button type="button" class="sub-pill-btn" data-seoul-zone="NE" title="노원구 · 도봉구 · 강북구 · 성북구 · 동대문구 · 중랑구">노도강·동북권</button>
-        <button type="button" class="sub-pill-btn" data-seoul-zone="NW" title="은평구 · 서대문구">은평·서북권</button>
+        <button type="button" class="sub-pill-btn active" data-seoul-zone="ALL">서울 전체 <span class="zone-count">0</span></button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="SE" title="강남구 · 서초구 · 송파구 · 강동구">강남·동남권 <span class="zone-sub">강남4구</span> <span class="zone-count">0</span></button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="CENTER" title="마포구 · 용산구 · 성동구 · 광진구 · 종로구 · 중구">마용성·도심권 <span class="zone-count">0</span></button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="SW" title="양천구 · 영등포구 · 동작구 · 강서구 · 관악구 · 구로구 · 금천구">목동·서남권 <span class="zone-count">0</span></button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="NE" title="노원구 · 도봉구 · 강북구 · 성북구 · 동대문구 · 중랑구">노도강·동북권 <span class="zone-count">0</span></button>
+        <button type="button" class="sub-pill-btn" data-seoul-zone="NW" title="은평구 · 서대문구">은평·서북권 <span class="zone-count">0</span></button>
       </nav>
     </div>
 
@@ -105,6 +105,7 @@
     <section class="filter-bar" aria-label="상세 필터">
       <div class="search-box">
         <input type="text" id="input-search" class="search-input" placeholder="아파트명, 동네 검색">
+        <button type="button" id="btn-search-clear" class="search-clear-btn" aria-label="검색어 지우기" hidden>&times;</button>
       </div>
       <div class="filter-selects">
         <select id="select-households" class="select-clean" aria-label="세대수 필터">
@@ -158,7 +159,7 @@
 
             <div class="popover-footer">
               <span class="popover-step-hint">5천만원 단위</span>
-              <button type="button" id="btn-price-apply" class="popover-apply-btn">확인</button>
+              <button type="button" id="btn-price-apply" class="popover-apply-btn">완료</button>
             </div>
           </div>
         </div>
@@ -206,6 +207,7 @@
   <!-- Toss-style Sheet Modal (Calculator) -->
   <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-complex-title">
     <div class="modal-sheet">
+      <div class="sheet-handle-bar" aria-hidden="true"></div>
       <div class="sheet-header">
         <div>
           <h2 class="sheet-title" id="modal-complex-title">-</h2>
@@ -215,13 +217,58 @@
       </div>
 
       <div class="calc-input-wrap">
-        <label class="calc-input-label" for="calc-input-price">내 예상 입찰가</label>
-        <input type="number" id="calc-input-price" class="sheet-input" step="10000000">
+        <div class="calc-label-row">
+          <label class="calc-input-label" for="calc-input-price">내 예상 입찰가 (원)</label>
+          <span class="calc-korean-val" id="calc-bid-korean">-</span>
+        </div>
+        <input type="number" id="calc-input-price" class="sheet-input" min="0" step="10000000">
+        <div class="calc-step-chips" role="group" aria-label="입찰가 빠른 조정">
+          <button type="button" class="calc-chip" data-bid-step="min">최저가</button>
+          <button type="button" class="calc-chip" data-bid-step="10000000">+1천만</button>
+          <button type="button" class="calc-chip" data-bid-step="50000000">+5천만</button>
+        </div>
+      </div>
+
+      <div class="calc-two-col">
+        <div class="calc-input-wrap">
+          <div class="calc-label-row">
+            <label class="calc-input-label" for="calc-input-market">예상 시세 (원)</label>
+            <span class="calc-korean-val" id="calc-market-korean">-</span>
+          </div>
+          <input type="number" id="calc-input-market" class="sheet-input sheet-input-sm" min="0" step="10000000">
+        </div>
+        <div class="calc-input-wrap">
+          <div class="calc-label-row">
+            <label class="calc-input-label" for="calc-input-assumed">인수 보증금·기타 (원)</label>
+            <span class="calc-korean-val" id="calc-assumed-korean">0원</span>
+          </div>
+          <input type="number" id="calc-input-assumed" class="sheet-input sheet-input-sm" min="0" step="1000000" value="0">
+        </div>
+      </div>
+
+      <div class="calc-controls-grid">
+        <div class="calc-control-group">
+          <span class="calc-input-label">LTV (대출 비율)</span>
+          <div class="calc-seg-group" id="calc-ltv-group" role="group" aria-label="LTV 선택">
+            <button type="button" class="calc-seg-btn" data-ltv="0">0%</button>
+            <button type="button" class="calc-seg-btn" data-ltv="50">50%</button>
+            <button type="button" class="calc-seg-btn" data-ltv="60">60%</button>
+            <button type="button" class="calc-seg-btn active" data-ltv="70">70%</button>
+          </div>
+        </div>
+        <div class="calc-control-group">
+          <span class="calc-input-label">보유 주택 수</span>
+          <div class="calc-seg-group" id="calc-house-group" role="group" aria-label="주택 수 선택">
+            <button type="button" class="calc-seg-btn active" data-houses="1">1주택</button>
+            <button type="button" class="calc-seg-btn" data-houses="2">2주택</button>
+            <button type="button" class="calc-seg-btn" data-houses="3">3주택+</button>
+          </div>
+        </div>
       </div>
 
       <div class="calc-result-list">
         <div class="calc-result-row">
-          <span>입찰보증금 (10%)</span>
+          <span>입찰보증금 (최저가 10%)</span>
           <span id="res-deposit" style="font-weight:700;">-</span>
         </div>
         <div class="calc-result-row">
@@ -229,16 +276,24 @@
           <span id="res-balance">-</span>
         </div>
         <div class="calc-result-row">
-          <span>예상 대출 (LTV 70%)</span>
+          <span id="res-loan-label">예상 대출 (LTV 70%)</span>
           <span id="res-loan" style="color:var(--toss-blue); font-weight:700;">-</span>
         </div>
         <div class="calc-result-row">
-          <span>취득세 (1주택 기준)</span>
+          <span id="res-tax-label">취득세 (1주택 기준)</span>
           <span id="res-tax">-</span>
         </div>
         <div class="calc-result-row">
           <span>부대비용 (명도+법무)</span>
           <span id="res-extra">-</span>
+        </div>
+        <div class="calc-result-row" id="res-assumed-row" style="display: none;">
+          <span>인수 보증금·기타비용</span>
+          <span id="res-assumed">-</span>
+        </div>
+        <div class="calc-result-row">
+          <span>예상 안전마진 (시세 차익)</span>
+          <span id="res-margin" style="font-weight:700;">-</span>
         </div>
         <div class="calc-result-row highlight">
           <span>필요 현금 (자기자본)</span>
@@ -252,8 +307,8 @@
   <div class="popover-backdrop" id="popover-backdrop" style="display: none;"></div>
 
   <!-- Toast -->
-  <div id="toast" class="toss-toast"></div>
+  <div id="toast" class="toss-toast" role="status" aria-live="polite"></div>
 
-  <script src="js/app.js?v=20261125_06" defer></script>
+  <script src="js/app.js?v=20261125_07" defer></script>
 </body>
 </html>

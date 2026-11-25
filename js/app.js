@@ -161,6 +161,8 @@
     items: [],
     historyItems: [],
     historyLoaded: false,
+    historyLoading: false,
+    historyLoadError: false,
     loadError: false,
     stats: {},
     updatedAt: '',
@@ -181,7 +183,9 @@
       sort: 'dday_asc',
       search: ''
     },
-    activeCalcItem: null
+    activeCalcItem: null,
+    calcLtv: 70,
+    calcHouseCount: 1
   };
 
   let historyLoadPromise = null;
@@ -227,7 +231,9 @@
     chkSafe: document.getElementById('chk-safe'),
     chkSafeWrap: document.getElementById('chk-safe-wrap'),
     chkBookmark: document.getElementById('chk-bookmark'),
+    chkBookmarkWrap: document.getElementById('chk-bookmark') ? document.getElementById('chk-bookmark').closest('.check-label') : null,
     inputSearch: document.getElementById('input-search'),
+    btnSearchClear: document.getElementById('btn-search-clear'),
     resultCount: document.getElementById('result-count'),
     auctionGrid: document.getElementById('auction-grid'),
     modalOverlay: document.getElementById('modal-overlay'),
@@ -235,11 +241,24 @@
     modalCaseNo: document.getElementById('modal-case-no'),
     modalClose: document.getElementById('modal-close'),
     calcInput: document.getElementById('calc-input-price'),
+    calcMarketInput: document.getElementById('calc-input-market'),
+    calcAssumedInput: document.getElementById('calc-input-assumed'),
+    calcBidKorean: document.getElementById('calc-bid-korean'),
+    calcMarketKorean: document.getElementById('calc-market-korean'),
+    calcAssumedKorean: document.getElementById('calc-assumed-korean'),
+    calcStepChips: document.querySelectorAll('[data-bid-step]'),
+    calcLtvButtons: document.querySelectorAll('#calc-ltv-group [data-ltv]'),
+    calcHouseButtons: document.querySelectorAll('#calc-house-group [data-houses]'),
     resDeposit: document.getElementById('res-deposit'),
     resBalance: document.getElementById('res-balance'),
+    resLoanLabel: document.getElementById('res-loan-label'),
     resLoan: document.getElementById('res-loan'),
+    resTaxLabel: document.getElementById('res-tax-label'),
     resTax: document.getElementById('res-tax'),
     resExtra: document.getElementById('res-extra'),
+    resAssumedRow: document.getElementById('res-assumed-row'),
+    resAssumed: document.getElementById('res-assumed'),
+    resMargin: document.getElementById('res-margin'),
     resTotal: document.getElementById('res-total'),
     toast: document.getElementById('toast')
   };
@@ -280,11 +299,15 @@
   }
 
   // Toast
+  let toastTimer = null;
   function toast(msg) {
     if (!el.toast) return;
+    clearTimeout(toastTimer);
     el.toast.textContent = msg;
     el.toast.classList.add('show');
-    setTimeout(() => el.toast && el.toast.classList.remove('show'), 1800);
+    toastTimer = setTimeout(() => {
+      if (el.toast) el.toast.classList.remove('show');
+    }, 1800);
   }
 
   // Bookmark Helpers (Legacy ID migration + snapshot persistence)
@@ -397,19 +420,26 @@
     if (state.historyLoaded) return;
     if (historyLoadPromise) return historyLoadPromise;
 
+    state.historyLoading = true;
+    state.historyLoadError = false;
+    if (state.activeTab === 'results') renderCards();
+
     historyLoadPromise = (async () => {
       try {
         const hData = await fetchJsonWithTimeout('data/auction_history.json', 10000);
         state.historyItems = Array.isArray(hData && hData.items) ? hData.items : [];
         state.historyLoaded = true;
+        state.historyLoadError = false;
         migrateAndSyncBookmarks();
         if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
         updateResultsSummaryCounts();
-        if (state.activeTab === 'results') renderCards();
+        updateSeoulZoneCounts();
       } catch (_) {
-        // Keep historyLoaded false so user can retry on tab switch if needed
+        state.historyLoadError = true;
       } finally {
+        state.historyLoading = false;
         historyLoadPromise = null;
+        if (state.activeTab === 'results') renderCards();
       }
     })();
 
@@ -439,10 +469,11 @@
     renderCards();
   }
 
-  // Update live counts on Seoul 5-zone sub-buttons
+  // Update live counts on Seoul 5-zone sub-buttons (preserves .zone-sub label)
   function updateSeoulZoneCounts() {
     if (!el.seoulZoneButtons) return;
-    const seoulItems = state.items.filter(isSeoulItem);
+    const sourceItems = state.activeTab === 'results' ? getResultsDataset() : state.items;
+    const seoulItems = sourceItems.filter(isSeoulItem);
     const zoneCounts = { ALL: seoulItems.length, SE: 0, CENTER: 0, SW: 0, NE: 0, NW: 0 };
     const zoneKeys = ['SE', 'CENTER', 'SW', 'NE', 'NW'];
     for (const it of seoulItems) {
@@ -450,19 +481,17 @@
         if (matchSeoulZone(it, zk)) zoneCounts[zk] += 1;
       }
     }
-    const labels = {
-      ALL: '서울 전체',
-      SE: '강남·동남권',
-      CENTER: '마용성·도심권',
-      SW: '목동·서남권',
-      NE: '노도강·동북권',
-      NW: '은평·서북권'
-    };
     el.seoulZoneButtons.forEach(btn => {
       const zk = btn.getAttribute('data-seoul-zone');
       const cnt = zoneCounts[zk] || 0;
-      const baseLabel = labels[zk] || btn.textContent;
-      btn.innerHTML = `${baseLabel} <span class="zone-count">${cnt}</span>`;
+      let countSpan = btn.querySelector('.zone-count');
+      if (!countSpan) {
+        countSpan = document.createElement('span');
+        countSpan.className = 'zone-count';
+        btn.appendChild(document.createTextNode(' '));
+        btn.appendChild(countSpan);
+      }
+      countSpan.textContent = cnt;
     });
   }
 
@@ -480,8 +509,11 @@
         ? '데이터를 불러오지 못했습니다'
         : `서울 · 경기 핵심지 자동 업데이트 (${dateLabel} 기준)`;
     }
+    const disc20Count = state.items.length > 0
+      ? state.items.filter(i => (Number(i.discount_rate) || 0) >= 20).length
+      : (state.stats.discounted_count || 0);
     if (el.statTotal) el.statTotal.textContent = `${state.stats.total || state.items.length}`;
-    if (el.statDiscount) el.statDiscount.textContent = `${state.stats.discounted_count || 0}`;
+    if (el.statDiscount) el.statDiscount.textContent = `${disc20Count}`;
     if (el.statNew) el.statNew.textContent = `${state.stats.new_count || 0}`;
     if (el.statImminent) el.statImminent.textContent = `${state.stats.imminent_count || 0}`;
     if (el.tabCountActive) el.tabCountActive.textContent = state.items.length;
@@ -666,8 +698,12 @@
     const dDayClass = isResult
       ? (isClosed ? 'chip chip-result-closed' : 'chip chip-result-date')
       : (Number.isFinite(dDayVal) && dDayVal <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday');
-    // 100% Guaranteed YY.MM.DD Format
-    const dateLabel = formatDate(item);
+    // 100% Guaranteed YY.MM.DD Format + D-Day on active cards
+    let dateLabel = formatDate(item);
+    if (!isResult && Number.isFinite(dDayVal)) {
+      const dDaySuffix = dDayVal === 0 ? 'D-day' : (dDayVal > 0 ? `D-${dDayVal}` : `D+${Math.abs(dDayVal)}`);
+      dateLabel = `${dateLabel} · ${dDaySuffix}`;
+    }
 
     let statusBadgeHtml = '';
     if (isResult) {
@@ -706,7 +742,7 @@
     if (isResult) {
       const ndLabel = formatShortDate(item.next_date);
       if (isSold) {
-        rightsText = winRatio > 0 ? `매각 완료 · 감정가 대비 ${winRatio}%` : '매각 완료';
+        rightsText = '매각 완료';
       } else if (st.includes('유찰')) {
         rightsText = ndLabel ? `유찰 · 차기 기일 ${ndLabel}` : '유찰 · 차기 기일 미정';
       } else if (st.includes('기일변경') || st.includes('변경')) {
@@ -781,7 +817,7 @@
           <a href="${escapeHtml(naverLink)}" target="_blank" rel="noopener noreferrer" class="btn-secondary">호가</a>
           <a href="${escapeHtml(hogangLink)}" target="_blank" rel="noopener noreferrer" class="btn-secondary">실거래</a>
           ${primaryActionHtml}
-          <button type="button" class="btn-fav ${isBookmarked ? 'active' : ''}" data-action="fav" data-id="${escapeHtml(itemId)}">
+          <button type="button" class="btn-fav ${isBookmarked ? 'active' : ''}" data-action="fav" data-id="${escapeHtml(itemId)}" aria-label="관심 매물 저장" aria-pressed="${isBookmarked ? 'true' : 'false'}">
             ★
           </button>
         </div>
@@ -796,12 +832,22 @@
     if (!el.auctionGrid) return;
 
     if (state.loadError && state.activeTab === 'active' && state.items.length === 0) {
-      el.auctionGrid.innerHTML = `<div class="empty-box">경매 데이터를 불러오지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.<div style="margin-top:12px;"><button type="button" class="btn-secondary" data-action="retry-load">다시 시도</button></div></div>`;
+      el.auctionGrid.innerHTML = `<div class="empty-box">경매 데이터를 불러오지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.<div class="empty-actions"><button type="button" class="btn-secondary" data-action="retry-load">다시 시도</button></div></div>`;
+      return;
+    }
+
+    if (state.activeTab === 'results' && state.historyLoading && !state.historyLoaded) {
+      el.auctionGrid.innerHTML = `<div class="empty-box loading-box"><div class="loading-spinner" aria-hidden="true"></div><div>매물 결과를 불러오는 중입니다...</div></div>`;
+      return;
+    }
+
+    if (state.activeTab === 'results' && state.historyLoadError && !state.historyLoaded && list.length === 0) {
+      el.auctionGrid.innerHTML = `<div class="empty-box">매물 결과를 불러오지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.<div class="empty-actions"><button type="button" class="btn-secondary" data-action="retry-history">다시 시도</button></div></div>`;
       return;
     }
 
     if (list.length === 0) {
-      el.auctionGrid.innerHTML = `<div class="empty-box">해당하는 경매 물건이 없습니다.</div>`;
+      el.auctionGrid.innerHTML = `<div class="empty-box">해당하는 경매 물건이 없습니다.<div class="empty-actions"><button type="button" class="btn-secondary" data-action="reset-filters">필터 초기화</button></div></div>`;
       return;
     }
     el.auctionGrid.innerHTML = list.map(renderCard).join('');
@@ -845,9 +891,24 @@
     if (!item || !el.modalOverlay) return;
 
     state.activeCalcItem = item;
+    state.calcLtv = 70;
+    state.calcHouseCount = 1;
     if (el.modalTitle) el.modalTitle.textContent = item.complex_name || '-';
     if (el.modalCaseNo) el.modalCaseNo.textContent = `${item.case_no || '-'} · 감정가 ${formatMoney(item.appraisal_price)}`;
     if (el.calcInput) el.calcInput.value = Number(item.minimum_price) || 0;
+    if (el.calcMarketInput) el.calcMarketInput.value = Number(item.appraisal_price) || 0;
+    if (el.calcAssumedInput) el.calcAssumedInput.value = 0;
+
+    if (el.calcLtvButtons) {
+      el.calcLtvButtons.forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.ltv) === state.calcLtv);
+      });
+    }
+    if (el.calcHouseButtons) {
+      el.calcHouseButtons.forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.houses) === state.calcHouseCount);
+      });
+    }
     updateCalcMath();
 
     el.modalOverlay.classList.add('active');
@@ -858,30 +919,74 @@
     state.activeCalcItem = null;
   }
 
+  function formatKoreanUnitLabel(val) {
+    if (!Number.isFinite(val) || val <= 0) return '0원';
+    return `= ${formatMoney(val)}`;
+  }
+
+  function getAcquisitionTaxRate(bid, houseCount) {
+    if (houseCount >= 3) return 0.12;
+    if (houseCount === 2) return 0.08;
+    // 1주택: 6억 이하 1.1%, 6~9억 비례세율 (1.1%~3.3%), 9억 이상 3.3%
+    if (bid <= 600000000) return 0.011;
+    if (bid >= 900000000) return 0.033;
+    const basePct = (bid / 100000000) * (2 / 3) - 3;
+    return (basePct * 1.1) / 100;
+  }
+
   function updateCalcMath() {
     if (!state.activeCalcItem) return;
-    const bid = el.calcInput ? (parseInt(el.calcInput.value, 10) || 0) : 0;
+    const bid = Math.max(0, el.calcInput ? (parseInt(el.calcInput.value, 10) || 0) : 0);
+    const market = Math.max(0, el.calcMarketInput ? (parseInt(el.calcMarketInput.value, 10) || 0) : 0);
+    const assumed = Math.max(0, el.calcAssumedInput ? (parseInt(el.calcAssumedInput.value, 10) || 0) : 0);
+
     const item = state.activeCalcItem;
     const minPrice = Number(item.minimum_price) || 0;
     const appPrice = Number(item.appraisal_price) || 0;
+    const ltv = Number(state.calcLtv) || 0;
+    const houses = Number(state.calcHouseCount) || 1;
+
+    if (el.calcBidKorean) el.calcBidKorean.textContent = formatKoreanUnitLabel(bid);
+    if (el.calcMarketKorean) el.calcMarketKorean.textContent = formatKoreanUnitLabel(market);
+    if (el.calcAssumedKorean) el.calcAssumedKorean.textContent = formatKoreanUnitLabel(assumed);
 
     const deposit = Math.round(minPrice * 0.1);
     const balance = Math.max(0, bid - deposit);
-    const loan = Math.round(Math.min(bid, appPrice) * 0.70);
+    const loan = Math.round(Math.min(bid, appPrice) * (ltv / 100));
 
-    let taxRate = 0.011;
-    if (bid > 900000000) taxRate = 0.035;
-    else if (bid > 600000000) taxRate = 0.022;
+    const taxRate = getAcquisitionTaxRate(bid, houses);
     const tax = Math.round(bid * taxRate);
 
     const extra = Math.round((Number(item.area_pyeong) || 25) * 80000 + 1000000); // 명도비 + 채권/법무
-    const ownCash = deposit + Math.max(0, balance - loan) + tax + extra;
+    const ownCash = deposit + Math.max(0, balance - loan) + tax + extra + assumed;
+    const margin = market - bid;
 
     if (el.resDeposit) el.resDeposit.textContent = formatMoney(deposit);
     if (el.resBalance) el.resBalance.textContent = formatMoney(balance);
-    if (el.resLoan) el.resLoan.textContent = `약 ${formatMoney(loan)}`;
-    if (el.resTax) el.resTax.textContent = `${formatMoney(tax)} (${(taxRate * 100).toFixed(1)}%)`;
+    if (el.resLoanLabel) el.resLoanLabel.textContent = `예상 대출 (LTV ${ltv}%)`;
+    if (el.resLoan) el.resLoan.textContent = ltv > 0 ? `약 ${formatMoney(loan)}` : '0원';
+    if (el.resTaxLabel) {
+      el.resTaxLabel.textContent = houses >= 3
+        ? '취득세 (3주택+ 12%)'
+        : (houses === 2 ? '취득세 (2주택 8%)' : '취득세 (1주택 기준)');
+    }
+    if (el.resTax) el.resTax.textContent = `${formatMoney(tax)} (${(taxRate * 100).toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1')}%)`;
     if (el.resExtra) el.resExtra.textContent = formatMoney(extra);
+    if (el.resAssumedRow) el.resAssumedRow.style.display = assumed > 0 ? 'flex' : 'none';
+    if (el.resAssumed) el.resAssumed.textContent = formatMoney(assumed);
+    if (el.resMargin) {
+      if (market <= 0) {
+        el.resMargin.textContent = '-';
+        el.resMargin.style.color = '';
+      } else {
+        const marginPct = Math.round((margin / market) * 100);
+        const absStr = formatMoney(Math.abs(margin));
+        el.resMargin.textContent = margin >= 0
+          ? `+${absStr} (${marginPct}%)`
+          : `-${absStr} (${marginPct}%)`;
+        el.resMargin.style.color = margin >= 0 ? 'var(--toss-blue)' : 'var(--toss-red)';
+      }
+    }
     if (el.resTotal) el.resTotal.textContent = formatMoney(ownCash);
   }
 
@@ -932,6 +1037,7 @@
           } else if (isResults) {
             updateResultsSummaryCounts();
           }
+          updateSeoulZoneCounts();
           renderCards();
         });
       });
@@ -1303,6 +1409,8 @@
     if (el.chkSafe) {
       el.chkSafe.addEventListener('change', e => {
         state.filters.safeOnly = e.target.checked;
+        if (el.chkSafeWrap) el.chkSafeWrap.classList.toggle('is-checked', e.target.checked);
+        updateSummaryActiveState();
         renderCards();
       });
     }
@@ -1310,20 +1418,75 @@
     if (el.chkBookmark) {
       el.chkBookmark.addEventListener('change', e => {
         state.filters.bookmarkedOnly = e.target.checked;
+        if (el.chkBookmarkWrap) el.chkBookmarkWrap.classList.toggle('is-checked', e.target.checked);
+        updateSummaryActiveState();
         renderCards();
       });
     }
 
     // Search
+    function syncSearchClearBtn() {
+      if (el.btnSearchClear && el.inputSearch) {
+        el.btnSearchClear.hidden = el.inputSearch.value.length === 0;
+      }
+    }
+
     if (el.inputSearch) {
       let timer = null;
       el.inputSearch.addEventListener('input', e => {
+        syncSearchClearBtn();
         clearTimeout(timer);
         timer = setTimeout(() => {
           state.filters.search = e.target.value.trim();
+          updateSummaryActiveState();
           renderCards();
         }, 150);
       });
+    }
+
+    if (el.btnSearchClear) {
+      el.btnSearchClear.addEventListener('click', () => {
+        if (!el.inputSearch) return;
+        el.inputSearch.value = '';
+        state.filters.search = '';
+        syncSearchClearBtn();
+        updateSummaryActiveState();
+        renderCards();
+        el.inputSearch.focus();
+      });
+    }
+
+    function resetAllFilters() {
+      state.filters.regionGroup = 'ALL';
+      state.filters.seoulZone = 'ALL';
+      state.filters.minHouseholds = 'ALL';
+      state.filters.discount = 'ALL';
+      state.filters.imminentOnly = false;
+      state.filters.safeOnly = false;
+      state.filters.bookmarkedOnly = false;
+      state.filters.resultStatus = 'ALL';
+      state.filters.search = '';
+
+      if (el.regionButtons) {
+        el.regionButtons.forEach(b => b.classList.toggle('active', b.getAttribute('data-region') === 'ALL'));
+      }
+      if (el.seoulSubWrapper) el.seoulSubWrapper.style.display = 'none';
+      if (el.seoulZoneButtons) {
+        el.seoulZoneButtons.forEach(sb => sb.classList.toggle('active', sb.getAttribute('data-seoul-zone') === 'ALL'));
+      }
+      if (el.selectHouseholds) el.selectHouseholds.value = 'ALL';
+      if (el.selectDiscount) el.selectDiscount.value = 'ALL';
+      if (el.chkSafe) el.chkSafe.checked = false;
+      if (el.chkSafeWrap) el.chkSafeWrap.classList.remove('is-checked');
+      if (el.chkBookmark) el.chkBookmark.checked = false;
+      if (el.chkBookmarkWrap) el.chkBookmarkWrap.classList.remove('is-checked');
+      if (el.inputSearch) el.inputSearch.value = '';
+      syncSearchClearBtn();
+
+      setPriceRange(0, PRICE_SLIDER_MAX, false, true);
+      updateSummaryActiveState();
+      updateResultsSummaryActiveState();
+      renderCards();
     }
 
     // Grid Click Delegation
@@ -1337,6 +1500,8 @@
         if (action === 'fav') toggleFav(id);
         else if (action === 'calc') openCalculator(id);
         else if (action === 'retry-load') loadData();
+        else if (action === 'retry-history') ensureHistoryLoaded();
+        else if (action === 'reset-filters') resetAllFilters();
         else if (action === 'copy-case') {
           const caseNo = btn.getAttribute('data-case');
           if (caseNo) {
@@ -1364,6 +1529,46 @@
     }
 
     if (el.calcInput) el.calcInput.addEventListener('input', updateCalcMath);
+    if (el.calcMarketInput) el.calcMarketInput.addEventListener('input', updateCalcMath);
+    if (el.calcAssumedInput) el.calcAssumedInput.addEventListener('input', updateCalcMath);
+
+    if (el.calcStepChips) {
+      el.calcStepChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          if (!state.activeCalcItem || !el.calcInput) return;
+          const step = chip.getAttribute('data-bid-step');
+          const minPrice = Number(state.activeCalcItem.minimum_price) || 0;
+          if (step === 'min') {
+            el.calcInput.value = minPrice;
+          } else {
+            const delta = parseInt(step, 10) || 0;
+            const current = Math.max(0, parseInt(el.calcInput.value, 10) || 0);
+            el.calcInput.value = current + delta;
+          }
+          updateCalcMath();
+        });
+      });
+    }
+
+    if (el.calcLtvButtons) {
+      el.calcLtvButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.calcLtv = Number(btn.getAttribute('data-ltv')) || 0;
+          el.calcLtvButtons.forEach(b => b.classList.toggle('active', b === btn));
+          updateCalcMath();
+        });
+      });
+    }
+
+    if (el.calcHouseButtons) {
+      el.calcHouseButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.calcHouseCount = Number(btn.getAttribute('data-houses')) || 1;
+          el.calcHouseButtons.forEach(b => b.classList.toggle('active', b === btn));
+          updateCalcMath();
+        });
+      });
+    }
 
     // 사건번호 텍스트 클립보드 복사 폴백
     function fallbackCopy(text) {
@@ -1381,13 +1586,28 @@
     }
 
     // 상단 4대 핵심 지표 카드 클릭 필터링
+    function isDefaultActiveFilters() {
+      return (
+        state.filters.discount === 'ALL' &&
+        !state.filters.imminentOnly &&
+        state.filters.regionGroup === 'ALL' &&
+        state.filters.seoulZone === 'ALL' &&
+        state.filters.minHouseholds === 'ALL' &&
+        state.filters.minPrice === 0 &&
+        state.filters.maxPrice === PRICE_SLIDER_MAX &&
+        !state.filters.safeOnly &&
+        !state.filters.bookmarkedOnly &&
+        !state.filters.search
+      );
+    }
+
     function updateSummaryActiveState() {
       if (!el.summaryItems) return;
       el.summaryItems.forEach(item => {
         const ft = item.getAttribute('data-filter');
         let isActive = false;
         if (ft === 'all') {
-          isActive = state.filters.discount === 'ALL' && !state.filters.imminentOnly;
+          isActive = isDefaultActiveFilters();
         } else if (ft === 'discount') {
           isActive = state.filters.discount === 'disc20' || state.filters.discount === 'disc36';
         } else if (ft === 'new') {
@@ -1404,11 +1624,10 @@
         item.addEventListener('click', () => {
           const filterType = item.getAttribute('data-filter');
           if (filterType === 'all') {
-            state.filters.discount = 'ALL';
-            state.filters.imminentOnly = false;
-            if (el.selectDiscount) el.selectDiscount.value = 'ALL';
+            resetAllFilters();
+            return;
           } else if (filterType === 'discount') {
-            const isAlready = state.filters.discount === 'disc20';
+            const isAlready = state.filters.discount === 'disc20' || state.filters.discount === 'disc36';
             state.filters.discount = isAlready ? 'ALL' : 'disc20';
             state.filters.imminentOnly = false;
             if (el.selectDiscount) el.selectDiscount.value = state.filters.discount;

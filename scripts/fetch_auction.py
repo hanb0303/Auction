@@ -272,18 +272,41 @@ def resolve_households(session, headers: dict, district: str, complex_name: str)
     return ""
 
 
-def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
+def create_retry_session() -> Any:
+    """일시적 429/5xx/타임아웃 재시도가 적용된 requests.Session 반환"""
+    import requests
+    from requests.adapters import HTTPAdapter
+    from urllib3.util.retry import Retry
+
+    session = requests.Session()
+    retry = Retry(
+        total=3,
+        backoff_factor=0.6,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET", "POST"],
+        raise_on_status=False,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+
+def scrape_court_auction(
+    hh_cache: Optional[Dict[str, str]] = None,
+    url_cache: Optional[Dict[str, str]] = None,
+) -> Tuple[List[Dict[str, Any]], Set[str]]:
     """
     대법원 법원경매정보(courtauction.go.kr) 차세대 JSON API에서 직접 아파트 경매 물건 수집
     """
     all_courts = {c["short_name"] for c in TARGET_COURTS}
+    hh_cache = hh_cache or {}
+    url_cache = url_cache or {}
     try:
-        import requests
+        session = create_retry_session()
     except ImportError:
         print("[!] requests 패키지가 설치되어 있지 않습니다.")
         return [], all_courts
-
-    session = requests.Session()
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -398,6 +421,8 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                     bigo = str(r.get("mulBigo") or "").strip()
                     if bigo and re.search(r"지분|미등기|유치권|법정지상권|분묘|선순위|건물만|토지별도|가처분|매각제외|맹지", bigo):
                         continue
+                    if bigo and "대항력" in bigo and "포기" not in bigo:
+                        continue
 
                     addr_part = str(r.get("printSt") or "").strip()
                     region_group = classify_region(addr_part)
@@ -426,11 +451,14 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                     dong = str(r.get("hjguDong") or "").strip()
                     district = f"서울 {sigu} {dong}".strip() if region_group == "서울" else f"{sigu} {dong}".strip()
 
-                    naver_url = resolve_naver_complex_url(session, headers, district, buld_nm)
-                    households = resolve_households(session, headers, district, buld_nm)
+                    cc_key = f"{court['short_name']}|{case_no}"
+                    k_dc = f"{district}|{buld_nm}"
+                    cached_url = url_cache.get(cc_key) or url_cache.get(k_dc, "")
+                    naver_url = cached_url if "complexes/" in cached_url else resolve_naver_complex_url(session, headers, district, buld_nm)
+                    households = hh_cache.get(cc_key) or hh_cache.get(k_dc) or resolve_households(session, headers, district, buld_nm)
 
                     seen_cases.add(seen_key)
-                    seen_cases.add(f"{court['short_name']}|{case_no}")
+                    seen_cases.add(cc_key)
                     area_pyeong = round(area_m2 * 0.3025, 1)
                     floor_info = extract_floor(buld_list)
                     discount_rate = max(0, round((1 - (min_price / app_price)) * 100))
@@ -446,6 +474,8 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                         internal_cs_no=internal_cs_no,
                         maemul_ser=maemul_ser or "1",
                         mul_bigo=bigo,
+                        yuchal=yuchal,
+                        complex_name=buld_nm,
                     )
 
                     collected_items.append({
@@ -609,9 +639,11 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                     tokens = addr_part.split()
                     district = f"{tokens[1]} {tokens[2]}".replace(",", "") if len(tokens) >= 3 else region_group
 
-                    naver_url = resolve_naver_complex_url(session, headers, district, complex_name)
+                    k_dc = f"{district}|{complex_name}"
+                    cached_url = url_cache.get(seen_court_case) or url_cache.get(k_dc, "")
+                    naver_url = cached_url if "complexes/" in cached_url else resolve_naver_complex_url(session, headers, district, complex_name)
                     dong_ho = extract_dong_ho(addr_part)
-                    households = resolve_households(session, headers, district, complex_name)
+                    households = hh_cache.get(seen_court_case) or hh_cache.get(k_dc) or resolve_households(session, headers, district, complex_name)
                     is_safe, rights_badge = analyze_rights_status(
                         session,
                         headers,
@@ -620,6 +652,8 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                         internal_cs_no="",
                         maemul_ser="1",
                         mul_bigo=rmk,
+                        yuchal=fail_cnt,
+                        complex_name=complex_name,
                     )
 
                     item = {
@@ -679,6 +713,66 @@ def to_internal_cs_no(case_no: str) -> str:
     return f"{m.group(1)}0130{int(m.group(2)):06d}"
 
 
+RIGHTS_RISK_RE = re.compile(r"유치권|법정지상권|선순위|대항력|가처분|미등기|점유자\s*미상|제3자\s*점유")
+SPECIAL_COMPLEX_RE = re.compile(r"시니어|실버|노인|복지")
+
+
+def _check_conservative_guard(complex_name: str, yuchal: int) -> Optional[Tuple[bool, str]]:
+    """보수적 가드: 특수유형 단지 또는 3회차 이상(2회 이상 유찰) 물건은 안전 표시 차단"""
+    if SPECIAL_COMPLEX_RE.search(complex_name or ""):
+        return False, "특수유형 · 명세서 확인 필요"
+    if yuchal >= 2:
+        return False, "다회 유찰 · 명세서/특수조건 확인 필요"
+    return None
+
+
+def _fallback_case_detail_rights(
+    session: Any,
+    curst_headers: Dict[str, str],
+    cort_cd: str,
+    case_no: str,
+    cs_no: str,
+    maemul_ser: str,
+    mul_bigo: str,
+    yuchal: int,
+    complex_name: str,
+) -> Optional[Tuple[bool, str]]:
+    """현황조사서(dlt_ordTsRlet)가 비어있는 신건 등의 경우 사건상세(selectAuctnCsSrchRslt.on)로 보완 판정"""
+    time.sleep(0.12)
+    r1 = session.post(
+        CS_DTL_URL,
+        headers={**curst_headers, "Submissionid": "mf_wfm_mainFrame_sbm_selectCsDtlInf"},
+        json={"dma_srchCsDtlInf": {"cortOfcCd": cort_cd, "csNo": case_no or cs_no}},
+        timeout=8,
+    )
+    if r1.status_code != 200:
+        return None
+    j1 = safe_json(r1, f"사건상세 권리보완 {case_no}")
+    d1 = (j1.get("data") or {}) if j1 else {}
+    intrps = d1.get("dlt_rletCsIntrpsLst") or []
+    objs = d1.get("dlt_dspslGdsDspslObjctLst") or []
+
+    if any("임차인" in str(p.get("auctnIntrpsDvsNm") or "") for p in intrps):
+        return False, "임차인 확인됨 (명세서 확인 필요)"
+
+    seq_str = str(maemul_ser or "1").strip()
+    matched_obj = next((o for o in objs if str(o.get("dspslGdsSeq") or "1").strip() == seq_str), None)
+    if matched_obj is None and len(objs) == 1:
+        matched_obj = objs[0]
+    obj_rmk = strip_html(matched_obj.get("dspslGdsRmk") or "") if matched_obj else " ".join(
+        strip_html(o.get("dspslGdsRmk") or "") for o in objs
+    )
+    if RIGHTS_RISK_RE.search(f"{obj_rmk} {mul_bigo}".strip()):
+        return False, "권리확인 필요 (특이점유/비고)"
+
+    if intrps:
+        guard = _check_conservative_guard(complex_name, yuchal)
+        if guard:
+            return guard
+        return True, "임차인 미신고 (명세서 확인 필요)"
+    return None
+
+
 def analyze_rights_status(
     session: Any,
     headers: Dict[str, str],
@@ -687,8 +781,10 @@ def analyze_rights_status(
     internal_cs_no: str = "",
     maemul_ser: str = "1",
     mul_bigo: str = "",
+    yuchal: int = 0,
+    complex_name: str = "",
 ) -> Tuple[bool, str]:
-    """대법원 현황조사서(selectCurstExmndc.on)를 조회해 임차인·점유관계 기반 (is_safe, rights_badge) 반환"""
+    """대법원 현황조사서(selectCurstExmndc.on) 및 사건상세(selectAuctnCsSrchRslt.on) 기반 (is_safe, rights_badge) 반환"""
     cs_no = internal_cs_no.strip() or to_internal_cs_no(case_no)
     if not (cort_cd and cs_no):
         return False, "권리확인 필요 (사건번호 미상)"
@@ -718,43 +814,50 @@ def analyze_rights_status(
             },
             timeout=8,
         )
-        if resp.status_code != 200:
-            return False, "권리확인 필요 (현황조사 미확인)"
+        if resp.status_code == 200:
+            j = safe_json(resp, f"현황조사서 {case_no}")
+            data = (j.get("data") or {}) if j else {}
+            lessees = data.get("dlt_ordTsLserLtn") or []
+            rlet_list = data.get("dlt_ordTsRlet") or []
+            rlet = rlet_list[0] if rlet_list else {}
 
-        j = safe_json(resp, f"현황조사서 {case_no}")
-        data = (j.get("data") or {}) if j else {}
-        lessees = data.get("dlt_ordTsLserLtn") or []
-        rlet_list = data.get("dlt_ordTsRlet") or []
-        rlet = rlet_list[0] if rlet_list else {}
+            les_cnt = max(len(lessees), safe_int(rlet.get("lesCnt"), 0))
+            poss_txt = strip_html(rlet.get("gdsPossCtt") or "")
+            rmk_txt = strip_html(rlet.get("rletLstRmk") or "")
+            combined_txt = f"{poss_txt} {rmk_txt} {mul_bigo}".strip()
 
-        les_cnt = max(len(lessees), safe_int(rlet.get("lesCnt"), 0))
-        poss_txt = strip_html(rlet.get("gdsPossCtt") or "")
-        rmk_txt = strip_html(rlet.get("rletLstRmk") or "")
-        combined_txt = f"{poss_txt} {rmk_txt} {mul_bigo}".strip()
+            if les_cnt > 0:
+                first = lessees[0] if lessees else {}
+                mvin = str(first.get("mvinDtlCtt") or "").strip().rstrip(".")
+                dpos = str(first.get("lesDposDts") or "").strip()
+                parts = []
+                if mvin:
+                    parts.append(f"전입 {mvin}")
+                if dpos:
+                    parts.append(f"보증금 {dpos}")
+                else:
+                    parts.append("보증금 미상")
+                detail = " · ".join(parts)
+                return False, f"임차인 {les_cnt}명 ({detail})"
 
-        if les_cnt > 0:
-            first = lessees[0] if lessees else {}
-            mvin = str(first.get("mvinDtlCtt") or "").strip().rstrip(".")
-            dpos = str(first.get("lesDposDts") or "").strip()
-            parts = []
-            if mvin:
-                parts.append(f"전입 {mvin}")
-            if dpos:
-                parts.append(f"보증금 {dpos}")
-            else:
-                parts.append("보증금 미상")
-            detail = " · ".join(parts)
-            return False, f"임차인 {les_cnt}명 ({detail})"
+            if RIGHTS_RISK_RE.search(combined_txt):
+                return False, "권리확인 필요 (특이점유/비고)"
 
-        if re.search(r"유치권|법정지상권|선순위|대항력|가처분|미등기|점유자\s*미상|제3자\s*점유", combined_txt):
-            return False, "권리확인 필요 (특이점유/비고)"
+            if rlet_list:
+                guard = _check_conservative_guard(complex_name, yuchal)
+                if guard:
+                    return guard
+                if "소유자" in poss_txt or "채무자" in poss_txt:
+                    return True, "임차인 없음 (소유자 점유)"
+                if "미상" in poss_txt or "불명" in poss_txt:
+                    return False, "점유관계 확인 필요 (매각물건명세서 확인)"
+                return True, "임차인 없음 (현황조사 기준)"
 
-        if rlet_list:
-            if "소유자" in poss_txt or "채무자" in poss_txt:
-                return True, "임차인 없음 (소유자 점유)"
-            if "미상" in poss_txt or "불명" in poss_txt:
-                return False, "점유관계 확인 필요 (매각물건명세서 확인)"
-            return True, "임차인 없음 (현황조사 기준)"
+        fb = _fallback_case_detail_rights(
+            session, curst_headers, cort_cd, case_no, cs_no, maemul_ser, mul_bigo, yuchal, complex_name
+        )
+        if fb is not None:
+            return fb
 
         return False, "권리확인 필요 (현황조사 미확인)"
     except Exception:
@@ -782,7 +885,7 @@ def lookup_case_outcome(
     try:
         time.sleep(0.15)
         r1 = h_sess.post(
-            f"{BASE_URL}/pgj/pgj15A/selectAuctnCsSrchRslt.on",
+            CS_DTL_URL,
             headers={**h_headers, "Submissionid": "mf_wfm_mainFrame_sbm_selectCsDtlInf"},
             json={"dma_srchCsDtlInf": {"cortOfcCd": cort_cd, "csNo": clean_cno}},
             timeout=8,
@@ -894,7 +997,7 @@ def run():
         try:
             with open(COMPLEX_CACHE_PATH, "r", encoding="utf-8") as f:
                 c_cache = json.load(f)
-                hh_cache.update(c_cache)
+                hh_cache.update({k: v for k, v in c_cache.items() if "|" in k})
         except Exception:
             pass
 
@@ -906,7 +1009,6 @@ def run():
                 for ex in existing_items:
                     c_no = ex.get("case_no", "")
                     k_dc = f"{ex.get('district', '')}|{ex.get('complex_name', '')}"
-                    c_nm = ex.get("complex_name", "")
                     hh = ex.get("households", "")
                     n_url = ex.get("naver_search_url", "")
                     cc_ex = f"{ex.get('court', '')}|{c_no}"
@@ -914,18 +1016,14 @@ def run():
                         if c_no:
                             hh_cache[cc_ex] = hh
                         hh_cache[k_dc] = hh
-                        if c_nm not in hh_cache:
-                            hh_cache[c_nm] = hh
                     if "complexes/" in n_url:
                         if c_no:
                             url_cache[cc_ex] = n_url
                         url_cache[k_dc] = n_url
-                        if c_nm not in url_cache:
-                            url_cache[c_nm] = n_url
         except Exception:
             pass
 
-    scraped_items, failed_courts = scrape_court_auction()
+    scraped_items, failed_courts = scrape_court_auction(hh_cache=hh_cache, url_cache=url_cache)
 
     if failed_courts and existing_items:
         print(f"[*] 일부 법원 수집 실패({', '.join(sorted(failed_courts))}) -> 해당 법원 기존 물건을 유지합니다.")
@@ -957,11 +1055,10 @@ def run():
         item["first_seen"] = fs
         item["is_today_new"] = (fs == today_str)
         k_dc = f"{item.get('district', '')}|{item.get('complex_name', '')}"
-        c_nm = item.get("complex_name", "")
         if not item.get("households"):
-            item["households"] = hh_cache.get(cc_key) or hh_cache.get(k_dc) or hh_cache.get(c_nm, "")
+            item["households"] = hh_cache.get(cc_key) or hh_cache.get(k_dc, "")
         if "complexes/" not in str(item.get("naver_search_url", "")):
-            cached_url = url_cache.get(cc_key) or url_cache.get(k_dc) or url_cache.get(c_nm, "")
+            cached_url = url_cache.get(cc_key) or url_cache.get(k_dc, "")
             if cached_url:
                 item["naver_search_url"] = cached_url
         item["d_day"] = calculate_d_day(item.get("auction_date", ""))
@@ -993,7 +1090,6 @@ def run():
         c_no = item.get("case_no", "")
         k_dc = f"{item.get('district', '')}|{c_nm}"
         if hh and c_nm:
-            hh_cache[c_nm] = hh
             hh_cache[k_dc] = hh
             if c_no:
                 hh_cache[f"{item.get('court', '')}|{c_no}"] = hh
@@ -1025,7 +1121,7 @@ def run():
             hist_map.pop(k, None)
 
         if disappeared:
-            h_sess = requests.Session()
+            h_sess = create_retry_session()
             h_headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                 "Accept": "application/json, text/javascript, */*; q=0.01",
