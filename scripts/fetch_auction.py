@@ -24,6 +24,8 @@ SEARCH_MAIN_URL = f"{BASE_URL}/pgj/pgjsearch/searchControllerMain.on"
 SEARCH_REFERER_URL = f"{BASE_URL}/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ151F00.xml"
 NOTICE_LIST_URL = f"{BASE_URL}/pgj/pgj143/selectRletDspslPbanc.on"
 NOTICE_DETAIL_URL = f"{BASE_URL}/pgj/pgj143/selectRletDspslPbancDtl.on"
+CURST_EXMN_URL = f"{BASE_URL}/pgj/pgj15B/selectCurstExmndc.on"
+CS_DTL_URL = f"{BASE_URL}/pgj/pgj15A/selectAuctnCsSrchRslt.on"
 REFERER_URL = f"{BASE_URL}/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ143M01.xml&pgjId=143M01"
 
 # 수집 대상 법원 코드 및 관할 지역 설정 (대법원 차세대 표준 법원코드)
@@ -435,6 +437,16 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                     yuchal = safe_int(r.get("yuchalCnt"), 0)
                     auction_round = f"{yuchal + 1}회차 ({yuchal}회 유찰)" if yuchal > 0 else "1회차 (신건)"
                     auction_date = format_ymd(r.get("maeGiil") or "")
+                    internal_cs_no = str(r.get("csNo") or "").strip()
+                    is_safe, rights_badge = analyze_rights_status(
+                        session,
+                        headers,
+                        court["cort_cd"],
+                        case_no,
+                        internal_cs_no=internal_cs_no,
+                        maemul_ser=maemul_ser or "1",
+                        mul_bigo=bigo,
+                    )
 
                     collected_items.append({
                         "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", f"{court['cort_cd']}_{case_no}_{maemul_ser}"),
@@ -456,8 +468,8 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                         "auction_date": auction_date,
                         "d_day": calculate_d_day(auction_date),
                         "bid_deposit": int(min_price * 0.1),
-                        "is_safe": True,
-                        "rights_badge": "인수권리 없음 (안전)",
+                        "is_safe": is_safe,
+                        "rights_badge": rights_badge,
                         "naver_search_url": naver_url,
                         "hogang_search_url": f"https://hogangnono.com/search?q={urllib.parse.quote(district + ' ' + buld_nm)}",
                     })
@@ -600,6 +612,15 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                     naver_url = resolve_naver_complex_url(session, headers, district, complex_name)
                     dong_ho = extract_dong_ho(addr_part)
                     households = resolve_households(session, headers, district, complex_name)
+                    is_safe, rights_badge = analyze_rights_status(
+                        session,
+                        headers,
+                        court["cort_cd"],
+                        case_no,
+                        internal_cs_no="",
+                        maemul_ser="1",
+                        mul_bigo=rmk,
+                    )
 
                     item = {
                         "id": re.sub(r"[^a-zA-Z0-9가-힣]", "", f"{court['cort_cd']}_{case_no}"),
@@ -621,8 +642,8 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
                         "auction_date": auction_date,
                         "d_day": calculate_d_day(auction_date),
                         "bid_deposit": int(minimum_price * 0.1),
-                        "is_safe": True,
-                        "rights_badge": "인수권리 없음 (안전)",
+                        "is_safe": is_safe,
+                        "rights_badge": rights_badge,
                         "naver_search_url": naver_url,
                         "hogang_search_url": f"https://hogangnono.com/search?q={urllib.parse.quote(district + ' ' + complex_name)}",
                     }
@@ -648,6 +669,96 @@ def _extract_item_seq(item: Dict[str, Any], clean_cno: str) -> str:
         if m_seq:
             return m_seq.group(1)
     return "1"
+
+
+def to_internal_cs_no(case_no: str) -> str:
+    """'2025타경104108' 형태 사건번호를 대법원 내부 사건번호('20250130104108')로 변환"""
+    m = re.match(r"^\s*(\d{4})타경(\d+)\s*$", str(case_no or ""))
+    if not m:
+        return ""
+    return f"{m.group(1)}0130{int(m.group(2)):06d}"
+
+
+def analyze_rights_status(
+    session: Any,
+    headers: Dict[str, str],
+    cort_cd: str,
+    case_no: str,
+    internal_cs_no: str = "",
+    maemul_ser: str = "1",
+    mul_bigo: str = "",
+) -> Tuple[bool, str]:
+    """대법원 현황조사서(selectCurstExmndc.on)를 조회해 임차인·점유관계 기반 (is_safe, rights_badge) 반환"""
+    cs_no = internal_cs_no.strip() or to_internal_cs_no(case_no)
+    if not (cort_cd and cs_no):
+        return False, "권리확인 필요 (사건번호 미상)"
+
+    curst_headers = {
+        **headers,
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Origin": BASE_URL,
+        "Referer": f"{BASE_URL}/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ159M00.xml",
+        "X-Requested-With": "XMLHttpRequest",
+        "Content-Type": "application/json; charset=UTF-8",
+        "SC-Userid": "SYSTEM",
+    }
+
+    try:
+        time.sleep(0.12)
+        resp = session.post(
+            CURST_EXMN_URL,
+            headers=curst_headers,
+            json={
+                "dma_srchCurstExmn": {
+                    "cortOfcCd": cort_cd,
+                    "csNo": cs_no,
+                    "dspslGdsSeq": str(maemul_ser or "1"),
+                    "ordTs": "",
+                }
+            },
+            timeout=8,
+        )
+        if resp.status_code != 200:
+            return False, "권리확인 필요 (현황조사 미확인)"
+
+        j = safe_json(resp, f"현황조사서 {case_no}")
+        data = (j.get("data") or {}) if j else {}
+        lessees = data.get("dlt_ordTsLserLtn") or []
+        rlet_list = data.get("dlt_ordTsRlet") or []
+        rlet = rlet_list[0] if rlet_list else {}
+
+        les_cnt = max(len(lessees), safe_int(rlet.get("lesCnt"), 0))
+        poss_txt = strip_html(rlet.get("gdsPossCtt") or "")
+        rmk_txt = strip_html(rlet.get("rletLstRmk") or "")
+        combined_txt = f"{poss_txt} {rmk_txt} {mul_bigo}".strip()
+
+        if les_cnt > 0:
+            first = lessees[0] if lessees else {}
+            mvin = str(first.get("mvinDtlCtt") or "").strip().rstrip(".")
+            dpos = str(first.get("lesDposDts") or "").strip()
+            parts = []
+            if mvin:
+                parts.append(f"전입 {mvin}")
+            if dpos:
+                parts.append(f"보증금 {dpos}")
+            else:
+                parts.append("보증금 미상")
+            detail = " · ".join(parts)
+            return False, f"임차인 {les_cnt}명 ({detail})"
+
+        if re.search(r"유치권|법정지상권|선순위|대항력|가처분|미등기|점유자\s*미상|제3자\s*점유", combined_txt):
+            return False, "권리확인 필요 (특이점유/비고)"
+
+        if rlet_list:
+            if "소유자" in poss_txt or "채무자" in poss_txt:
+                return True, "임차인 없음 (소유자 점유)"
+            if "미상" in poss_txt or "불명" in poss_txt:
+                return False, "점유관계 확인 필요 (매각물건명세서 확인)"
+            return True, "임차인 없음 (현황조사 기준)"
+
+        return False, "권리확인 필요 (현황조사 미확인)"
+    except Exception:
+        return False, "권리확인 필요 (현황조사 미확인)"
 
 
 def lookup_case_outcome(

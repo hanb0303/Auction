@@ -735,6 +735,7 @@
     const primaryActionHtml = isResult
       ? `<a href="${escapeHtml(auctionDetailUrl)}" target="_blank" rel="noopener noreferrer" class="btn-primary">상세공고</a>`
       : `<button type="button" class="btn-primary" data-action="calc" data-id="${escapeHtml(itemId)}">계산기</button>`;
+    const rightsNoteClass = !isResult && item.is_safe === false ? 'rights-note is-caution' : 'rights-note';
     const rightsNoteHtml = `<strong>${escapeHtml(rightsText)}</strong>`;
 
     return `
@@ -771,7 +772,7 @@
             </div>
           </div>
 
-          <div class="rights-note">
+          <div class="${rightsNoteClass}">
             ${rightsNoteHtml}
           </div>
         </div>
