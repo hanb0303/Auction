@@ -956,18 +956,18 @@ select.select-clean::-ms-expand {
 }
 
 .chip-result-sold {
-  background: var(--text-main);
-  color: #ffffff;
+  background: #e8f3ff;
+  color: #1b64da;
 }
 
 .chip-result-fail {
-  background: var(--bg-tag);
-  color: var(--text-sub);
+  background: #fef0f1;
+  color: #e02938;
 }
 
 .chip-result-change {
-  background: var(--bg-tag);
-  color: var(--text-sub);
+  background: #fff5e6;
+  color: #b86200;
 }
 
 .chip-result-date {
@@ -1077,16 +1077,16 @@ select.select-clean::-ms-expand {
 }
 
 .price-section.is-sold {
-  background: var(--bg-subtle);
-  border-color: var(--border-active);
+  background: #f4f8ff;
+  border-color: #d6e6ff;
 }
 
 .price-section.is-sold .price-target-label {
-  color: var(--text-main);
+  color: #1b64da;
 }
 
 .price-section.is-sold .price-target-val {
-  color: var(--text-main);
+  color: #1b64da;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1097,24 +1097,47 @@ select.select-clean::-ms-expand {
   align-items: center;
   padding: 2px 8px;
   border-radius: 9999px;
-  background: var(--bg-tag);
-  color: var(--text-sub);
+  background: #e8f3ff;
+  color: #1b64da;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
-.price-section.is-unsold {
-  background: var(--bg-subtle);
+.price-section.is-fail {
+  background: #fff8f8;
+  border-color: #fde2e4;
+}
+
+.price-section.is-fail .price-target-label {
+  color: #d93040;
+}
+
+.price-section.is-fail .price-target-val {
+  color: var(--text-main);
+}
+
+.price-section.is-change {
+  background: #fffcf5;
+  border-color: #fae8cc;
+}
+
+.price-section.is-change .price-target-label {
+  color: #995300;
+}
+
+.price-section.is-change .price-target-val {
+  color: var(--text-main);
+}
+
+.price-section.is-closed {
+  background: #f2f4f6;
   border-color: var(--border-subtle);
 }
 
-.price-section.is-unsold .price-target-label {
-  color: var(--text-sub);
-}
-
-.price-section.is-unsold .price-target-val {
-  color: var(--text-main);
+.price-section.is-closed .price-target-label,
+.price-section.is-closed .price-target-val {
+  color: #6b7684;
 }
 
 /* Rights Note */
@@ -1136,6 +1159,30 @@ select.select-clean::-ms-expand {
   background: #fff8eb;
   border-color: #ffe2b3;
   color: #b25e09;
+}
+
+.rights-note.is-sold {
+  background: #eef5ff;
+  border-color: #d6e6ff;
+  color: #1b64da;
+}
+
+.rights-note.is-fail {
+  background: #fef0f1;
+  border-color: #fcd8db;
+  color: #d93040;
+}
+
+.rights-note.is-change {
+  background: #fff8eb;
+  border-color: #ffe2b3;
+  color: #b25e09;
+}
+
+.rights-note.is-closed {
+  background: #f2f4f6;
+  border-color: var(--border-subtle);
+  color: #6b7684;
 }
 
 /* Card Actions */

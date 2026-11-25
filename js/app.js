@@ -759,7 +759,15 @@
     const dongHo = getDongHo(item);
     const households = getHouseholds(item);
 
-    const priceSectionClass = isResult ? (isSold ? 'price-section is-sold' : 'price-section is-unsold') : 'price-section';
+    let resultTypeClass = '';
+    if (isResult) {
+      if (isSold || st.includes('매각')) resultTypeClass = 'is-sold';
+      else if (st.includes('유찰')) resultTypeClass = 'is-fail';
+      else if (st.includes('기일변경') || st.includes('변경')) resultTypeClass = 'is-change';
+      else resultTypeClass = 'is-closed';
+    }
+
+    const priceSectionClass = isResult ? `price-section ${resultTypeClass}` : 'price-section';
     const priceLabel = isResult ? (isSold ? '낙찰가' : '당시 최저가') : '최저가';
     const priceValue = isSold ? formatMoney(winPrice) : formatMoney(minPrice);
     const winRatioPill = isSold && winRatio > 0 ? `<span class="win-ratio-pill">${escapeHtml(winRatio)}%</span>` : '';
@@ -771,7 +779,9 @@
     const primaryActionHtml = isResult
       ? `<a href="${escapeHtml(auctionDetailUrl)}" target="_blank" rel="noopener noreferrer" class="btn-primary">상세공고</a>`
       : `<button type="button" class="btn-primary" data-action="calc" data-id="${escapeHtml(itemId)}">계산기</button>`;
-    const rightsNoteClass = !isResult && item.is_safe === false ? 'rights-note is-caution' : 'rights-note';
+    const rightsNoteClass = isResult
+      ? `rights-note ${resultTypeClass}`
+      : (!isResult && item.is_safe === false ? 'rights-note is-caution' : 'rights-note');
     const rightsNoteHtml = `<strong>${escapeHtml(rightsText)}</strong>`;
 
     return `
