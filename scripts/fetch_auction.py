@@ -216,14 +216,17 @@ def safe_json(resp: Any, context: str = "") -> Optional[Dict[str, Any]]:
         return None
 
 
-def atomic_write_json(path: str, payload: Any) -> None:
+def atomic_write_json(path: str, payload: Any, compact: bool = True) -> None:
     """임시 파일(.tmp)에 먼저 기록한 뒤 os.replace로 원자적 교체"""
     parent = os.path.dirname(path)
     if parent:
         os.makedirs(parent, exist_ok=True)
     tmp_path = f"{path}.tmp"
     with open(tmp_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+        if compact:
+            json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+        else:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
     os.replace(tmp_path, path)
 
 
@@ -272,17 +275,24 @@ def resolve_households(session, headers: dict, district: str, complex_name: str)
     return ""
 
 
-def create_retry_session() -> Any:
+def create_retry_session(
+    total_retries: int = 3,
+    backoff_factor: float = 0.6,
+    status_forcelist: Optional[List[int]] = None,
+) -> Any:
     """일시적 429/5xx/타임아웃 재시도가 적용된 requests.Session 반환"""
     import requests
     from requests.adapters import HTTPAdapter
     from urllib3.util.retry import Retry
 
+    if status_forcelist is None:
+        status_forcelist = [429, 500, 502, 503, 504]
+
     session = requests.Session()
     retry = Retry(
-        total=3,
-        backoff_factor=0.6,
-        status_forcelist=[429, 500, 502, 503, 504],
+        total=total_retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
         allowed_methods=["GET", "POST"],
         raise_on_status=False,
     )
@@ -290,6 +300,53 @@ def create_retry_session() -> Any:
     session.mount("https://", adapter)
     session.mount("http://", adapter)
     return session
+
+
+def _resolve_naver_fields(
+    naver_session: Any,
+    headers: Dict[str, str],
+    district: str,
+    complex_name: str,
+    cc_key: str,
+    k_dc: str,
+    url_cache: Dict[str, str],
+    hh_cache: Dict[str, str],
+    naver_state: Dict[str, Any],
+) -> Tuple[str, str]:
+    """캐시·인메모리 메모이제이션·서킷브레이커를 적용해 네이버 단지 URL과 세대수를 조회"""
+    cached_url = url_cache.get(cc_key) or url_cache.get(k_dc, "")
+    if "complexes/" in cached_url:
+        naver_url = cached_url
+    elif complex_name in KNOWN_NAVER_COMPLEX_IDS:
+        naver_url = f"https://new.land.naver.com/complexes/{KNOWN_NAVER_COMPLEX_IDS[complex_name]}"
+        url_cache[k_dc] = naver_url
+    elif naver_state["blocked"] or k_dc in naver_state["missed_urls"]:
+        query = urllib.parse.quote(f"{district} {complex_name}".strip())
+        naver_url = f"https://new.land.naver.com/search?sk={query}"
+    else:
+        naver_url = resolve_naver_complex_url(naver_session, headers, district, complex_name)
+        if "complexes/" in naver_url:
+            url_cache[k_dc] = naver_url
+            naver_state["consecutive_failures"] = 0
+        else:
+            naver_state["missed_urls"].add(k_dc)
+            naver_state["consecutive_failures"] += 1
+            if naver_state["consecutive_failures"] >= 5:
+                naver_state["blocked"] = True
+
+    households = hh_cache.get(cc_key) or hh_cache.get(k_dc, "")
+    if not households and not naver_state["blocked"] and k_dc not in naver_state["missed_hhs"]:
+        households = resolve_households(naver_session, headers, district, complex_name)
+        if households:
+            hh_cache[k_dc] = households
+            naver_state["consecutive_failures"] = 0
+        else:
+            naver_state["missed_hhs"].add(k_dc)
+            naver_state["consecutive_failures"] += 1
+            if naver_state["consecutive_failures"] >= 5:
+                naver_state["blocked"] = True
+
+    return naver_url, households
 
 
 def scrape_court_auction(
@@ -304,9 +361,20 @@ def scrape_court_auction(
     url_cache = url_cache or {}
     try:
         session = create_retry_session()
+        naver_session = create_retry_session(
+            total_retries=1,
+            backoff_factor=0.3,
+            status_forcelist=[500, 502, 503, 504],
+        )
     except ImportError:
         print("[!] requests 패키지가 설치되어 있지 않습니다.")
         return [], all_courts
+    naver_state: Dict[str, Any] = {
+        "missed_urls": set(),
+        "missed_hhs": set(),
+        "consecutive_failures": 0,
+        "blocked": False,
+    }
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -453,9 +521,17 @@ def scrape_court_auction(
 
                     cc_key = f"{court['short_name']}|{case_no}"
                     k_dc = f"{district}|{buld_nm}"
-                    cached_url = url_cache.get(cc_key) or url_cache.get(k_dc, "")
-                    naver_url = cached_url if "complexes/" in cached_url else resolve_naver_complex_url(session, headers, district, buld_nm)
-                    households = hh_cache.get(cc_key) or hh_cache.get(k_dc) or resolve_households(session, headers, district, buld_nm)
+                    naver_url, households = _resolve_naver_fields(
+                        naver_session,
+                        headers,
+                        district,
+                        buld_nm,
+                        cc_key,
+                        k_dc,
+                        url_cache,
+                        hh_cache,
+                        naver_state,
+                    )
 
                     seen_cases.add(seen_key)
                     seen_cases.add(cc_key)
@@ -622,7 +698,7 @@ def scrape_court_auction(
                     seen_cases.add(seen_court_case)
                     area_pyeong = round(area_m2 * 0.3025, 1)
                     floor_info = extract_floor(addr_part)
-                    discount_rate = round((1 - (minimum_price / appraisal_price)) * 100)
+                    discount_rate = max(0, round((1 - (minimum_price / appraisal_price)) * 100))
 
                     fail_cnt = 0
                     if discount_rate >= 65:
@@ -640,10 +716,18 @@ def scrape_court_auction(
                     district = f"{tokens[1]} {tokens[2]}".replace(",", "") if len(tokens) >= 3 else region_group
 
                     k_dc = f"{district}|{complex_name}"
-                    cached_url = url_cache.get(seen_court_case) or url_cache.get(k_dc, "")
-                    naver_url = cached_url if "complexes/" in cached_url else resolve_naver_complex_url(session, headers, district, complex_name)
+                    naver_url, households = _resolve_naver_fields(
+                        naver_session,
+                        headers,
+                        district,
+                        complex_name,
+                        seen_court_case,
+                        k_dc,
+                        url_cache,
+                        hh_cache,
+                        naver_state,
+                    )
                     dong_ho = extract_dong_ho(addr_part)
-                    households = hh_cache.get(seen_court_case) or hh_cache.get(k_dc) or resolve_households(session, headers, district, complex_name)
                     is_safe, rights_badge = analyze_rights_status(
                         session,
                         headers,

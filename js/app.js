@@ -315,6 +315,41 @@
   let cloudPushSeq = 0;
   let lastCloudPullAt = 0;
 
+  function compactSnapshot(item) {
+    if (!item || typeof item !== 'object') return null;
+    const snap = {};
+    const keys = [
+      'id', 'case_no', 'legacy_id', 'court', 'complex_name',
+      'dong_ho', 'households', 'region_group', 'district',
+      'area_m2', 'area_pyeong', 'floor_info',
+      'appraisal_price', 'minimum_price', 'discount_rate',
+      'auction_round', 'auction_date', 'bid_deposit',
+      'winning_price', 'status_label', 'next_date', 'result_detail'
+    ];
+    for (const k of keys) {
+      const v = item[k];
+      if (v !== undefined && v !== null && v !== '') {
+        snap[k] = v;
+      }
+    }
+    if (!snap.dong_ho) {
+      const dh = getDongHo(item);
+      if (dh) snap.dong_ho = dh;
+    }
+    if (!snap.households) {
+      const hh = getHouseholds(item);
+      if (hh) snap.households = hh;
+    }
+    const rawNaver = item.naver_url || item.naver_search_url || '';
+    if (typeof rawNaver === 'string' && /\/complexes\/\d+/.test(rawNaver)) {
+      snap.naver_url = rawNaver;
+    }
+    if ((!snap.region_group || !snap.district) && item.address) {
+      snap.address = item.address;
+    }
+    return snap;
+  }
+
   function saveLocalBookmarksOnly() {
     try {
       localStorage.setItem('sar_bookmarks', JSON.stringify(Array.from(state.bookmarks)));
@@ -325,9 +360,16 @@
   async function pushCloudBookmarks() {
     const seq = ++cloudPushSeq;
     try {
+      const compactSnapshots = {};
+      for (const id of state.bookmarks) {
+        if (state.snapshots[id]) {
+          const compacted = compactSnapshot(state.snapshots[id]);
+          if (compacted) compactSnapshots[id] = compacted;
+        }
+      }
       const payload = {
         bookmarks: Array.from(state.bookmarks),
-        snapshots: state.snapshots,
+        snapshots: compactSnapshots,
         updated_at: Date.now()
       };
       await fetch(FIREBASE_SYNC_URL, {
@@ -363,14 +405,25 @@
       const cloud = await res.json();
       if (seqAtStart !== cloudPushSeq) return; // Local toggle happened while fetching
 
-      if (!cloud || !Array.isArray(cloud.bookmarks)) {
+      const hasBookmarksArray = Boolean(cloud && Array.isArray(cloud.bookmarks));
+      // Firebase RTDB strips empty arrays/objects, leaving only { updated_at } when 0 bookmarks
+      const isExplicitlyEmpty = Boolean(
+        cloud &&
+        typeof cloud === 'object' &&
+        typeof cloud.updated_at === 'number' &&
+        !hasBookmarksArray
+      );
+
+      if (!cloud || typeof cloud !== 'object' || (!hasBookmarksArray && !isExplicitlyEmpty)) {
         if (state.bookmarks.size > 0) {
           pushCloudBookmarks();
         }
         return;
       }
 
-      const nextBookmarks = new Set(cloud.bookmarks.filter(v => typeof v === 'string' && v.length > 0));
+      const nextBookmarks = hasBookmarksArray
+        ? new Set(cloud.bookmarks.filter(v => typeof v === 'string' && v.length > 0))
+        : new Set();
       const nextSnapshots = (cloud.snapshots && typeof cloud.snapshots === 'object' && !Array.isArray(cloud.snapshots))
         ? cloud.snapshots
         : {};
@@ -381,8 +434,10 @@
 
       state.bookmarks = nextBookmarks;
       state.snapshots = nextSnapshots;
-      migrateAndSyncBookmarks(false);
-      saveLocalBookmarksOnly();
+      const migrated = migrateAndSyncBookmarks(false);
+      if (changed || migrated) {
+        saveLocalBookmarksOnly();
+      }
 
       if (state.bookmarks.size > 0 && !state.historyLoaded) {
         ensureHistoryLoaded();
@@ -410,8 +465,12 @@
     for (const savedId of Array.from(state.bookmarks)) {
       const exact = allKnown.find(i => i && i.id === savedId);
       if (exact) {
-        state.snapshots[exact.id] = { ...exact };
-        changed = true;
+        const compacted = compactSnapshot(exact);
+        const prev = state.snapshots[exact.id];
+        if (!prev || prev.auction_date !== compacted.auction_date || prev.status_label !== compacted.status_label || prev.minimum_price !== compacted.minimum_price || prev.winning_price !== compacted.winning_price) {
+          state.snapshots[exact.id] = compacted;
+          changed = true;
+        }
         continue;
       }
       // Migrate legacy ID (e.g. "2023타경113343" -> "B0002102023타경1133431")
@@ -420,12 +479,14 @@
         state.bookmarks.delete(savedId);
         matches.forEach(m => {
           state.bookmarks.add(m.id);
-          state.snapshots[m.id] = { ...m };
+          const compacted = compactSnapshot(m);
+          if (compacted) state.snapshots[m.id] = compacted;
         });
         changed = true;
       }
     }
     if (changed) saveBookmarks(syncCloud);
+    return changed;
   }
 
   function getResultsDataset() {
@@ -444,11 +505,11 @@
     return merged;
   }
 
-  async function fetchJsonWithTimeout(url, timeoutMs = 10000) {
+  async function fetchJsonWithTimeout(url, timeoutMs = 10000, cacheMode = 'default') {
     const controller = new AbortController();
     const timerId = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const res = await fetch(url, { cache: 'no-cache', signal: controller.signal });
+      const res = await fetch(url, { cache: cacheMode, signal: controller.signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
     } finally {
@@ -635,6 +696,7 @@
   function getFilteredItems() {
     const isResultsTab = state.activeTab === 'results';
     const sourceItems = isResultsTab ? getResultsDataset() : state.items;
+    const searchQuery = state.filters.search ? state.filters.search.toLowerCase() : '';
     return sourceItems.filter(item => {
       if (!item || typeof item !== 'object') return false;
       // Region Filter
@@ -680,10 +742,9 @@
       if (state.filters.bookmarkedOnly && !isItemBookmarked(item)) return false;
 
       // Keyword Search
-      if (state.filters.search) {
-        const query = state.filters.search.toLowerCase();
+      if (searchQuery) {
         const text = `${item.complex_name || ''} ${item.district || ''} ${item.case_no || ''} ${item.court || ''}`.toLowerCase();
-        if (!text.includes(query)) return false;
+        if (!text.includes(searchQuery)) return false;
       }
       return true;
     }).sort((a, b) => {
@@ -812,7 +873,10 @@
       `https://search.naver.com/search.naver?where=nexearch&query=${encodeURIComponent(caseNo + ' ' + complexName + ' 경매')}`
     );
     const naverLink = safeHttpUrl(getNaverComplexUrl(item));
-    const hogangLink = safeHttpUrl(item.hogang_url || item.hogang_search_url || '#');
+    const hogangFallback = (district || complexName)
+      ? `https://hogangnono.com/search?q=${encodeURIComponent(`${district} ${complexName}`.trim())}`
+      : '#';
+    const hogangLink = safeHttpUrl(item.hogang_url || item.hogang_search_url || hogangFallback);
 
     const winRatio = isSold && appPrice > 0 ? Math.round((winPrice / appPrice) * 100) : 0;
 
@@ -964,7 +1028,10 @@
       toast('관심 목록에서 해제되었습니다.');
     } else {
       state.bookmarks.add(id);
-      if (item) state.snapshots[id] = { ...item };
+      if (item) {
+        const compacted = compactSnapshot(item);
+        if (compacted) state.snapshots[id] = compacted;
+      }
       toast('★ 관심 목록에 저장되었습니다.');
     }
     saveBookmarks(true);
@@ -1307,6 +1374,8 @@
 
     function onPointerMove(e) {
       if (!activeDragThumb) return;
+      const prevMin = state.filters.minPrice;
+      const prevMax = state.filters.maxPrice;
       const val = getValueFromClientX(e.clientX);
       if (activeDragThumb === 'min') {
         const clampedMin = Math.min(val, state.filters.maxPrice);
@@ -1317,11 +1386,14 @@
         setPriceRange(state.filters.minPrice, clampedMax, false, false);
       }
 
-      // 카드 필터링 렌더링 디바운스
-      clearTimeout(renderDebounceTimer);
-      renderDebounceTimer = setTimeout(() => {
-        renderCards();
-      }, 40);
+      if (state.filters.minPrice !== prevMin || state.filters.maxPrice !== prevMax) {
+        // 카드 필터링 렌더링 디바운스
+        clearTimeout(renderDebounceTimer);
+        renderDebounceTimer = setTimeout(() => {
+          renderDebounceTimer = null;
+          renderCards();
+        }, 60);
+      }
     }
 
     function onPointerEnd(e) {
@@ -1339,8 +1411,11 @@
       cachedSliderRect = null;
       // 드래그 종료 시 버튼 라벨을 최종 반영
       updateSliderVisuals(state.filters.minPrice, state.filters.maxPrice, true);
-      clearTimeout(renderDebounceTimer);
-      renderCards();
+      if (renderDebounceTimer) {
+        clearTimeout(renderDebounceTimer);
+        renderDebounceTimer = null;
+        renderCards();
+      }
     }
 
     if (el.thumbPriceMin && el.thumbPriceMax && el.priceSliderWrap) {
