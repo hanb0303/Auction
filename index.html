@@ -9,7 +9,7 @@
   <link rel="preload" href="data/auction_data.json" as="fetch" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261125_02">
+  <link rel="stylesheet" href="css/style.css?v=20261125_03">
 </head>
 <body>
 
@@ -49,6 +49,30 @@
       <div class="summary-item" data-filter="imminent" tabindex="0" role="button" title="이번주 마감 임박 물건만 모아보기">
         <span class="summary-label">이번주 마감</span>
         <span class="summary-num blue" id="stat-imminent">-</span>
+      </div>
+    </section>
+
+    <!-- Results Summary Bar (매물 결과 탭 전용) -->
+    <section class="summary-bar results-summary-bar" id="results-summary-bar" aria-label="매물 결과 요약" style="display: none;">
+      <div class="summary-item active" data-result-filter="ALL" tabindex="0" role="button" title="전체 결과 보기">
+        <span class="summary-label">전체</span>
+        <span class="summary-num" id="stat-res-all">-</span>
+      </div>
+      <div class="summary-item" data-result-filter="sold" tabindex="0" role="button" title="매각 물건만 모아보기">
+        <span class="summary-label">매각</span>
+        <span class="summary-num blue" id="stat-res-sold">-</span>
+      </div>
+      <div class="summary-item" data-result-filter="fail" tabindex="0" role="button" title="유찰 물건만 모아보기">
+        <span class="summary-label">유찰</span>
+        <span class="summary-num amber" id="stat-res-fail">-</span>
+      </div>
+      <div class="summary-item" data-result-filter="change" tabindex="0" role="button" title="기일변경 물건만 모아보기">
+        <span class="summary-label">기일변경</span>
+        <span class="summary-num" id="stat-res-change">-</span>
+      </div>
+      <div class="summary-item" data-result-filter="other" tabindex="0" role="button" title="종국 및 기타 물건만 모아보기">
+        <span class="summary-label">종국·기타</span>
+        <span class="summary-num slate" id="stat-res-other">-</span>
       </div>
     </section>
 
@@ -157,7 +181,7 @@
     <!-- Sub Toggles -->
     <div class="filter-sub-row">
       <div class="sub-toggles">
-        <label class="check-label">
+        <label class="check-label" id="chk-safe-wrap">
           <input type="checkbox" id="chk-safe">
           안전 권리만
         </label>
@@ -228,6 +252,6 @@
   <!-- Toast -->
   <div id="toast" class="toss-toast"></div>
 
-  <script src="js/app.js?v=20261125_02" defer></script>
+  <script src="js/app.js?v=20261125_03" defer></script>
 </body>
 </html>

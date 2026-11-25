@@ -636,6 +636,140 @@ def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
     return collected_items, failed_courts
 
 
+def _extract_item_seq(item: Dict[str, Any], clean_cno: str) -> str:
+    """아이템의 물건순번(maemulSer/dspslGdsSeq) 추출 (없으면 id 꼬리 또는 '1')"""
+    seq = str(item.get("maemul_ser") or item.get("dspslGdsSeq") or "").strip()
+    if seq:
+        return seq
+    item_id = str(item.get("id") or "")
+    if clean_cno and clean_cno in item_id:
+        tail = item_id.split(clean_cno, 1)[1]
+        m_seq = re.search(r"(\d+)$", tail)
+        if m_seq:
+            return m_seq.group(1)
+    return "1"
+
+
+def lookup_case_outcome(
+    h_sess: Any,
+    h_headers: Dict[str, str],
+    cort_cd: str,
+    clean_cno: str,
+    item: Dict[str, Any],
+) -> Tuple[str, str, int, str]:
+    """사라진 매물의 법원 상세·기일내역을 조회하여 (status_label, result_detail, winning_price, next_date) 반환"""
+    status_label, result_detail, winning_price, next_date = "목록 종료", "", 0, ""
+    if not (cort_cd and clean_cno):
+        return status_label, result_detail, winning_price, next_date
+
+    item_seq = _extract_item_seq(item, clean_cno)
+    item_auc_date = str(item.get("auction_date") or "").strip()
+    item_auc_ymd = re.sub(r"[^\d]", "", item_auc_date)
+    item_auc_dot = item_auc_date.replace("-", ".")
+    item_complex = str(item.get("complex_name") or "").strip()
+
+    try:
+        time.sleep(0.15)
+        r1 = h_sess.post(
+            f"{BASE_URL}/pgj/pgj15A/selectAuctnCsSrchRslt.on",
+            headers={**h_headers, "Submissionid": "mf_wfm_mainFrame_sbm_selectCsDtlInf"},
+            json={"dma_srchCsDtlInf": {"cortOfcCd": cort_cd, "csNo": clean_cno}},
+            timeout=8,
+        )
+        if r1.status_code != 200:
+            return status_label, result_detail, winning_price, next_date
+
+        j1 = safe_json(r1, f"이력 조회 {clean_cno}")
+        d1 = (j1.get("data") or {}) if j1 else {}
+        bas = d1.get("dma_csBasInf") or {}
+        objs = d1.get("dlt_dspslGdsDspslObjctLst") or []
+
+        matched_obj = None
+        if objs:
+            if len(objs) > 1:
+                for o in objs:
+                    bld = str(o.get("bldNm") or "").strip()
+                    o_ymd = str(o.get("dspslDxdyYmd") or "").strip()
+                    if (item_complex and bld and (bld in item_complex or item_complex in bld)) or (
+                        item_auc_ymd and o_ymd == item_auc_ymd
+                    ):
+                        matched_obj = o
+                        break
+            if matched_obj is None:
+                for o in objs:
+                    if str(o.get("dspslGdsSeq") or "1").strip() == item_seq:
+                        matched_obj = o
+                        break
+            if matched_obj is None and len(objs) == 1:
+                matched_obj = objs[0]
+
+        matched_seq = str(matched_obj.get("dspslGdsSeq") or item_seq).strip() if matched_obj else item_seq
+        if matched_obj:
+            amt = safe_int(matched_obj.get("dspslAmt"), 0)
+            if amt > 0:
+                winning_price = amt
+            ymd = str(matched_obj.get("dspslDxdyYmd") or "").strip()
+            if len(ymd) == 8:
+                cand_date = f"{ymd[:4]}-{ymd[4:6]}-{ymd[6:8]}"
+                if not item_auc_date or cand_date > item_auc_date:
+                    next_date = cand_date
+
+        int_cs_no = bas.get("csNo", "")
+        dxdy_list = []
+        if int_cs_no:
+            time.sleep(0.15)
+            r2 = h_sess.post(
+                f"{BASE_URL}/pgj/pgj15A/selectCsDtlDxdyDts.on",
+                headers={**h_headers, "Submissionid": "mf_wfm_mainFrame_wfm_dxdyDts_sbm_selectDxdyDtsLst"},
+                json={"dma_srchDxdyDtsLst": {"cortOfcCd": cort_cd, "csNo": int_cs_no}},
+                timeout=8,
+            )
+            if r2.status_code == 200:
+                j2 = safe_json(r2, f"기일내역 조회 {clean_cno}")
+                dxdy_list = ((j2.get("data") or {}).get("dlt_dxdyDtsLst") or []) if j2 else []
+
+        seq_dxdy = [
+            x for x in dxdy_list
+            if str(x.get("dspslGdsSeq") or matched_seq).strip() == matched_seq
+        ]
+        if not seq_dxdy:
+            seq_dxdy = dxdy_list
+
+        target_row = None
+        if item_auc_dot:
+            for x in seq_dxdy:
+                dxdy_time = str(x.get("dxdyTime") or "")
+                if dxdy_time.startswith(item_auc_dot):
+                    target_row = x
+                    break
+        if target_row is None and seq_dxdy:
+            target_row = seq_dxdy[-1]
+
+        rslt = strip_html(target_row.get("dxdyRslt") or "") if target_row else ""
+        if rslt:
+            result_detail = rslt
+            if "매각" in rslt and "불허가" not in rslt:
+                status_label = "매각"
+            elif "유찰" in rslt:
+                status_label = "유찰"
+            elif "변경" in rslt:
+                status_label = "기일변경"
+            else:
+                status_label = rslt[:14]
+        elif winning_price > 0:
+            status_label = "매각"
+            result_detail = f"매각 ({winning_price:,}원)"
+        elif bas.get("ultmtDvsCd", "000") != "000":
+            status_label = "종국(취하·완결)"
+
+        if status_label != "매각":
+            winning_price = 0
+    except Exception:
+        pass
+
+    return status_label, result_detail, winning_price, next_date
+
+
 def run():
     print("==================================================")
     print("  대법원 경매 사이트(courtauction.go.kr) 직접 수집기")
@@ -795,57 +929,9 @@ def run():
                 cort_cd = court_cd_map.get(c_name, "")
                 m_cno = re.search(r"\d{4}타경\d+", str(item.get("case_no", "")))
                 clean_cno = m_cno.group(0) if m_cno else ""
-                status_label, result_detail, winning_price, next_date = "목록 종료", "", 0, ""
-                if cort_cd and clean_cno:
-                    try:
-                        time.sleep(0.15)
-                        r1 = h_sess.post(
-                            f"{BASE_URL}/pgj/pgj15A/selectAuctnCsSrchRslt.on",
-                            headers={**h_headers, "Submissionid": "mf_wfm_mainFrame_sbm_selectCsDtlInf"},
-                            json={"dma_srchCsDtlInf": {"cortOfcCd": cort_cd, "csNo": clean_cno}},
-                            timeout=8,
-                        )
-                        if r1.status_code == 200:
-                            j1 = safe_json(r1, f"이력 조회 {clean_cno}")
-                            d1 = (j1.get("data") or {}) if j1 else {}
-                            bas = d1.get("dma_csBasInf") or {}
-                            objs = d1.get("dlt_dspslGdsDspslObjctLst") or []
-                            for o in objs:
-                                amt = safe_int(o.get("dspslAmt"), 0)
-                                if amt > 0:
-                                    winning_price = amt
-                                if len(str(o.get("dspslDxdyYmd") or "")) == 8:
-                                    ymd = str(o["dspslDxdyYmd"])
-                                    next_date = f"{ymd[:4]}-{ymd[4:6]}-{ymd[6:8]}"
-                            int_cs_no = bas.get("csNo", "")
-                            dxdy_list = []
-                            if int_cs_no:
-                                time.sleep(0.15)
-                                r2 = h_sess.post(
-                                    f"{BASE_URL}/pgj/pgj15A/selectCsDtlDxdyDts.on",
-                                    headers={**h_headers, "Submissionid": "mf_wfm_mainFrame_wfm_dxdyDts_sbm_selectDxdyDtsLst"},
-                                    json={"dma_srchDxdyDtsLst": {"cortOfcCd": cort_cd, "csNo": int_cs_no}},
-                                    timeout=8,
-                                )
-                                if r2.status_code == 200:
-                                    j2 = safe_json(r2, f"기일내역 조회 {clean_cno}")
-                                    dxdy_list = ((j2.get("data") or {}).get("dlt_dxdyDtsLst") or []) if j2 else []
-                            non_empty = [x for x in dxdy_list if strip_html(x.get("dxdyRslt") or "")]
-                            if non_empty:
-                                rslt = strip_html(non_empty[-1].get("dxdyRslt") or "")
-                                result_detail = rslt
-                                if "매각" in rslt and "불허가" not in rslt:
-                                    status_label = "매각"
-                                elif "유찰" in rslt:
-                                    status_label = "유찰"
-                                elif "변경" in rslt:
-                                    status_label = "기일변경"
-                                else:
-                                    status_label = rslt[:14]
-                            elif bas.get("ultmtDvsCd", "000") != "000":
-                                status_label = "종국(취하·완결)"
-                    except Exception:
-                        pass
+                status_label, result_detail, winning_price, next_date = lookup_case_outcome(
+                    h_sess, h_headers, cort_cd, clean_cno, item
+                )
                 hist_map[f"{c_name}|{clean_cno or item.get('case_no', '')}"] = {
                     **item,
                     "status_label": status_label,

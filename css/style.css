@@ -187,6 +187,12 @@ body {
 
 .summary-num.red { color: var(--toss-red); }
 .summary-num.blue { color: var(--toss-blue); }
+.summary-num.amber { color: #d97706; }
+.summary-num.slate { color: #6b7684; }
+
+.results-summary-bar {
+  grid-template-columns: repeat(5, 1fr);
+}
 
 /* Region Pills */
 .segmented-wrapper {
@@ -719,6 +725,69 @@ body {
   border-color: var(--border-active);
 }
 
+.auction-card.is-result {
+  padding: 20px;
+}
+
+.auction-card.is-result .card-top {
+  margin-bottom: 10px;
+}
+
+.auction-card.is-result .complex-header {
+  margin-bottom: 14px;
+}
+
+.auction-card.is-result .price-section {
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.auction-card.is-result .rights-note {
+  margin-bottom: 16px;
+}
+
+/* Desaturated monochrome for closed (종국/목록 종료) result cards */
+.auction-card.is-closed {
+  background: #f8f9fa;
+  opacity: 0.78;
+}
+
+.auction-card.is-closed:hover {
+  border-color: var(--border-subtle);
+}
+
+.auction-card.is-closed .badge-row,
+.auction-card.is-closed .card-actions,
+.auction-card.is-closed .price-section {
+  filter: grayscale(100%);
+}
+
+.auction-card.is-closed .complex-name,
+.auction-card.is-closed .complex-name-link,
+.auction-card.is-closed .complex-spec,
+.auction-card.is-closed .price-target-label,
+.auction-card.is-closed .price-target-val,
+.auction-card.is-closed .price-sub-row,
+.auction-card.is-closed .rights-note {
+  color: #8b95a1;
+}
+
+.auction-card.is-closed .price-section {
+  background: #f2f4f6;
+  border-color: var(--border-subtle);
+}
+
+.auction-card.is-closed .btn-primary,
+.auction-card.is-closed .btn-secondary {
+  background: #eef0f3;
+  color: #8b95a1;
+}
+
+.auction-card.is-closed .btn-primary:hover,
+.auction-card.is-closed .btn-secondary:hover {
+  background: #e5e8eb;
+}
+
 .card-top {
   display: flex;
   justify-content: space-between;
@@ -807,6 +876,17 @@ body {
   color: var(--text-sub);
 }
 
+.chip-result-date {
+  background: var(--bg-tag);
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip-result-closed {
+  background: #eef0f3;
+  color: #8b95a1;
+}
+
 /* Complex Header */
 .complex-header {
   margin-bottom: 18px;
@@ -877,6 +957,47 @@ body {
 
 .appraisal-val {
   text-decoration: line-through;
+}
+
+.price-section.is-sold {
+  background: var(--toss-blue-light);
+  border-color: rgba(49, 130, 246, 0.22);
+}
+
+.price-section.is-sold .price-target-label {
+  color: var(--toss-blue);
+}
+
+.price-section.is-sold .price-target-val {
+  color: var(--toss-blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.win-ratio-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(49, 130, 246, 0.14);
+  color: var(--toss-blue);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.price-section.is-unsold {
+  background: var(--bg-subtle);
+  border-color: var(--border-subtle);
+}
+
+.price-section.is-unsold .price-target-label {
+  color: var(--text-sub);
+}
+
+.price-section.is-unsold .price-target-val {
+  color: #191f28;
 }
 
 /* Rights Note */
@@ -1120,6 +1241,8 @@ body {
 @media (max-width: 600px) {
   .app-container { padding: 20px 16px 60px; }
   .summary-bar { grid-template-columns: repeat(2, 1fr); }
+  .results-summary-bar { grid-template-columns: repeat(2, 1fr); }
+  .results-summary-bar .summary-item:first-child { grid-column: 1 / -1; }
   .auction-grid { grid-template-columns: 1fr; }
   .app-title { font-size: 22px; }
   .filter-bar { padding: 12px; }

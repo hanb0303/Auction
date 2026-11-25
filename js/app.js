@@ -176,6 +176,8 @@
       imminentOnly: false,
       safeOnly: false,
       bookmarkedOnly: false,
+      resultStatus: 'ALL',
+      resultsSort: 'result_date_desc',
       sort: 'dday_asc',
       search: ''
     },
@@ -190,12 +192,19 @@
     mainTabs: document.querySelectorAll('.main-tab'),
     tabCountActive: document.getElementById('tab-count-active'),
     tabCountResults: document.getElementById('tab-count-results'),
-    summaryBar: document.querySelector('.summary-bar'),
-    summaryItems: document.querySelectorAll('.summary-item'),
+    summaryBar: document.querySelector('.summary-bar:not(.results-summary-bar)'),
+    summaryItems: document.querySelectorAll('.summary-bar:not(.results-summary-bar) .summary-item'),
+    resultsSummaryBar: document.getElementById('results-summary-bar'),
+    resultsSummaryItems: document.querySelectorAll('#results-summary-bar .summary-item'),
     statTotal: document.getElementById('stat-total'),
     statDiscount: document.getElementById('stat-discount'),
     statNew: document.getElementById('stat-new'),
     statImminent: document.getElementById('stat-imminent'),
+    statResAll: document.getElementById('stat-res-all'),
+    statResSold: document.getElementById('stat-res-sold'),
+    statResFail: document.getElementById('stat-res-fail'),
+    statResChange: document.getElementById('stat-res-change'),
+    statResOther: document.getElementById('stat-res-other'),
     regionButtons: document.querySelectorAll('.pill-btn[data-region]'),
     seoulSubWrapper: document.getElementById('seoul-sub-wrapper'),
     seoulZoneButtons: document.querySelectorAll('.sub-pill-btn[data-seoul-zone]'),
@@ -216,6 +225,7 @@
     selectDiscount: document.getElementById('select-discount'),
     selectSort: document.getElementById('select-sort'),
     chkSafe: document.getElementById('chk-safe'),
+    chkSafeWrap: document.getElementById('chk-safe-wrap'),
     chkBookmark: document.getElementById('chk-bookmark'),
     inputSearch: document.getElementById('input-search'),
     resultCount: document.getElementById('result-count'),
@@ -346,6 +356,43 @@
     }
   }
 
+  function getResultCategory(item) {
+    const st = (item && item.status_label) || '';
+    if (st.includes('매각')) return 'sold';
+    if (st.includes('유찰')) return 'fail';
+    if (st.includes('기일변경') || st.includes('변경')) return 'change';
+    return 'other';
+  }
+
+  function isSoldResultItem(item) {
+    if (!item) return false;
+    const winPrice = Number(item.winning_price) || 0;
+    return (item.status_label || '').includes('매각') && winPrice > 0;
+  }
+
+  function formatShortDate(dateStr) {
+    if (!dateStr || typeof dateStr !== 'string') return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return `${parts[0].slice(-2)}.${parts[1].padStart(2, '0')}.${parts[2].padStart(2, '0')}`;
+    }
+    return dateStr;
+  }
+
+  function updateResultsSummaryCounts() {
+    const list = getResultsDataset();
+    const counts = { ALL: list.length, sold: 0, fail: 0, change: 0, other: 0 };
+    for (const it of list) {
+      const cat = getResultCategory(it);
+      if (counts[cat] !== undefined) counts[cat] += 1;
+    }
+    if (el.statResAll) el.statResAll.textContent = state.historyLoaded || list.length > 0 ? counts.ALL : '-';
+    if (el.statResSold) el.statResSold.textContent = state.historyLoaded || list.length > 0 ? counts.sold : '-';
+    if (el.statResFail) el.statResFail.textContent = state.historyLoaded || list.length > 0 ? counts.fail : '-';
+    if (el.statResChange) el.statResChange.textContent = state.historyLoaded || list.length > 0 ? counts.change : '-';
+    if (el.statResOther) el.statResOther.textContent = state.historyLoaded || list.length > 0 ? counts.other : '-';
+  }
+
   async function ensureHistoryLoaded() {
     if (state.historyLoaded) return;
     if (historyLoadPromise) return historyLoadPromise;
@@ -357,6 +404,7 @@
         state.historyLoaded = true;
         migrateAndSyncBookmarks();
         if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
+        updateResultsSummaryCounts();
         if (state.activeTab === 'results') renderCards();
       } catch (_) {
         // Keep historyLoaded false so user can retry on tab switch if needed
@@ -438,6 +486,7 @@
     if (el.statImminent) el.statImminent.textContent = `${state.stats.imminent_count || 0}`;
     if (el.tabCountActive) el.tabCountActive.textContent = state.items.length;
     if (el.tabCountResults) el.tabCountResults.textContent = state.historyLoaded ? getResultsDataset().length : '-';
+    updateResultsSummaryCounts();
     updateSeoulZoneCounts();
   }
 
@@ -509,8 +558,13 @@
         if (state.filters.imminentOnly && (!Number.isFinite(dDay) || dDay < 0 || dDay > 7)) return false;
       }
 
-      // Safe rights only
-      if (state.filters.safeOnly && !item.is_safe) return false;
+      // Results status filter (results tab only)
+      if (isResultsTab && state.filters.resultStatus !== 'ALL') {
+        if (getResultCategory(item) !== state.filters.resultStatus) return false;
+      }
+
+      // Safe rights only (active tab only)
+      if (!isResultsTab && state.filters.safeOnly && !item.is_safe) return false;
 
       // Bookmarked only
       if (state.filters.bookmarkedOnly && !isItemBookmarked(item)) return false;
@@ -524,9 +578,21 @@
       return true;
     }).sort((a, b) => {
       if (state.activeTab === 'results') {
+        const rSort = state.filters.resultsSort || 'result_date_desc';
+        const winA = isSoldResultItem(a) ? (Number(a.winning_price) || 0) : 0;
+        const winB = isSoldResultItem(b) ? (Number(b.winning_price) || 0) : 0;
+        if (rSort === 'winning_price_desc') {
+          if (winB !== winA) return winB - winA;
+        } else if (rSort === 'win_ratio_desc') {
+          const appA = Number(a.appraisal_price) || 0;
+          const appB = Number(b.appraisal_price) || 0;
+          const ratioA = winA > 0 && appA > 0 ? winA / appA : 0;
+          const ratioB = winB > 0 && appB > 0 ? winB / appB : 0;
+          if (ratioB !== ratioA) return ratioB - ratioA;
+        }
         const dCmp = (b.auction_date || '').localeCompare(a.auction_date || '');
         if (dCmp !== 0) return dCmp;
-        return (Number(b.winning_price) || 0) - (Number(a.winning_price) || 0);
+        return winB - winA;
       }
       if (state.filters.sort === 'created_desc') {
         // 오늘 신규 유입(is_today_new) 1순위 -> 최신 등록일 -> 사건번호 순
@@ -586,18 +652,29 @@
   function renderCard(item) {
     if (!item || typeof item !== 'object') return '';
     const isResult = state.activeTab === 'results' || Boolean(item.status_label);
+    const st = item.status_label || '목록 종료';
+    const winPrice = Number(item.winning_price) || 0;
+    const minPrice = Number(item.minimum_price) || 0;
+    const appPrice = Number(item.appraisal_price) || 0;
+    const isSold = isResult && st.includes('매각') && winPrice > 0;
+    const isClosed = isResult && (st.includes('종국') || st.includes('목록 종료'));
+
     const isTodayNew = !isResult && Boolean(item.is_today_new || (state.updatedAt && item.first_seen === state.updatedAt));
     const newBadge = isTodayNew ? '<span class="chip chip-badge-new">NEW</span>' : '';
     const isBookmarked = isItemBookmarked(item);
     const dDayVal = Number(item.d_day);
-    const dDayClass = isResult ? 'chip chip-result-change' : (Number.isFinite(dDayVal) && dDayVal <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday');
+    const dDayClass = isResult
+      ? (isClosed ? 'chip chip-result-closed' : 'chip chip-result-date')
+      : (Number.isFinite(dDayVal) && dDayVal <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday');
     // 100% Guaranteed YY.MM.DD Format
     const dateLabel = formatDate(item);
-    
+
     let statusBadgeHtml = '';
     if (isResult) {
-      const st = item.status_label || '목록 종료';
-      const stClass = st.includes('매각') ? 'chip-result-sold' : (st.includes('유찰') ? 'chip-result-fail' : 'chip-result-change');
+      let stClass = 'chip-result-change';
+      if (isSold || st.includes('매각')) stClass = 'chip-result-sold';
+      else if (st.includes('유찰')) stClass = 'chip-result-fail';
+      else if (isClosed) stClass = 'chip-result-closed';
       statusBadgeHtml = `<span class="chip ${stClass}">${escapeHtml(st)}</span>`;
     } else {
       const disc = Number(item.discount_rate) || 0;
@@ -623,36 +700,53 @@
     const naverLink = safeHttpUrl(getNaverComplexUrl(item));
     const hogangLink = safeHttpUrl(item.hogang_url || item.hogang_search_url || '#');
 
+    const winRatio = isSold && appPrice > 0 ? Math.round((winPrice / appPrice) * 100) : 0;
+
     let rightsText = item.rights_badge || (item.is_safe ? '인수권리 없음 (안전)' : '권리확인 필요');
-    if (isResult && item.next_date) {
-      const nd = String(item.next_date).split('-');
-      const ndLabel = nd.length === 3 ? `${nd[0].slice(-2)}.${nd[1]}.${nd[2]}` : item.next_date;
-      rightsText = `다음 기일 예정: ${ndLabel}`;
-    } else if (isResult && item.result_detail) {
-      rightsText = `진행 결과: ${item.result_detail}`;
+    if (isResult) {
+      const ndLabel = formatShortDate(item.next_date);
+      if (isSold) {
+        rightsText = winRatio > 0 ? `매각 완료 · 감정가 대비 ${winRatio}%` : '매각 완료';
+      } else if (st.includes('유찰')) {
+        rightsText = ndLabel ? `유찰 · 차기 기일 ${ndLabel}` : '유찰 · 차기 기일 미정';
+      } else if (st.includes('기일변경') || st.includes('변경')) {
+        rightsText = ndLabel ? `기일변경 · 변경 기일 ${ndLabel}` : '기일변경 · 일정 확인 필요';
+      } else if (isClosed) {
+        rightsText = '종국 · 취하 또는 완결';
+      } else if (item.result_detail) {
+        rightsText = `진행 결과 · ${item.result_detail}`;
+      } else {
+        rightsText = st;
+      }
     }
+
     const dongHo = getDongHo(item);
     const households = getHouseholds(item);
 
-    const winPrice = Number(item.winning_price) || 0;
-    const minPrice = Number(item.minimum_price) || 0;
-    const appPrice = Number(item.appraisal_price) || 0;
-    const hasWinning = isResult && winPrice > 0;
-    const priceLabel = hasWinning ? '낙찰가' : '최저가';
-    const priceValue = hasWinning ? formatMoney(winPrice) : formatMoney(minPrice);
-    const winRatio = hasWinning && appPrice > 0 ? Math.round((winPrice / appPrice) * 100) : 0;
-    const rightSubText = hasWinning
+    const priceSectionClass = isResult ? (isSold ? 'price-section is-sold' : 'price-section is-unsold') : 'price-section';
+    const priceLabel = isResult ? (isSold ? '낙찰가' : '당시 최저가') : '최저가';
+    const priceValue = isSold ? formatMoney(winPrice) : formatMoney(minPrice);
+    const winRatioPill = isSold && winRatio > 0 ? `<span class="win-ratio-pill">${escapeHtml(winRatio)}%</span>` : '';
+    const rightSubText = isSold
       ? `최저가 ${formatMoney(minPrice)} · 감정가 대비 ${winRatio}%`
       : `보증금 ${formatMoney(item.bid_deposit)}`;
 
+    const cardClass = `auction-card${isResult ? ' is-result' : ''}${isClosed ? ' is-closed' : ''}`;
+    const primaryActionHtml = isResult
+      ? `<a href="${escapeHtml(auctionDetailUrl)}" target="_blank" rel="noopener noreferrer" class="btn-primary">상세공고</a>`
+      : `<button type="button" class="btn-primary" data-action="calc" data-id="${escapeHtml(itemId)}">계산기</button>`;
+    const rightsNoteHtml = isResult
+      ? `<strong>${escapeHtml(rightsText)}</strong>`
+      : `🛡️ <strong>${escapeHtml(rightsText)}</strong>`;
+
     return `
-      <article class="auction-card" data-id="${escapeHtml(itemId)}">
+      <article class="${cardClass}" data-id="${escapeHtml(itemId)}">
         <div>
           <div class="card-top">
             <span class="meta-case"><span class="meta-case-no" data-action="copy-case" data-case="${escapeHtml(caseNo)}" title="클릭하여 사건번호 복사">${escapeHtml(caseNo)}</span> · ${escapeHtml(court)}</span>
             <div class="badge-row">
               ${newBadge}${statusBadgeHtml}
-              <span class="${dDayClass}" title="${isResult ? '기존 매각기일' : '매각기일'}">${escapeHtml(dateLabel)}</span>
+              <span class="${dDayClass}" title="${isResult ? '매각기일' : '매각기일'}">${escapeHtml(dateLabel)}</span>
             </div>
           </div>
 
@@ -665,10 +759,10 @@
             <div class="complex-spec">${escapeHtml(district)}${households ? ` · ${escapeHtml(households)}` : ''} · 전용 ${escapeHtml(areaM2)}㎡ (${escapeHtml(areaPyeong)}평) · ${escapeHtml(floorInfo)} · ${escapeHtml(auctionRound)}</div>
           </div>
 
-          <div class="price-section">
+          <div class="${priceSectionClass}">
             <div class="price-main-row">
               <span class="price-target-label">${escapeHtml(priceLabel)}</span>
-              <span class="price-target-val">${escapeHtml(priceValue)}</span>
+              <span class="price-target-val">${escapeHtml(priceValue)}${winRatioPill}</span>
             </div>
             <div class="price-sub-row">
               <span>감정가 <span class="appraisal-val">${escapeHtml(formatMoney(appPrice))}</span></span>
@@ -677,14 +771,14 @@
           </div>
 
           <div class="rights-note">
-            ${isResult ? '📌' : '🛡️'} <strong>${escapeHtml(rightsText)}</strong>
+            ${rightsNoteHtml}
           </div>
         </div>
 
         <div class="card-actions">
           <a href="${escapeHtml(naverLink)}" target="_blank" rel="noopener noreferrer" class="btn-secondary">호가</a>
           <a href="${escapeHtml(hogangLink)}" target="_blank" rel="noopener noreferrer" class="btn-secondary">실거래</a>
-          <button type="button" class="btn-primary" data-action="calc" data-id="${escapeHtml(itemId)}">계산기</button>
+          ${primaryActionHtml}
           <button type="button" class="btn-fav ${isBookmarked ? 'active' : ''}" data-action="fav" data-id="${escapeHtml(itemId)}">
             ★
           </button>
@@ -739,6 +833,7 @@
     }
     saveBookmarks();
     if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
+    updateResultsSummaryCounts();
     renderCards();
   }
 
@@ -790,6 +885,28 @@
 
   // Event Listeners
   function initEvents() {
+    const ACTIVE_SORT_OPTIONS = [
+      { value: 'dday_asc', label: '마감 빠른순' },
+      { value: 'created_desc', label: '신규 등록순' },
+      { value: 'discount_desc', label: '할인율 높은순' },
+      { value: 'min_price_asc', label: '가격 낮은순' },
+      { value: 'appraisal_desc', label: '감정가 높은순' }
+    ];
+    const RESULTS_SORT_OPTIONS = [
+      { value: 'result_date_desc', label: '최근 결과순' },
+      { value: 'winning_price_desc', label: '낙찰가 높은순' },
+      { value: 'win_ratio_desc', label: '낙찰가율 높은순' }
+    ];
+
+    function syncSortSelectOptions(tab) {
+      if (!el.selectSort) return;
+      const opts = tab === 'results' ? RESULTS_SORT_OPTIONS : ACTIVE_SORT_OPTIONS;
+      el.selectSort.innerHTML = opts
+        .map(o => `<option value="${escapeHtml(o.value)}">${escapeHtml(o.label)}</option>`)
+        .join('');
+      el.selectSort.value = tab === 'results' ? state.filters.resultsSort : state.filters.sort;
+    }
+
     // Main Tabs (진행 매물 | 매물 결과)
     if (el.mainTabs) {
       el.mainTabs.forEach(tab => {
@@ -802,11 +919,16 @@
             t.classList.toggle('active', active);
             t.setAttribute('aria-selected', active ? 'true' : 'false');
           });
-          if (el.summaryBar) {
-            el.summaryBar.style.display = targetTab === 'active' ? 'grid' : 'none';
-          }
-          if (targetTab === 'results' && !state.historyLoaded) {
+          const isResults = targetTab === 'results';
+          if (el.summaryBar) el.summaryBar.style.display = isResults ? 'none' : 'grid';
+          if (el.resultsSummaryBar) el.resultsSummaryBar.style.display = isResults ? 'grid' : 'none';
+          if (el.selectDiscount) el.selectDiscount.style.display = isResults ? 'none' : '';
+          if (el.chkSafeWrap) el.chkSafeWrap.style.display = isResults ? 'none' : '';
+          syncSortSelectOptions(targetTab);
+          if (isResults && !state.historyLoaded) {
             ensureHistoryLoaded();
+          } else if (isResults) {
+            updateResultsSummaryCounts();
           }
           renderCards();
         });
@@ -1166,7 +1288,11 @@
 
     if (el.selectSort) {
       el.selectSort.addEventListener('change', e => {
-        state.filters.sort = e.target.value;
+        if (state.activeTab === 'results') {
+          state.filters.resultsSort = e.target.value;
+        } else {
+          state.filters.sort = e.target.value;
+        }
         renderCards();
       });
     }
@@ -1312,6 +1438,36 @@
       el.selectDiscount.addEventListener('change', () => {
         state.filters.imminentOnly = false;
         updateSummaryActiveState();
+      });
+    }
+
+    // 매물 결과 5개 요약 지표 클릭 필터링
+    function updateResultsSummaryActiveState() {
+      if (!el.resultsSummaryItems) return;
+      el.resultsSummaryItems.forEach(item => {
+        const ft = item.getAttribute('data-result-filter');
+        item.classList.toggle('active', ft === state.filters.resultStatus);
+      });
+    }
+
+    if (el.resultsSummaryItems) {
+      el.resultsSummaryItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const ft = item.getAttribute('data-result-filter') || 'ALL';
+          if (ft === 'ALL' || state.filters.resultStatus === ft) {
+            state.filters.resultStatus = 'ALL';
+          } else {
+            state.filters.resultStatus = ft;
+          }
+          updateResultsSummaryActiveState();
+          renderCards();
+        });
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            item.click();
+          }
+        });
       });
     }
   }
