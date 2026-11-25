@@ -754,7 +754,10 @@
                 ${escapeHtml(complexName)}${dongHo ? ` <span class="complex-dong-ho">${escapeHtml(dongHo)}</span>` : ''}
               </a>
             </h3>
-            <div class="complex-spec">${escapeHtml(district)}${households ? ` · ${escapeHtml(households)}` : ''} · 전용 ${escapeHtml(areaM2)}㎡ (${escapeHtml(areaPyeong)}평) · ${escapeHtml(floorInfo)} · ${escapeHtml(auctionRound)}</div>
+            <div class="complex-spec">
+              <div class="complex-spec-line">${escapeHtml(district)}${auctionRound ? ` · ${escapeHtml(auctionRound)}` : ''}</div>
+              <div class="complex-spec-line">${[households ? escapeHtml(households) : '', `전용 ${escapeHtml(areaM2)}㎡ (${escapeHtml(areaPyeong)}평)`, floorInfo ? escapeHtml(floorInfo) : ''].filter(Boolean).join(' · ')}</div>
+            </div>
           </div>
 
           <div class="${priceSectionClass}">

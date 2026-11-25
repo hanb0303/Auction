@@ -951,10 +951,19 @@ select.select-clean::-ms-expand {
 }
 
 .complex-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   font-size: 14px;
   line-height: 1.45;
   color: var(--text-sub);
   font-weight: 500;
+}
+
+.complex-spec-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Price Section */
