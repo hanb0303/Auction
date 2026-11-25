@@ -430,7 +430,7 @@ def scrape_court_auction(
                         continue
 
                     app_price = parse_korean_price(str(r.get("gamevalAmt") or "0"))
-                    if app_price < 350_000_000:
+                    if app_price < 400_000_000 or app_price > 1_800_000_000:
                         continue
                     min1 = parse_korean_price(str(r.get("minmaePrice") or "0"))
                     min2 = parse_korean_price(str(r.get("notifyMinmaePrice1") or "0"))
@@ -608,7 +608,7 @@ def scrape_court_auction(
 
                     appraisal_price = parse_korean_price(row.get("aeeEvlAmt") or "")
                     minimum_price = parse_korean_price(row.get("lwsDspslPrc") or "") or appraisal_price
-                    if appraisal_price < 350_000_000:
+                    if appraisal_price < 400_000_000 or appraisal_price > 1_800_000_000:
                         continue
 
                     complex_name = extract_complex_name(addr_part)
