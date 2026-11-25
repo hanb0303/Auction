@@ -735,9 +735,7 @@
     const primaryActionHtml = isResult
       ? `<a href="${escapeHtml(auctionDetailUrl)}" target="_blank" rel="noopener noreferrer" class="btn-primary">상세공고</a>`
       : `<button type="button" class="btn-primary" data-action="calc" data-id="${escapeHtml(itemId)}">계산기</button>`;
-    const rightsNoteHtml = isResult
-      ? `<strong>${escapeHtml(rightsText)}</strong>`
-      : `🛡️ <strong>${escapeHtml(rightsText)}</strong>`;
+    const rightsNoteHtml = `<strong>${escapeHtml(rightsText)}</strong>`;
 
     return `
       <article class="${cardClass}" data-id="${escapeHtml(itemId)}">
@@ -746,14 +744,14 @@
             <span class="meta-case"><span class="meta-case-no" data-action="copy-case" data-case="${escapeHtml(caseNo)}" title="클릭하여 사건번호 복사">${escapeHtml(caseNo)}</span> · ${escapeHtml(court)}</span>
             <div class="badge-row">
               ${newBadge}${statusBadgeHtml}
-              <span class="${dDayClass}" title="${isResult ? '매각기일' : '매각기일'}">${escapeHtml(dateLabel)}</span>
+              <span class="${dDayClass}" title="매각기일">${escapeHtml(dateLabel)}</span>
             </div>
           </div>
 
           <div class="complex-header">
             <h3 class="complex-name">
               <a href="${escapeHtml(auctionDetailUrl)}" target="_blank" rel="noopener noreferrer" class="complex-name-link" title="법원 매물 상세공고 확인 (새 탭)">
-                ${escapeHtml(complexName)}${dongHo ? ` <span style="font-weight:600; font-size:0.88em; color:#4e5968;">${escapeHtml(dongHo)}</span>` : ''}
+                ${escapeHtml(complexName)}${dongHo ? ` <span class="complex-dong-ho">${escapeHtml(dongHo)}</span>` : ''}
               </a>
             </h3>
             <div class="complex-spec">${escapeHtml(district)}${households ? ` · ${escapeHtml(households)}` : ''} · 전용 ${escapeHtml(areaM2)}㎡ (${escapeHtml(areaPyeong)}평) · ${escapeHtml(floorInfo)} · ${escapeHtml(auctionRound)}</div>

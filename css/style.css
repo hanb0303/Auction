@@ -63,7 +63,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 4px 12px;
 }
 
 .app-title {
@@ -148,7 +149,7 @@ body {
   cursor: pointer;
   user-select: none;
   outline: none;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
 .summary-item:hover {
@@ -159,13 +160,13 @@ body {
 
 .summary-item:focus-visible {
   border-color: var(--toss-blue);
-  box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.25);
+  outline: 2px solid rgba(49, 130, 246, 0.35);
+  outline-offset: 2px;
 }
 
 .summary-item.active {
   border-color: var(--toss-blue);
   background: var(--toss-blue-light);
-  box-shadow: 0 3px 12px rgba(49, 130, 246, 0.14);
 }
 
 .summary-item.active .summary-label {
@@ -183,6 +184,7 @@ body {
   font-size: 22px;
   font-weight: 800;
   color: var(--text-main);
+  font-variant-numeric: tabular-nums;
 }
 
 .summary-num.red { color: var(--toss-red); }
@@ -213,6 +215,7 @@ body {
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
   color: var(--text-sub);
+  font-family: inherit;
   font-size: 14px;
   font-weight: 600;
   padding: 10px 18px;
@@ -304,7 +307,7 @@ body {
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 /* Compact Price Range Popover (클릭 시 팝업) */
@@ -378,10 +381,9 @@ body {
   z-index: 120;
   width: 280px;
   background: #ffffff;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-active);
   border-radius: var(--radius-sm);
   padding: 14px 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   display: none;
   flex-direction: column;
   gap: 10px;
@@ -431,6 +433,7 @@ body {
   background: none;
   border: none;
   color: var(--text-muted);
+  font-family: inherit;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -542,19 +545,18 @@ body {
   border: 3px solid var(--toss-blue);
   cursor: grab;
   z-index: 10;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: transform 0.1s ease, background 0.1s ease;
   touch-action: none;
   outline: none;
 }
 
 .dual-range-thumb:hover {
   transform: translateY(-50%) scale(1.15);
-  box-shadow: 0 2px 8px rgba(49, 130, 246, 0.35);
 }
 
 .dual-range-thumb:focus-visible {
-  box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.35);
+  outline: 2px solid rgba(49, 130, 246, 0.45);
+  outline-offset: 2px;
 }
 
 .dual-range-thumb:active,
@@ -562,7 +564,6 @@ body {
   cursor: grabbing;
   transform: translateY(-50%) scale(1.25);
   background: var(--toss-blue-light);
-  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.5);
   z-index: 20;
 }
 
@@ -594,6 +595,7 @@ body {
   border: none;
   border-radius: var(--radius-xs);
   padding: 5px 13px;
+  font-family: inherit;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -685,7 +687,7 @@ select.select-clean::-ms-expand {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   padding: 0 4px;
 }
 
@@ -747,25 +749,29 @@ select.select-clean::-ms-expand {
   border-color: var(--border-active);
 }
 
-.auction-card.is-result {
-  padding: 20px;
+/* Achromatic/monochrome styling for result cards (no color accents) */
+.auction-card.is-result .meta-case-no:hover {
+  color: var(--text-main);
+  text-decoration-color: var(--text-main);
 }
 
-.auction-card.is-result .card-top {
-  margin-bottom: 10px;
+.auction-card.is-result .complex-name-link:hover {
+  color: var(--text-sub);
 }
 
-.auction-card.is-result .complex-header {
-  margin-bottom: 14px;
+.auction-card.is-result .btn-primary {
+  background: var(--text-main);
+  color: #ffffff;
 }
 
-.auction-card.is-result .price-section {
-  padding: 14px 16px;
-  margin-bottom: 14px;
+.auction-card.is-result .btn-primary:hover {
+  background: #333d4b;
 }
 
-.auction-card.is-result .rights-note {
-  margin-bottom: 16px;
+.auction-card.is-result .btn-fav.active {
+  background: #e5e8eb;
+  border-color: var(--border-active);
+  color: var(--text-main);
 }
 
 /* Desaturated monochrome for closed (종국/목록 종료) result cards */
@@ -778,14 +784,9 @@ select.select-clean::-ms-expand {
   border-color: var(--border-subtle);
 }
 
-.auction-card.is-closed .badge-row,
-.auction-card.is-closed .card-actions,
-.auction-card.is-closed .price-section {
-  filter: grayscale(100%);
-}
-
 .auction-card.is-closed .complex-name,
 .auction-card.is-closed .complex-name-link,
+.auction-card.is-closed .complex-dong-ho,
 .auction-card.is-closed .complex-spec,
 .auction-card.is-closed .price-target-label,
 .auction-card.is-closed .price-target-val,
@@ -814,6 +815,7 @@ select.select-clean::-ms-expand {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
@@ -844,13 +846,19 @@ select.select-clean::-ms-expand {
 .badge-row {
   display: flex;
   gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .chip {
+  display: inline-flex;
+  align-items: center;
   font-size: 12px;
   font-weight: 700;
+  line-height: 1.25;
   padding: 4px 10px;
   border-radius: 9999px;
+  white-space: nowrap;
 }
 
 .chip-dday {
@@ -884,13 +892,13 @@ select.select-clean::-ms-expand {
 }
 
 .chip-result-sold {
-  background: var(--toss-blue-light);
-  color: var(--toss-blue);
+  background: var(--text-main);
+  color: #ffffff;
 }
 
 .chip-result-fail {
-  background: #fff4e5;
-  color: #d97706;
+  background: var(--bg-tag);
+  color: var(--text-sub);
 }
 
 .chip-result-change {
@@ -917,9 +925,16 @@ select.select-clean::-ms-expand {
 .complex-name {
   font-size: 20px;
   font-weight: 800;
+  line-height: 1.35;
   color: var(--text-main);
   letter-spacing: -0.02em;
   margin-bottom: 4px;
+}
+
+.complex-dong-ho {
+  font-weight: 600;
+  font-size: 0.88em;
+  color: var(--text-sub);
 }
 
 .complex-name-link {
@@ -937,6 +952,7 @@ select.select-clean::-ms-expand {
 
 .complex-spec {
   font-size: 14px;
+  line-height: 1.45;
   color: var(--text-sub);
   font-weight: 500;
 }
@@ -954,6 +970,7 @@ select.select-clean::-ms-expand {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 8px;
   margin-bottom: 6px;
 }
 
@@ -966,15 +983,20 @@ select.select-clean::-ms-expand {
 .price-target-val {
   font-size: 22px;
   font-weight: 800;
+  line-height: 1.25;
   color: var(--toss-red);
+  font-variant-numeric: tabular-nums;
 }
 
 .price-sub-row {
   display: flex;
   justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
   font-size: 13px;
   color: var(--text-muted);
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
 .appraisal-val {
@@ -982,16 +1004,16 @@ select.select-clean::-ms-expand {
 }
 
 .price-section.is-sold {
-  background: var(--toss-blue-light);
-  border-color: rgba(49, 130, 246, 0.22);
+  background: var(--bg-subtle);
+  border-color: var(--border-active);
 }
 
 .price-section.is-sold .price-target-label {
-  color: var(--toss-blue);
+  color: var(--text-main);
 }
 
 .price-section.is-sold .price-target-val {
-  color: var(--toss-blue);
+  color: var(--text-main);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1002,8 +1024,8 @@ select.select-clean::-ms-expand {
   align-items: center;
   padding: 2px 8px;
   border-radius: 9999px;
-  background: rgba(49, 130, 246, 0.14);
-  color: var(--toss-blue);
+  background: var(--bg-tag);
+  color: var(--text-sub);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -1019,18 +1041,19 @@ select.select-clean::-ms-expand {
 }
 
 .price-section.is-unsold .price-target-val {
-  color: #191f28;
+  color: var(--text-main);
 }
 
 /* Rights Note */
 .rights-note {
   font-size: 13px;
+  line-height: 1.4;
   color: var(--text-sub);
   background: #f4f6f8;
   border: 1px solid var(--border-subtle);
-  padding: 8px 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-xs);
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1045,18 +1068,23 @@ select.select-clean::-ms-expand {
 
 .btn-secondary {
   flex: 1;
+  height: 42px;
   background: var(--bg-tag);
   color: var(--text-main);
   border: 1px solid transparent;
-  padding: 12px 14px;
+  padding: 0 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 700;
   font-family: inherit;
+  line-height: 1;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
 .btn-secondary:hover {
@@ -1065,14 +1093,20 @@ select.select-clean::-ms-expand {
 
 .btn-primary {
   flex: 1.2;
+  height: 42px;
   background: var(--toss-blue);
   color: #ffffff;
-  border: none;
-  padding: 12px 14px;
+  border: 1px solid transparent;
+  padding: 0 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 700;
   font-family: inherit;
+  line-height: 1;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: background 0.15s;
   text-align: center;
@@ -1085,13 +1119,16 @@ select.select-clean::-ms-expand {
 .btn-fav {
   width: 44px;
   height: 42px;
+  flex-shrink: 0;
   border: 1px solid var(--border-subtle);
   background: var(--bg-tag);
   border-radius: var(--radius-sm);
+  font-family: inherit;
   font-size: 16px;
+  line-height: 1;
   color: var(--text-muted);
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s;
@@ -1157,6 +1194,7 @@ select.select-clean::-ms-expand {
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  font-family: inherit;
   font-size: 18px;
   color: var(--text-sub);
   cursor: pointer;
@@ -1262,12 +1300,21 @@ select.select-clean::-ms-expand {
 /* Responsive */
 @media (max-width: 600px) {
   .app-container { padding: 20px 16px 60px; }
-  .summary-bar { grid-template-columns: repeat(2, 1fr); }
+  .app-header { margin-bottom: 18px; }
+  .app-title { font-size: 22px; }
+  .header-meta { font-size: 12px; }
+  .summary-bar { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
   .results-summary-bar { grid-template-columns: repeat(2, 1fr); }
   .results-summary-bar .summary-item:first-child { grid-column: 1 / -1; }
-  .auction-grid { grid-template-columns: 1fr; }
-  .app-title { font-size: 22px; }
-  .filter-bar { padding: 12px; }
+  .auction-grid { grid-template-columns: 1fr; gap: 14px; }
+  .auction-card { padding: 20px; }
+  .card-top { flex-wrap: wrap; }
+  .complex-name { font-size: 18px; }
+  .complex-spec { font-size: 13px; }
+  .price-target-val { font-size: 20px; }
+  .price-sub-row { font-size: 12px; }
+  .filter-bar { padding: 12px; gap: 8px; }
+  .search-box { min-width: 100%; }
   .search-input { height: 38px; font-size: 13px; }
   .filter-selects { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .select-clean, .popover-wrapper { width: 100%; min-width: 0; }
@@ -1294,7 +1341,7 @@ select.select-clean::-ms-expand {
     border-radius: 20px 20px 0 0;
     padding: 16px 20px 32px;
     border: none;
-    box-shadow: 0 -8px 36px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid var(--border-subtle);
     z-index: 3000;
     animation: sheetSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -1307,4 +1354,5 @@ select.select-clean::-ms-expand {
     backdrop-filter: blur(2px);
     z-index: 2999;
   }
+  .modal-sheet { padding: 22px 20px; border-radius: 20px; }
 }
