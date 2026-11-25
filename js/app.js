@@ -4094,10 +4094,13 @@
 
   // State
   let state = {
+    activeTab: 'active',
     items: [],
+    historyItems: [],
     stats: {},
     updatedAt: '',
     bookmarks: new Set(JSON.parse(localStorage.getItem('sar_bookmarks') || '[]')),
+    snapshots: JSON.parse(localStorage.getItem('sar_bookmark_snapshots') || '{}'),
     filters: {
       regionGroup: 'ALL',
       seoulZone: 'ALL',
@@ -4117,6 +4120,10 @@
   // DOM Elements
   const el = {
     headerMeta: document.getElementById('header-meta'),
+    mainTabs: document.querySelectorAll('.main-tab'),
+    tabCountActive: document.getElementById('tab-count-active'),
+    tabCountResults: document.getElementById('tab-count-results'),
+    summaryBar: document.querySelector('.summary-bar'),
     summaryItems: document.querySelectorAll('.summary-item'),
     statTotal: document.getElementById('stat-total'),
     statDiscount: document.getElementById('stat-discount'),
@@ -4200,12 +4207,70 @@
     setTimeout(() => el.toast.classList.remove('show'), 1800);
   }
 
+  // Bookmark Helpers (Legacy ID migration + snapshot persistence)
+  function saveBookmarks() {
+    localStorage.setItem('sar_bookmarks', JSON.stringify(Array.from(state.bookmarks)));
+    localStorage.setItem('sar_bookmark_snapshots', JSON.stringify(state.snapshots));
+  }
+
+  function isItemBookmarked(item) {
+    if (!item) return false;
+    return (
+      state.bookmarks.has(item.id) ||
+      (item.case_no && state.bookmarks.has(item.case_no)) ||
+      (item.legacy_id && state.bookmarks.has(item.legacy_id))
+    );
+  }
+
+  function migrateAndSyncBookmarks() {
+    const allKnown = [...state.items, ...state.historyItems];
+    let changed = false;
+    for (const savedId of Array.from(state.bookmarks)) {
+      const exact = allKnown.find(i => i.id === savedId);
+      if (exact) {
+        state.snapshots[exact.id] = { ...exact };
+        changed = true;
+        continue;
+      }
+      // Migrate legacy ID (e.g. "2023타경113343" -> "B0002102023타경1133431")
+      const matches = allKnown.filter(i => i.case_no === savedId || i.legacy_id === savedId || (i.id && i.id.includes(savedId)));
+      if (matches.length > 0) {
+        state.bookmarks.delete(savedId);
+        matches.forEach(m => {
+          state.bookmarks.add(m.id);
+          state.snapshots[m.id] = { ...m };
+        });
+        changed = true;
+      }
+    }
+    if (changed) saveBookmarks();
+  }
+
+  function getResultsDataset() {
+    const merged = [...state.historyItems];
+    const knownKeys = new Set([
+      ...state.items.map(i => `${i.court}|${i.case_no}`),
+      ...state.historyItems.map(i => `${i.court}|${i.case_no}`)
+    ]);
+    // Include any bookmarked snapshots that vanished before history tracking
+    for (const id of state.bookmarks) {
+      const snap = state.snapshots[id];
+      if (snap && !knownKeys.has(`${snap.court}|${snap.case_no}`)) {
+        merged.push({ ...snap, status_label: snap.status_label || '목록 종료' });
+      }
+    }
+    return merged;
+  }
+
   // Load Data
   async function loadData() {
+    const [activeRes, histRes] = await Promise.allSettled([
+      fetch('data/auction_data.json?t=' + Date.now()),
+      fetch('data/auction_history.json?t=' + Date.now())
+    ]);
     try {
-      const res = await fetch('data/auction_data.json?t=' + Date.now());
-      if (!res.ok) throw new Error();
-      const data = await res.json();
+      if (activeRes.status !== 'fulfilled' || !activeRes.value.ok) throw new Error();
+      const data = await activeRes.value.json();
       state.items = data.items || [];
       state.stats = data.stats || {};
       state.updatedAt = data.updated_at || '';
@@ -4214,6 +4279,13 @@
       state.stats = FALLBACK_DATA.stats;
       state.updatedAt = FALLBACK_DATA.updated_at;
     }
+    if (histRes.status === 'fulfilled' && histRes.value.ok) {
+      try {
+        const hData = await histRes.value.json();
+        state.historyItems = hData.items || [];
+      } catch (_) {}
+    }
+    migrateAndSyncBookmarks();
     renderHeader();
     renderCards();
   }
@@ -4251,6 +4323,8 @@
     el.statDiscount.textContent = `${state.stats.discounted_count || 0}`;
     el.statNew.textContent = `${state.stats.new_count || 0}`;
     el.statImminent.textContent = `${state.stats.imminent_count || 0}`;
+    if (el.tabCountActive) el.tabCountActive.textContent = state.items.length;
+    if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
     updateSeoulZoneCounts();
   }
 
@@ -4264,7 +4338,9 @@
 
   // Filter Items
   function getFilteredItems() {
-    return state.items.filter(item => {
+    const isResultsTab = state.activeTab === 'results';
+    const sourceItems = isResultsTab ? getResultsDataset() : state.items;
+    return sourceItems.filter(item => {
       // Region Filter
       if (state.filters.regionGroup !== 'ALL') {
         if (state.filters.regionGroup === '서울') {
@@ -4286,19 +4362,19 @@
       if (state.filters.minPrice > 0 && p < state.filters.minPrice) return false;
       if (state.filters.maxPrice < PRICE_SLIDER_MAX && p > state.filters.maxPrice) return false;
 
-      // Discount Filter
-      if (state.filters.discount === 'new' && item.discount_rate !== 0) return false;
-      if (state.filters.discount === 'disc20' && item.discount_rate < 20) return false;
-      if (state.filters.discount === 'disc36' && item.discount_rate < 36) return false;
-
-      // Imminent Only (이번주 마감 기일 7일 이내)
-      if (state.filters.imminentOnly && (item.d_day < 0 || item.d_day > 7)) return false;
+      // Discount & Imminent Filters (active tab only)
+      if (state.activeTab === 'active') {
+        if (state.filters.discount === 'new' && item.discount_rate !== 0) return false;
+        if (state.filters.discount === 'disc20' && item.discount_rate < 20) return false;
+        if (state.filters.discount === 'disc36' && item.discount_rate < 36) return false;
+        if (state.filters.imminentOnly && (item.d_day < 0 || item.d_day > 7)) return false;
+      }
 
       // Safe rights only
       if (state.filters.safeOnly && !item.is_safe) return false;
 
       // Bookmarked only
-      if (state.filters.bookmarkedOnly && !state.bookmarks.has(item.id)) return false;
+      if (state.filters.bookmarkedOnly && !isItemBookmarked(item)) return false;
 
       // Keyword Search
       if (state.filters.search) {
@@ -4308,6 +4384,11 @@
       }
       return true;
     }).sort((a, b) => {
+      if (state.activeTab === 'results') {
+        const dCmp = (b.auction_date || '').localeCompare(a.auction_date || '');
+        if (dCmp !== 0) return dCmp;
+        return (b.winning_price || 0) - (a.winning_price || 0);
+      }
       if (state.filters.sort === 'created_desc') {
         // 오늘 신규 유입(is_today_new) 1순위 -> 최신 등록일 -> 사건번호 순
         const newA = Boolean(a.is_today_new || (state.updatedAt && a.first_seen === state.updatedAt));
@@ -4363,24 +4444,47 @@
 
   // Render Card HTML (Clean & Informative)
   function renderCard(item) {
-    const isTodayNew = Boolean(item.is_today_new || (state.updatedAt && item.first_seen === state.updatedAt));
+    const isResult = state.activeTab === 'results' || Boolean(item.status_label);
+    const isTodayNew = !isResult && Boolean(item.is_today_new || (state.updatedAt && item.first_seen === state.updatedAt));
     const newBadge = isTodayNew ? '<span class="chip chip-badge-new">NEW</span>' : '';
-    const isBookmarked = state.bookmarks.has(item.id);
-    const dDayClass = item.d_day <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday';
+    const isBookmarked = isItemBookmarked(item);
+    const dDayClass = isResult ? 'chip chip-result-change' : (item.d_day <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday');
     // 100% Guaranteed YY.MM.DD Format
     const dateLabel = formatDate(item);
     
-    const discountChip = item.discount_rate > 0
-      ? `<span class="chip chip-discount">-${item.discount_rate}%</span>`
-      : `<span class="chip chip-new">신건</span>`;
+    let statusBadgeHtml = '';
+    if (isResult) {
+      const st = item.status_label || '목록 종료';
+      const stClass = st.includes('매각') ? 'chip-result-sold' : (st.includes('유찰') ? 'chip-result-fail' : 'chip-result-change');
+      statusBadgeHtml = `<span class="chip ${stClass}">${st}</span>`;
+    } else {
+      statusBadgeHtml = item.discount_rate > 0
+        ? `<span class="chip chip-discount">-${item.discount_rate}%</span>`
+        : `<span class="chip chip-new">신건</span>`;
+    }
 
     // 단지명 클릭 시 사건번호+단지명 경매 상세 검색결과 연결
     const auctionDetailUrl = `https://search.naver.com/search.naver?where=nexearch&query=${encodeURIComponent(item.case_no + ' ' + item.complex_name + ' 경매')}`;
     const naverLink = getNaverComplexUrl(item);
     const hogangLink = item.hogang_url || item.hogang_search_url || '#';
-    const rightsText = item.rights_badge || (item.is_safe ? '인수권리 없음 (안전)' : '권리확인 필요');
+    let rightsText = item.rights_badge || (item.is_safe ? '인수권리 없음 (안전)' : '권리확인 필요');
+    if (isResult && item.next_date) {
+      const nd = item.next_date.split('-');
+      const ndLabel = nd.length === 3 ? `${nd[0].slice(-2)}.${nd[1]}.${nd[2]}` : item.next_date;
+      rightsText = `다음 기일 예정: ${ndLabel}`;
+    } else if (isResult && item.result_detail) {
+      rightsText = `진행 결과: ${item.result_detail}`;
+    }
     const dongHo = getDongHo(item);
     const households = getHouseholds(item);
+
+    const hasWinning = isResult && item.winning_price > 0;
+    const priceLabel = hasWinning ? '낙찰가' : '최저가';
+    const priceValue = hasWinning ? formatMoney(item.winning_price) : formatMoney(item.minimum_price);
+    const winRatio = hasWinning && item.appraisal_price > 0 ? Math.round((item.winning_price / item.appraisal_price) * 100) : 0;
+    const rightSubText = hasWinning
+      ? `최저가 ${formatMoney(item.minimum_price)} · 감정가 대비 ${winRatio}%`
+      : `보증금 ${formatMoney(item.bid_deposit)}`;
 
     return `
       <article class="auction-card" data-id="${item.id}">
@@ -4388,8 +4492,8 @@
           <div class="card-top">
             <span class="meta-case"><span class="meta-case-no" data-action="copy-case" data-case="${item.case_no}" title="클릭하여 사건번호 복사">${item.case_no}</span> · ${item.court}</span>
             <div class="badge-row">
-              ${newBadge}${discountChip}
-              <span class="${dDayClass}" title="매각기일">${dateLabel}</span>
+              ${newBadge}${statusBadgeHtml}
+              <span class="${dDayClass}" title="${isResult ? '기존 매각기일' : '매각기일'}">${dateLabel}</span>
             </div>
           </div>
 
@@ -4404,17 +4508,17 @@
 
           <div class="price-section">
             <div class="price-main-row">
-              <span class="price-target-label">최저가</span>
-              <span class="price-target-val">${formatMoney(item.minimum_price)}</span>
+              <span class="price-target-label">${priceLabel}</span>
+              <span class="price-target-val">${priceValue}</span>
             </div>
             <div class="price-sub-row">
               <span>감정가 <span class="appraisal-val">${formatMoney(item.appraisal_price)}</span></span>
-              <span>보증금 ${formatMoney(item.bid_deposit)}</span>
+              <span>${rightSubText}</span>
             </div>
           </div>
 
           <div class="rights-note">
-            🛡️ <strong>${rightsText}</strong>
+            ${isResult ? '📌' : '🛡️'} <strong>${rightsText}</strong>
           </div>
         </div>
 
@@ -4442,22 +4546,40 @@
     el.auctionGrid.innerHTML = list.map(renderCard).join('');
   }
 
+  // Find item across active, history, and snapshots
+  function findItemById(id) {
+    return (
+      state.items.find(i => i.id === id) ||
+      state.historyItems.find(i => i.id === id) ||
+      state.snapshots[id] ||
+      null
+    );
+  }
+
   // Toggle Favorite
   function toggleFav(id) {
-    if (state.bookmarks.has(id)) {
+    const item = findItemById(id);
+    if (state.bookmarks.has(id) || (item && isItemBookmarked(item))) {
       state.bookmarks.delete(id);
+      delete state.snapshots[id];
+      if (item) {
+        if (item.case_no) state.bookmarks.delete(item.case_no);
+        if (item.legacy_id) state.bookmarks.delete(item.legacy_id);
+      }
       toast('관심 목록에서 해제되었습니다.');
     } else {
       state.bookmarks.add(id);
+      if (item) state.snapshots[id] = { ...item };
       toast('★ 관심 목록에 저장되었습니다.');
     }
-    localStorage.setItem('sar_bookmarks', JSON.stringify(Array.from(state.bookmarks)));
+    saveBookmarks();
+    if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
     renderCards();
   }
 
   // Calculator
   function openCalculator(id) {
-    const item = state.items.find(i => i.id === id);
+    const item = findItemById(id);
     if (!item) return;
 
     state.activeCalcItem = item;
@@ -4501,6 +4623,26 @@
 
   // Event Listeners
   function initEvents() {
+    // Main Tabs (진행 매물 | 매물 결과)
+    if (el.mainTabs) {
+      el.mainTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const targetTab = tab.getAttribute('data-tab') || 'active';
+          if (state.activeTab === targetTab) return;
+          state.activeTab = targetTab;
+          el.mainTabs.forEach(t => {
+            const active = t === tab;
+            t.classList.toggle('active', active);
+            t.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+          if (el.summaryBar) {
+            el.summaryBar.style.display = targetTab === 'active' ? 'grid' : 'none';
+          }
+          renderCards();
+        });
+      });
+    }
+
     // Region Pills
     el.regionButtons.forEach(btn => {
       btn.addEventListener('click', () => {

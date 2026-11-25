@@ -16,6 +16,7 @@ from typing import List, Dict, Any
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_FILE_PATH = os.path.join(PROJECT_ROOT, "data", "auction_data.json")
+HISTORY_FILE_PATH = os.path.join(PROJECT_ROOT, "data", "auction_history.json")
 COMPLEX_CACHE_PATH = os.path.join(PROJECT_ROOT, "data", "complex_cache.json")
 
 BASE_URL = "https://www.courtauction.go.kr"
@@ -692,6 +693,102 @@ def run():
         pass
 
     print(f"[✓] 총 {len(scraped_items)}건 업데이트 완료 -> {DATA_FILE_PATH}")
+
+    # 사라진 매물 결과 추적 -> data/auction_history.json (60일 롤링)
+    try:
+        import requests
+        court_cd_map = {c["short_name"]: c["cort_cd"] for c in TARGET_COURTS}
+        cur_keys = {f"{i.get('court', '')}|{i.get('case_no', '')}" for i in scraped_items}
+        disappeared = [ex for ex in existing_items if f"{ex.get('court', '')}|{ex.get('case_no', '')}" not in cur_keys]
+        existing_hist = []
+        if os.path.exists(HISTORY_FILE_PATH):
+            with open(HISTORY_FILE_PATH, "r", encoding="utf-8") as f:
+                existing_hist = json.load(f).get("items", [])
+
+        hist_map = {f"{h.get('court', '')}|{h.get('case_no', '')}": h for h in existing_hist}
+        # 현재 다시 진행 목록에 복귀한 물건은 결과 탭에서 제외
+        for k in cur_keys:
+            hist_map.pop(k, None)
+
+        if disappeared:
+            h_sess = requests.Session()
+            h_headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "Origin": BASE_URL,
+                "Referer": f"{BASE_URL}/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ159M00.xml",
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/json; charset=UTF-8",
+                "SC-Userid": "SYSTEM",
+            }
+            for item in disappeared[:40]:
+                c_name = item.get("court", "")
+                cort_cd = court_cd_map.get(c_name, "")
+                m_cno = re.search(r"\d{4}타경\d+", str(item.get("case_no", "")))
+                clean_cno = m_cno.group(0) if m_cno else ""
+                status_label, result_detail, winning_price, next_date = "목록 종료", "", 0, ""
+                if cort_cd and clean_cno:
+                    try:
+                        time.sleep(0.2)
+                        r1 = h_sess.post(
+                            f"{BASE_URL}/pgj/pgj15A/selectAuctnCsSrchRslt.on",
+                            headers={**h_headers, "Submissionid": "mf_wfm_mainFrame_sbm_selectCsDtlInf"},
+                            json={"dma_srchCsDtlInf": {"cortOfcCd": cort_cd, "csNo": clean_cno}},
+                            timeout=8,
+                        )
+                        if r1.status_code == 200:
+                            d1 = r1.json().get("data") or {}
+                            bas = d1.get("dma_csBasInf") or {}
+                            objs = d1.get("dlt_dspslGdsDspslObjctLst") or []
+                            for o in objs:
+                                if o.get("dspslAmt") and int(o.get("dspslAmt") or 0) > 0:
+                                    winning_price = int(o["dspslAmt"])
+                                if len(str(o.get("dspslDxdyYmd") or "")) == 8:
+                                    ymd = str(o["dspslDxdyYmd"])
+                                    next_date = f"{ymd[:4]}-{ymd[4:6]}-{ymd[6:8]}"
+                            int_cs_no = bas.get("csNo", "")
+                            dxdy_list = []
+                            if int_cs_no:
+                                time.sleep(0.15)
+                                r2 = h_sess.post(
+                                    f"{BASE_URL}/pgj/pgj15A/selectCsDtlDxdyDts.on",
+                                    headers={**h_headers, "Submissionid": "mf_wfm_mainFrame_wfm_dxdyDts_sbm_selectDxdyDtsLst"},
+                                    json={"dma_srchDxdyDtsLst": {"cortOfcCd": cort_cd, "csNo": int_cs_no}},
+                                    timeout=8,
+                                )
+                                if r2.status_code == 200:
+                                    dxdy_list = (r2.json().get("data") or {}).get("dlt_dxdyDtsLst") or []
+                            non_empty = [x for x in dxdy_list if strip_html(x.get("dxdyRslt") or "")]
+                            if non_empty:
+                                rslt = strip_html(non_empty[-1].get("dxdyRslt") or "")
+                                result_detail = rslt
+                                if "매각" in rslt and "불허가" not in rslt:
+                                    status_label = "매각"
+                                elif "유찰" in rslt:
+                                    status_label = "유찰"
+                                elif "변경" in rslt:
+                                    status_label = "기일변경"
+                                else:
+                                    status_label = rslt[:14]
+                            elif bas.get("ultmtDvsCd", "000") != "000":
+                                status_label = "종국(취하·완결)"
+                    except Exception:
+                        pass
+                hist_map[f"{c_name}|{clean_cno or item.get('case_no', '')}"] = {
+                    **item,
+                    "status_label": status_label,
+                    "result_detail": result_detail,
+                    "winning_price": winning_price,
+                    "next_date": next_date,
+                    "archived_at": today_str,
+                }
+
+        cutoff_str = (get_kst_today() - datetime.timedelta(days=60)).strftime("%Y-%m-%d")
+        pruned_hist = [h for h in hist_map.values() if (h.get("archived_at") or today_str) >= cutoff_str]
+        with open(HISTORY_FILE_PATH, "w", encoding="utf-8") as f:
+            json.dump({"updated_at": today_str, "total_count": len(pruned_hist), "items": pruned_hist}, f, ensure_ascii=False, indent=2)
+    except Exception as he:
+        print(f"[!] 이력 아카이브 저장 건너뜀: {he}")
 
 
 if __name__ == "__main__":

@@ -79,6 +79,57 @@ body {
   font-weight: 500;
 }
 
+/* Main View Tabs (진행 매물 | 매물 결과) */
+.main-tabs {
+  display: inline-flex;
+  background: var(--bg-tag);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  gap: 4px;
+  margin-bottom: 18px;
+}
+
+.main-tab {
+  border: none;
+  background: transparent;
+  color: var(--text-sub);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: calc(var(--radius-md) - 4px);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.main-tab:hover {
+  color: var(--text-main);
+}
+
+.main-tab.active {
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.tab-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+}
+
+.main-tab.active .tab-badge {
+  background: var(--toss-blue-light);
+  color: var(--toss-blue);
+}
+
 /* KPI Summary Bar (Flat & Soft) */
 .summary-bar {
   display: grid;
@@ -736,6 +787,21 @@ body {
 }
 
 .chip-new {
+  background: var(--bg-tag);
+  color: var(--text-sub);
+}
+
+.chip-result-sold {
+  background: var(--toss-blue-light);
+  color: var(--toss-blue);
+}
+
+.chip-result-fail {
+  background: #fff4e5;
+  color: #d97706;
+}
+
+.chip-result-change {
   background: var(--bg-tag);
   color: var(--text-sub);
 }

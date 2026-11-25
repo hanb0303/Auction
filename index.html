@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>서울 아파트 경매</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css">
-  <link rel="stylesheet" href="css/style.css?v=20261124_01">
+  <link rel="stylesheet" href="css/style.css?v=20261125_01">
 </head>
 <body>
 
@@ -17,6 +17,16 @@
         <div class="header-meta" id="header-meta">서울 · 경기 핵심지 자동 업데이트</div>
       </div>
     </header>
+
+    <!-- Main View Tabs -->
+    <div class="main-tabs" role="tablist" aria-label="매물 보기 전환">
+      <button type="button" class="main-tab active" data-tab="active" role="tab" aria-selected="true">
+        진행 매물 <span class="tab-badge" id="tab-count-active">-</span>
+      </button>
+      <button type="button" class="main-tab" data-tab="results" role="tab" aria-selected="false">
+        매물 결과 <span class="tab-badge" id="tab-count-results">-</span>
+      </button>
+    </div>
 
     <!-- Key Metrics (Toss-style clean cards) -->
     <section class="summary-bar" aria-label="요약 지표">
@@ -214,6 +224,6 @@
   <!-- Toast -->
   <div id="toast" class="toss-toast"></div>
 
-  <script src="js/app.js?v=20261124_01"></script>
+  <script src="js/app.js?v=20261125_01"></script>
 </body>
 </html>
