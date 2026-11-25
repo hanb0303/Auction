@@ -310,11 +310,88 @@
     }, 1800);
   }
 
-  // Bookmark Helpers (Legacy ID migration + snapshot persistence)
-  function saveBookmarks() {
+  // Bookmark Helpers (Legacy ID migration + snapshot persistence + Firebase auto-sync)
+  const FIREBASE_SYNC_URL = 'https://auction-ce67e-default-rtdb.asia-southeast1.firebasedatabase.app/sar_bookmarks.json';
+  let cloudPushSeq = 0;
+  let lastCloudPullAt = 0;
+
+  function saveLocalBookmarksOnly() {
     try {
       localStorage.setItem('sar_bookmarks', JSON.stringify(Array.from(state.bookmarks)));
       localStorage.setItem('sar_bookmark_snapshots', JSON.stringify(state.snapshots));
+    } catch (_) {}
+  }
+
+  async function pushCloudBookmarks() {
+    const seq = ++cloudPushSeq;
+    try {
+      const payload = {
+        bookmarks: Array.from(state.bookmarks),
+        snapshots: state.snapshots,
+        updated_at: Date.now()
+      };
+      await fetch(FIREBASE_SYNC_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (_) {
+      // Ignore offline/transient cloud errors; localStorage already saved
+    } finally {
+      if (seq === cloudPushSeq) {
+        lastCloudPullAt = Date.now();
+      }
+    }
+  }
+
+  function saveBookmarks(syncCloud = false) {
+    saveLocalBookmarksOnly();
+    if (syncCloud) {
+      pushCloudBookmarks();
+    }
+  }
+
+  async function pullCloudBookmarks(force = false) {
+    const now = Date.now();
+    if (!force && now - lastCloudPullAt < 4000) return;
+    lastCloudPullAt = now;
+    const seqAtStart = cloudPushSeq;
+
+    try {
+      const res = await fetch(FIREBASE_SYNC_URL, { cache: 'no-store' });
+      if (!res.ok) return;
+      const cloud = await res.json();
+      if (seqAtStart !== cloudPushSeq) return; // Local toggle happened while fetching
+
+      if (!cloud || !Array.isArray(cloud.bookmarks)) {
+        if (state.bookmarks.size > 0) {
+          pushCloudBookmarks();
+        }
+        return;
+      }
+
+      const nextBookmarks = new Set(cloud.bookmarks.filter(v => typeof v === 'string' && v.length > 0));
+      const nextSnapshots = (cloud.snapshots && typeof cloud.snapshots === 'object' && !Array.isArray(cloud.snapshots))
+        ? cloud.snapshots
+        : {};
+
+      const changed =
+        nextBookmarks.size !== state.bookmarks.size ||
+        Array.from(nextBookmarks).some(id => !state.bookmarks.has(id));
+
+      state.bookmarks = nextBookmarks;
+      state.snapshots = nextSnapshots;
+      migrateAndSyncBookmarks(false);
+      saveLocalBookmarksOnly();
+
+      if (state.bookmarks.size > 0 && !state.historyLoaded) {
+        ensureHistoryLoaded();
+      }
+      if (changed) {
+        if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
+        updateResultsSummaryCounts();
+        renderCards();
+      }
     } catch (_) {}
   }
 
@@ -327,7 +404,7 @@
     );
   }
 
-  function migrateAndSyncBookmarks() {
+  function migrateAndSyncBookmarks(syncCloud = false) {
     const allKnown = [...state.items, ...state.historyItems];
     let changed = false;
     for (const savedId of Array.from(state.bookmarks)) {
@@ -348,7 +425,7 @@
         changed = true;
       }
     }
-    if (changed) saveBookmarks();
+    if (changed) saveBookmarks(syncCloud);
   }
 
   function getResultsDataset() {
@@ -467,6 +544,7 @@
     migrateAndSyncBookmarks();
     renderHeader();
     renderCards();
+    pullCloudBookmarks(true);
   }
 
   // Update live counts on Seoul 5-zone sub-buttons (preserves .zone-sub label)
@@ -889,7 +967,7 @@
       if (item) state.snapshots[id] = { ...item };
       toast('★ 관심 목록에 저장되었습니다.');
     }
-    saveBookmarks();
+    saveBookmarks(true);
     if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
     updateResultsSummaryCounts();
     renderCards();
@@ -1707,5 +1785,9 @@
   document.addEventListener('DOMContentLoaded', () => {
     initEvents();
     loadData();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') pullCloudBookmarks(false);
+    });
+    window.addEventListener('focus', () => pullCloudBookmarks(false));
   });
 })();
