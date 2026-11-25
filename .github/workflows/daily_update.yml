@@ -37,5 +37,5 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/auction_data.json js/app.js
+          git add data/auction_data.json data/auction_history.json data/complex_cache.json js/app.js
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore(data): auto-update court auction listings [skip ci]" && git push)
