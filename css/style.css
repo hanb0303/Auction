@@ -32,6 +32,7 @@
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -45,6 +46,19 @@ body {
   color: var(--text-main);
   line-height: 1.45;
   letter-spacing: -0.02em;
+  padding-top: env(safe-area-inset-top);
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.btn-fav:active,
+.pill-btn:active,
+.sub-pill-btn:active,
+.summary-item:active,
+.main-tab:active,
+.calc-chip:active,
+.preset-chip:active {
+  transform: scale(0.97);
 }
 
 /* Comfortable Centered Container */
@@ -1544,7 +1558,7 @@ select.select-clean::-ms-expand {
 /* Toast */
 .toss-toast {
   position: fixed;
-  bottom: 28px;
+  bottom: calc(28px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%) translateY(40px);
   background: #191f28;
@@ -1566,11 +1580,12 @@ select.select-clean::-ms-expand {
 
 /* Responsive */
 @media (max-width: 600px) {
-  .app-container { padding: 20px 16px 60px; }
+  .app-container { padding: 18px 16px calc(64px + env(safe-area-inset-bottom)); }
   .app-header { margin-bottom: 18px; }
   .app-title { font-size: 22px; }
   .header-meta { font-size: 12px; }
   .main-tab { padding: 10px 16px; }
+  .region-pills, .sub-segmented-control { -webkit-overflow-scrolling: touch; }
   .summary-bar { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
   .results-summary-bar { grid-template-columns: repeat(2, 1fr); }
   .results-summary-bar .summary-item:first-child { grid-column: 1 / -1; }
@@ -1584,7 +1599,8 @@ select.select-clean::-ms-expand {
   .price-sub-row { font-size: 12px; }
   .filter-bar { padding: 12px; gap: 8px; }
   .search-box { min-width: 100%; }
-  .search-input { height: 38px; font-size: 13px; }
+  .search-input { height: 42px; font-size: 16px; }
+  .sheet-input-sm { font-size: 16px; }
   .filter-selects { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .select-clean, .popover-wrapper { width: 100%; min-width: 0; }
   .select-clean, .popover-trigger { height: 38px; font-size: 12px; }
@@ -1608,7 +1624,9 @@ select.select-clean::-ms-expand {
     max-width: 100%;
     margin: 0;
     border-radius: 20px 20px 0 0;
-    padding: 16px 20px 32px;
+    padding: 16px 20px calc(28px + env(safe-area-inset-bottom));
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
     border: none;
     border-top: 1px solid var(--border-subtle);
     z-index: 3000;
@@ -1632,7 +1650,9 @@ select.select-clean::-ms-expand {
     max-height: 90vh;
     border-radius: 22px 22px 0 0;
     border-bottom: none;
-    padding: 14px 20px 28px;
+    padding: 14px 20px calc(24px + env(safe-area-inset-bottom));
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
   }
   .sheet-handle-bar {
     display: block;
