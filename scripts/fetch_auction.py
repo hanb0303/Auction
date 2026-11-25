@@ -12,7 +12,7 @@ import json
 import time
 import datetime
 import urllib.parse
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional, Tuple, Set
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_FILE_PATH = os.path.join(PROJECT_ROOT, "data", "auction_data.json")
@@ -173,12 +173,12 @@ KST = datetime.timezone(datetime.timedelta(hours=9))
 
 
 def get_kst_now() -> datetime.datetime:
-    """?쒓뎅 ?쒖???KST, UTC+9) ?꾩옱 ?쒓컖 (GitHub Actions UTC ?쒕쾭 ?명솚)"""
+    """한국 표준시(KST, UTC+9) 현재 시각 (GitHub Actions UTC 서버 호환)"""
     return datetime.datetime.now(KST)
 
 
 def get_kst_today() -> datetime.date:
-    """?쒓뎅 ?쒖???KST, UTC+9) ?ㅻ뒛 ?좎쭨"""
+    """한국 표준시(KST, UTC+9) 오늘 날짜"""
     return get_kst_now().date()
 
 
@@ -187,7 +187,42 @@ def calculate_d_day(auction_date_str: str) -> int:
         auction_date = datetime.datetime.strptime(auction_date_str, "%Y-%m-%d").date()
         return (auction_date - get_kst_today()).days
     except Exception:
-        return 0
+        return 999
+
+
+def safe_int(val: Any, default: int = 0) -> int:
+    """숫자 문자열/정수를 안전하게 int로 변환 (실패 시 default 반환)"""
+    if val is None or val == "":
+        return default
+    try:
+        return int(float(str(val).replace(",", "").strip()))
+    except (ValueError, TypeError):
+        return default
+
+
+def safe_json(resp: Any, context: str = "") -> Optional[Dict[str, Any]]:
+    """HTTP 200 응답이라도 WAF/HTML 페이지가 올 수 있으므로 안전하게 JSON 디코딩"""
+    try:
+        data = resp.json()
+        if isinstance(data, dict):
+            return data
+        print(f"  [!] 예상치 못한 JSON 형식 ({context or 'response'}): {type(data).__name__}")
+        return None
+    except Exception as e:
+        snippet = (getattr(resp, "text", "") or "")[:120].replace("\n", " ").strip()
+        print(f"  [!] JSON 파싱 실패 ({context or 'response'}): {e} | 응답 일부: {snippet}")
+        return None
+
+
+def atomic_write_json(path: str, payload: Any) -> None:
+    """임시 파일(.tmp)에 먼저 기록한 뒤 os.replace로 원자적 교체"""
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    tmp_path = f"{path}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, path)
 
 
 def format_ymd(ymd: str) -> str:
@@ -235,15 +270,16 @@ def resolve_households(session, headers: dict, district: str, complex_name: str)
     return ""
 
 
-def scrape_court_auction() -> List[Dict[str, Any]]:
+def scrape_court_auction() -> Tuple[List[Dict[str, Any]], Set[str]]:
     """
     대법원 법원경매정보(courtauction.go.kr) 차세대 JSON API에서 직접 아파트 경매 물건 수집
     """
+    all_courts = {c["short_name"] for c in TARGET_COURTS}
     try:
         import requests
     except ImportError:
         print("[!] requests 패키지가 설치되어 있지 않습니다.")
-        return []
+        return [], all_courts
 
     session = requests.Session()
     headers = {
@@ -260,7 +296,7 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
         session.get(f"{BASE_URL}/", headers={"User-Agent": headers["User-Agent"]}, timeout=10)
     except Exception as e:
         print(f"[!] 대법원 사이트 초기 접속 실패: {e}")
-        return []
+        return [], all_courts
 
     today = get_kst_today()
     bgng_ymd = today.strftime("%Y%m%d")
@@ -268,6 +304,7 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
     srch_ym = today.strftime("%Y%m")
     collected_items: List[Dict[str, Any]] = []
     seen_cases = set()
+    failed_courts: Set[str] = set()
 
     search_headers = dict(headers)
     search_headers["SC-Userid"] = "SYSTEM"
@@ -336,8 +373,14 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                 }
                 s_resp = session.post(SEARCH_MAIN_URL, json=srch_payload, headers=search_headers, timeout=20)
                 if s_resp.status_code != 200:
+                    print(f"  [!] [{court['short_name']}] 4주 물건 검색 HTTP {s_resp.status_code}")
+                    failed_courts.add(court["short_name"])
                     break
-                s_list = (s_resp.json().get("data") or {}).get("dlt_srchResult") or []
+                s_json = safe_json(s_resp, f"{court['short_name']} 4주 물건 검색 p.{page_no}")
+                if s_json is None:
+                    failed_courts.add(court["short_name"])
+                    break
+                s_list = (s_json.get("data") or {}).get("dlt_srchResult") or []
                 if not s_list:
                     break
 
@@ -389,7 +432,7 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                     area_pyeong = round(area_m2 * 0.3025, 1)
                     floor_info = extract_floor(buld_list)
                     discount_rate = max(0, round((1 - (min_price / app_price)) * 100))
-                    yuchal = int(str(r.get("yuchalCnt") or "0") or 0)
+                    yuchal = safe_int(r.get("yuchalCnt"), 0)
                     auction_round = f"{yuchal + 1}회차 ({yuchal}회 유찰)" if yuchal > 0 else "1회차 (신건)"
                     auction_date = format_ymd(r.get("maeGiil") or "")
 
@@ -423,10 +466,11 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                     break
             except Exception as e:
                 print(f"  - [{court['short_name']}] 4주 물건 검색 건너뜀: {e}")
+                failed_courts.add(court["short_name"])
                 break
 
     # 2) 기일별 공고 상세 보조 수집
-    for court in TARGET_COURTS:
+    for idx, court in enumerate(TARGET_COURTS):
         try:
             time.sleep(2.0)  # 대법원 서버 차단 방지 딜레이
             list_body = {
@@ -439,11 +483,19 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
             }
             resp = session.post(NOTICE_LIST_URL, json=list_body, headers=headers, timeout=15)
             if resp.status_code != 200:
+                print(f"  [!] [{court['short_name']}] 기일별 공고 목록 HTTP {resp.status_code}")
+                failed_courts.add(court["short_name"])
                 continue
 
-            data = resp.json().get("data") or {}
+            resp_json = safe_json(resp, f"{court['short_name']} 기일별 공고 목록")
+            if resp_json is None:
+                failed_courts.add(court["short_name"])
+                continue
+            data = resp_json.get("data") or {}
             if data.get("ipcheck") is False:
                 print("[!] 대법원 IP 일시 제한 감지 - 수집 중단")
+                for rem_court in TARGET_COURTS[idx:]:
+                    failed_courts.add(rem_court["short_name"])
                 break
 
             notices = (data.get("dlt_rletDspslPbancLst") or [])[: court["max_notices"]]
@@ -468,9 +520,14 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
                 }
                 dtl_resp = session.post(NOTICE_DETAIL_URL, json=dtl_body, headers=headers, timeout=15)
                 if dtl_resp.status_code != 200:
+                    print(f"  [!] [{court['short_name']}] 공고 상세 HTTP {dtl_resp.status_code}")
+                    failed_courts.add(court["short_name"])
                     continue
 
-                dtl_json = dtl_resp.json()
+                dtl_json = safe_json(dtl_resp, f"{court['short_name']} 공고 상세")
+                if dtl_json is None:
+                    failed_courts.add(court["short_name"])
+                    continue
                 rows = (
                     dtl_json.get("data", {})
                     .get("result", {})
@@ -574,8 +631,9 @@ def scrape_court_auction() -> List[Dict[str, Any]]:
             print(f"  - [{court['short_name']}] 수집 완료 (누적 {len(collected_items)}건)")
         except Exception as e:
             print(f"  - [{court['short_name']}] 크롤링 건너뜀: {e}")
+            failed_courts.add(court["short_name"])
 
-    return collected_items
+    return collected_items, failed_courts
 
 
 def run():
@@ -622,7 +680,17 @@ def run():
         except Exception:
             pass
 
-    scraped_items = scrape_court_auction()
+    scraped_items, failed_courts = scrape_court_auction()
+
+    if failed_courts and existing_items:
+        print(f"[*] 일부 법원 수집 실패({', '.join(sorted(failed_courts))}) -> 해당 법원 기존 물건을 유지합니다.")
+        scraped_keys = {f"{i.get('court', '')}|{i.get('case_no', '')}" for i in scraped_items}
+        for ex in existing_items:
+            ex_court = ex.get("court", "")
+            ex_key = f"{ex_court}|{ex.get('case_no', '')}"
+            if ex_court in failed_courts and ex_key not in scraped_keys:
+                scraped_items.append(ex)
+                scraped_keys.add(ex_key)
 
     # 크롤링 결과가 적거나 없을 경우(법원 서버 점검 시간 등) 기존 데이터 유지
     if len(scraped_items) < 5 and existing_items:
@@ -671,9 +739,7 @@ def run():
         "items": scraped_items,
     }
 
-    os.makedirs(os.path.dirname(DATA_FILE_PATH), exist_ok=True)
-    with open(DATA_FILE_PATH, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+    atomic_write_json(DATA_FILE_PATH, payload)
 
     # 영구 단지 캐시 DB 업데이트
     for item in scraped_items:
@@ -687,8 +753,7 @@ def run():
             if c_no:
                 hh_cache[f"{item.get('court', '')}|{c_no}"] = hh
     try:
-        with open(COMPLEX_CACHE_PATH, "w", encoding="utf-8") as f:
-            json.dump(hh_cache, f, ensure_ascii=False, indent=2)
+        atomic_write_json(COMPLEX_CACHE_PATH, hh_cache)
     except Exception:
         pass
 
@@ -699,7 +764,11 @@ def run():
         import requests
         court_cd_map = {c["short_name"]: c["cort_cd"] for c in TARGET_COURTS}
         cur_keys = {f"{i.get('court', '')}|{i.get('case_no', '')}" for i in scraped_items}
-        disappeared = [ex for ex in existing_items if f"{ex.get('court', '')}|{ex.get('case_no', '')}" not in cur_keys]
+        disappeared = [
+            ex for ex in existing_items
+            if f"{ex.get('court', '')}|{ex.get('case_no', '')}" not in cur_keys
+            and ex.get("court", "") not in failed_courts
+        ]
         existing_hist = []
         if os.path.exists(HISTORY_FILE_PATH):
             with open(HISTORY_FILE_PATH, "r", encoding="utf-8") as f:
@@ -721,7 +790,7 @@ def run():
                 "Content-Type": "application/json; charset=UTF-8",
                 "SC-Userid": "SYSTEM",
             }
-            for item in disappeared[:40]:
+            for item in disappeared:
                 c_name = item.get("court", "")
                 cort_cd = court_cd_map.get(c_name, "")
                 m_cno = re.search(r"\d{4}타경\d+", str(item.get("case_no", "")))
@@ -729,7 +798,7 @@ def run():
                 status_label, result_detail, winning_price, next_date = "목록 종료", "", 0, ""
                 if cort_cd and clean_cno:
                     try:
-                        time.sleep(0.2)
+                        time.sleep(0.15)
                         r1 = h_sess.post(
                             f"{BASE_URL}/pgj/pgj15A/selectAuctnCsSrchRslt.on",
                             headers={**h_headers, "Submissionid": "mf_wfm_mainFrame_sbm_selectCsDtlInf"},
@@ -737,12 +806,14 @@ def run():
                             timeout=8,
                         )
                         if r1.status_code == 200:
-                            d1 = r1.json().get("data") or {}
+                            j1 = safe_json(r1, f"이력 조회 {clean_cno}")
+                            d1 = (j1.get("data") or {}) if j1 else {}
                             bas = d1.get("dma_csBasInf") or {}
                             objs = d1.get("dlt_dspslGdsDspslObjctLst") or []
                             for o in objs:
-                                if o.get("dspslAmt") and int(o.get("dspslAmt") or 0) > 0:
-                                    winning_price = int(o["dspslAmt"])
+                                amt = safe_int(o.get("dspslAmt"), 0)
+                                if amt > 0:
+                                    winning_price = amt
                                 if len(str(o.get("dspslDxdyYmd") or "")) == 8:
                                     ymd = str(o["dspslDxdyYmd"])
                                     next_date = f"{ymd[:4]}-{ymd[4:6]}-{ymd[6:8]}"
@@ -757,7 +828,8 @@ def run():
                                     timeout=8,
                                 )
                                 if r2.status_code == 200:
-                                    dxdy_list = (r2.json().get("data") or {}).get("dlt_dxdyDtsLst") or []
+                                    j2 = safe_json(r2, f"기일내역 조회 {clean_cno}")
+                                    dxdy_list = ((j2.get("data") or {}).get("dlt_dxdyDtsLst") or []) if j2 else []
                             non_empty = [x for x in dxdy_list if strip_html(x.get("dxdyRslt") or "")]
                             if non_empty:
                                 rslt = strip_html(non_empty[-1].get("dxdyRslt") or "")
@@ -785,8 +857,10 @@ def run():
 
         cutoff_str = (get_kst_today() - datetime.timedelta(days=60)).strftime("%Y-%m-%d")
         pruned_hist = [h for h in hist_map.values() if (h.get("archived_at") or today_str) >= cutoff_str]
-        with open(HISTORY_FILE_PATH, "w", encoding="utf-8") as f:
-            json.dump({"updated_at": today_str, "total_count": len(pruned_hist), "items": pruned_hist}, f, ensure_ascii=False, indent=2)
+        atomic_write_json(
+            HISTORY_FILE_PATH,
+            {"updated_at": today_str, "total_count": len(pruned_hist), "items": pruned_hist},
+        )
     except Exception as he:
         print(f"[!] 이력 아카이브 저장 건너뜀: {he}")
 

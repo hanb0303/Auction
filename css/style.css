@@ -1,5 +1,4 @@
 /* ===== Soft Apple & Toss Clean Design (Zero Shadow & SUIT Font) ===== */
-@import url('https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css');
 
 :root {
   --bg-page: #f2f4f6;
@@ -710,6 +709,8 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 290px;
 }
 
 

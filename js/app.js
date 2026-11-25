@@ -5,3969 +5,8 @@
 (function () {
   'use strict';
 
-  // Fallback Data for offline or direct file:// opening (Real Live Court Auction Data)
-  const FALLBACK_DATA = {
-    "updated_at":  "2026-10-22",
-    "total_count":  158,
-    "stats":  {
-                  "total":  158,
-                  "new_count":  96,
-                  "discounted_count":  62,
-                  "imminent_count":  57
-              },
-    "items":  [
-                  {
-                      "id":  "2025타경103160",
-                      "case_no":  "2025타경103160",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "삼성동 힐스테이트1 단지",
-                      "dong_ho":  "115동 101호",
-                      "households":  "144세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강남구 삼성동",
-                      "address":  "서울특별시 강남구 삼성동 16-2 삼성동 힐스테이트1 단지 115동 1층101호",
-                      "area_m2":  84.24,
-                      "area_pyeong":  25.5,
-                      "floor_info":  "1층",
-                      "appraisal_price":  2910000000,
-                      "minimum_price":  1862400000,
-                      "discount_rate":  36,
-                      "auction_round":  "3회차 (2회 유찰)",
-                      "auction_date":  "2026-10-28",
-                      "d_day":  6,
-                      "bid_deposit":  186240000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/24009",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%82%BC%EC%84%B1%EB%8F%99%20%EC%82%BC%EC%84%B1%EB%8F%99%20%ED%9E%90%EC%8A%A4%ED%85%8C%EC%9D%B4%ED%8A%B81%20%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경103555",
-                      "case_no":  "2025타경103555",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "관악산휴먼시아",
-                      "dong_ho":  "229동 704호",
-                      "households":  "2,810세대",
-                      "region_group":  "서울",
-                      "district":  "서울 관악구 신림동",
-                      "address":  "서울특별시 관악구 신림동 1735 관악산휴먼시아 229동 7층704호",
-                      "area_m2":  84.96,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "7층",
-                      "appraisal_price":  730000000,
-                      "minimum_price":  584000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  58400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/100344",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B4%80%EC%95%85%EA%B5%AC%20%EC%8B%A0%EB%A6%BC%EB%8F%99%20%EA%B4%80%EC%95%85%EC%82%B0%ED%9C%B4%EB%A8%BC%EC%8B%9C%EC%95%84"
-                  },
-                  {
-                      "id":  "2025타경103618",
-                      "case_no":  "2025타경103618",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "성지라빌레뜨",
-                      "dong_ho":  "비동 502호",
-                      "households":  "18세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 방배동",
-                      "address":  "서울특별시 서초구 방배동 845-14 성지라빌레뜨 비동 5층502호",
-                      "area_m2":  216.36,
-                      "area_pyeong":  65.4,
-                      "floor_info":  "5층",
-                      "appraisal_price":  3300000000,
-                      "minimum_price":  3300000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-05",
-                      "d_day":  14,
-                      "bid_deposit":  330000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/104739",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EB%B0%A9%EB%B0%B0%EB%8F%99%20%EC%84%B1%EC%A7%80%EB%9D%BC%EB%B9%8C%EB%A0%88%EB%9C%A8"
-                  },
-                  {
-                      "id":  "2025타경103954",
-                      "case_no":  "2025타경103954",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "래미안원펜타스",
-                      "dong_ho":  "102동 1403호",
-                      "households":  "641세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 반포동",
-                      "address":  "서울특별시 서초구 반포동 12 래미안원펜타스 102동 14층1403호",
-                      "area_m2":  84.73,
-                      "area_pyeong":  25.6,
-                      "floor_info":  "14층",
-                      "appraisal_price":  5800000000,
-                      "minimum_price":  4640000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-05",
-                      "d_day":  14,
-                      "bid_deposit":  464000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/169837",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EB%B0%98%ED%8F%AC%EB%8F%99%20%EB%9E%98%EB%AF%B8%EC%95%88%EC%9B%90%ED%8E%9C%ED%83%80%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2025타경104025",
-                      "case_no":  "2025타경104025",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "래미안포레",
-                      "dong_ho":  "315동 104호",
-                      "households":  "1,070세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강남구 자곡동",
-                      "address":  "서울특별시 강남구 자곡동 687 래미안포레 315동 1층104호",
-                      "area_m2":  84.89,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "1층",
-                      "appraisal_price":  1730000000,
-                      "minimum_price":  1730000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  173000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/107457",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%9E%90%EA%B3%A1%EB%8F%99%20%EB%9E%98%EB%AF%B8%EC%95%88%ED%8F%AC%EB%A0%88"
-                  },
-                  {
-                      "id":  "2025타경104108",
-                      "case_no":  "2025타경104108",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "동작협성휴포레시그니처",
-                      "dong_ho":  "105동 902호",
-                      "households":  "274세대",
-                      "region_group":  "서울",
-                      "district":  "서울 동작구 신대방동",
-                      "address":  "서울특별시 동작구 신대방동 686-48 동작협성휴포레시그니처 105동 9층902호",
-                      "area_m2":  84.98,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "9층",
-                      "appraisal_price":  1130000000,
-                      "minimum_price":  578560000,
-                      "discount_rate":  49,
-                      "auction_round":  "4회차 (3회 유찰)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  57856000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/124970",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EC%9E%91%EA%B5%AC%20%EC%8B%A0%EB%8C%80%EB%B0%A9%EB%8F%99%20%EB%8F%99%EC%9E%91%ED%98%91%EC%84%B1%ED%9C%B4%ED%8F%AC%EB%A0%88%EC%8B%9C%EA%B7%B8%EB%8B%88%EC%B2%98"
-                  },
-                  {
-                      "id":  "2025타경104308",
-                      "case_no":  "2025타경104308",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "래미안대치팰리스",
-                      "dong_ho":  "104동 1201호",
-                      "households":  "1,608세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강남구 대치동",
-                      "address":  "서울특별시 강남구 대치동 1027 래미안대치팰리스 104동 12층1201호",
-                      "area_m2":  84.98,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "12층",
-                      "appraisal_price":  5070000000,
-                      "minimum_price":  4056000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-05",
-                      "d_day":  14,
-                      "bid_deposit":  405600000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/180280",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%8C%80%EC%B9%98%EB%8F%99%20%EB%9E%98%EB%AF%B8%EC%95%88%EB%8C%80%EC%B9%98%ED%8C%B0%EB%A6%AC%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2025타경104318",
-                      "case_no":  "2025타경104318",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "청담린든그로브",
-                      "dong_ho":  "104동 204호",
-                      "households":  "114세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강남구 청담동",
-                      "address":  "서울특별시 강남구 청담동 67-1 청담린든그로브 104동 2층204호",
-                      "area_m2":  85.0,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "2층",
-                      "appraisal_price":  3400000000,
-                      "minimum_price":  3400000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-05",
-                      "d_day":  14,
-                      "bid_deposit":  340000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/112472",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%B2%AD%EB%8B%B4%EB%8F%99%20%EC%B2%AD%EB%8B%B4%EB%A6%B0%EB%93%A0%EA%B7%B8%EB%A1%9C%EB%B8%8C"
-                  },
-                  {
-                      "id":  "2025타경104590",
-                      "case_no":  "2025타경104590",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "서초교대이편한세상",
-                      "dong_ho":  "101동 802호",
-                      "households":  "435세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 서초동",
-                      "address":  "서울특별시 서초구 서초동 1686-9 서초교대이편한세상 101동 8층802호",
-                      "area_m2":  84.97,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "8층",
-                      "appraisal_price":  3461000000,
-                      "minimum_price":  2768800000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  276880000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/101344",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EC%84%9C%EC%B4%88%EB%8F%99%20%EC%84%9C%EC%B4%88%EA%B5%90%EB%8C%80%EC%9D%B4%ED%8E%B8%ED%95%9C%EC%84%B8%EC%83%81"
-                  },
-                  {
-                      "id":  "2026타경100062",
-                      "case_no":  "2026타경100062",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "청계천 두산위브더제니스",
-                      "dong_ho":  "2702호",
-                      "households":  "295세대",
-                      "region_group":  "서울",
-                      "district":  "서울 중구 흥인동",
-                      "address":  "서울특별시 중구 흥인동 13-1 청계천 두산위브더제니스 27층웨스트2702호",
-                      "area_m2":  147.32,
-                      "area_pyeong":  44.6,
-                      "floor_info":  "27층",
-                      "appraisal_price":  2052000000,
-                      "minimum_price":  1313280000,
-                      "discount_rate":  36,
-                      "auction_round":  "3회차 (2회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  131328000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/106942",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%A4%91%EA%B5%AC%20%ED%9D%A5%EC%9D%B8%EB%8F%99%20%EC%B2%AD%EA%B3%84%EC%B2%9C%20%EB%91%90%EC%82%B0%EC%9C%84%EB%B8%8C%EB%8D%94%EC%A0%9C%EB%8B%88%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2026타경100088",
-                      "case_no":  "2026타경100088",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "서초네스피아에이",
-                      "dong_ho":  "601호",
-                      "households":  "24세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 서초동",
-                      "address":  "서울특별시 서초구 서초동 1466-2 서초네스피아에이 6층601호",
-                      "area_m2":  104.75,
-                      "area_pyeong":  31.7,
-                      "floor_info":  "6층",
-                      "appraisal_price":  1250000000,
-                      "minimum_price":  1000000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  100000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EC%84%9C%EC%B4%88%EB%8F%99%20%EC%84%9C%EC%B4%88%EB%84%A4%EC%8A%A4%ED%94%BC%EC%95%84%EC%97%90%EC%9D%B4",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EC%84%9C%EC%B4%88%EB%8F%99%20%EC%84%9C%EC%B4%88%EB%84%A4%EC%8A%A4%ED%94%BC%EC%95%84%EC%97%90%EC%9D%B4"
-                  },
-                  {
-                      "id":  "2026타경100205",
-                      "case_no":  "2026타경100205",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "캐슬렉스",
-                      "dong_ho":  "601호",
-                      "households":  "6세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 방배동",
-                      "address":  "서울특별시 서초구 방배동 799-9 캐슬렉스 6층601호",
-                      "area_m2":  105.78,
-                      "area_pyeong":  32.0,
-                      "floor_info":  "6층",
-                      "appraisal_price":  1900364960,
-                      "minimum_price":  1216232000,
-                      "discount_rate":  36,
-                      "auction_round":  "3회차 (2회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  121623200,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/115384",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EB%B0%A9%EB%B0%B0%EB%8F%99%20%EC%BA%90%EC%8A%AC%EB%A0%89%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2026타경100316",
-                      "case_no":  "2026타경100316",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "반포센트럴자이",
-                      "dong_ho":  "104동 2201호",
-                      "households":  "160세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 잠원동",
-                      "address":  "서울특별시 서초구 잠원동 162 반포센트럴자이 104동 22층2201호",
-                      "area_m2":  84.98,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "22층",
-                      "appraisal_price":  5250000000,
-                      "minimum_price":  4200000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  420000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/118947",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EC%9E%A0%EC%9B%90%EB%8F%99%20%EB%B0%98%ED%8F%AC%EC%84%BC%ED%8A%B8%EB%9F%B4%EC%9E%90%EC%9D%B4"
-                  },
-                  {
-                      "id":  "2026타경100393",
-                      "case_no":  "2026타경100393",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "동부센트레빌",
-                      "dong_ho":  "101동 1801호",
-                      "households":  "122세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 방배동",
-                      "address":  "서울특별시 서초구 방배동 3275 동부센트레빌 101동 18층1801호",
-                      "area_m2":  134.04,
-                      "area_pyeong":  40.5,
-                      "floor_info":  "18층",
-                      "appraisal_price":  3235000000,
-                      "minimum_price":  2588000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  258800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/10495",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EB%B0%A9%EB%B0%B0%EB%8F%99%20%EB%8F%99%EB%B6%80%EC%84%BC%ED%8A%B8%EB%A0%88%EB%B9%8C"
-                  },
-                  {
-                      "id":  "2026타경100434",
-                      "case_no":  "2026타경100434",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "힐스나인빌리지",
-                      "dong_ho":  "101호",
-                      "households":  "9세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 방배동",
-                      "address":  "서울특별시 서초구 방배동 799-5 힐스나인빌리지 1층101호",
-                      "area_m2":  152.54,
-                      "area_pyeong":  46.1,
-                      "floor_info":  "1층",
-                      "appraisal_price":  2473000000,
-                      "minimum_price":  1978400000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  197840000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/120258",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EB%B0%A9%EB%B0%B0%EB%8F%99%20%ED%9E%90%EC%8A%A4%EB%82%98%EC%9D%B8%EB%B9%8C%EB%A6%AC%EC%A7%80"
-                  },
-                  {
-                      "id":  "2026타경100463",
-                      "case_no":  "2026타경100463",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "뉴서울아파트",
-                      "dong_ho":  "가동 406호",
-                      "households":  "1,571세대",
-                      "region_group":  "서울",
-                      "district":  "서울 관악구 신림동",
-                      "address":  "서울특별시 관악구 신림동 739 뉴서울아파트 가동 4층406호",
-                      "area_m2":  66.21,
-                      "area_pyeong":  20.0,
-                      "floor_info":  "4층",
-                      "appraisal_price":  430000000,
-                      "minimum_price":  430000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  43000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1051",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B4%80%EC%95%85%EA%B5%AC%20%EC%8B%A0%EB%A6%BC%EB%8F%99%20%EB%89%B4%EC%84%9C%EC%9A%B8%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경100495",
-                      "case_no":  "2026타경100495",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "동작상떼빌",
-                      "dong_ho":  "101동 906호",
-                      "households":  "545세대",
-                      "region_group":  "서울",
-                      "district":  "서울 동작구 신대방동",
-                      "address":  "서울특별시 동작구 신대방동 719 동작상떼빌 101동 9층906호",
-                      "area_m2":  128.61,
-                      "area_pyeong":  38.9,
-                      "floor_info":  "9층",
-                      "appraisal_price":  1390000000,
-                      "minimum_price":  1390000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  139000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/13311",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EC%9E%91%EA%B5%AC%20%EC%8B%A0%EB%8C%80%EB%B0%A9%EB%8F%99%20%EB%8F%99%EC%9E%91%EC%83%81%EB%96%BC%EB%B9%8C"
-                  },
-                  {
-                      "id":  "2026타경100530",
-                      "case_no":  "2026타경100530",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "역삼래미안",
-                      "dong_ho":  "108동 102호",
-                      "households":  "1,050세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강남구 역삼동",
-                      "address":  "서울특별시 강남구 역삼동 757 역삼래미안 108동 1층102호",
-                      "area_m2":  80.87,
-                      "area_pyeong":  24.5,
-                      "floor_info":  "1층",
-                      "appraisal_price":  3290000000,
-                      "minimum_price":  2632000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  263200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/13814",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%97%AD%EC%82%BC%EB%8F%99%20%EC%97%AD%EC%82%BC%EB%9E%98%EB%AF%B8%EC%95%88"
-                  },
-                  {
-                      "id":  "2026타경100545",
-                      "case_no":  "2026타경100545",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "흑석한강센트레빌2차",
-                      "dong_ho":  "105동 1404호",
-                      "households":  "963세대",
-                      "region_group":  "서울",
-                      "district":  "서울 동작구 흑석동",
-                      "address":  "서울특별시 동작구 흑석동 339 흑석한강센트레빌2차 105동 14층1404호",
-                      "area_m2":  119.73,
-                      "area_pyeong":  36.2,
-                      "floor_info":  "14층",
-                      "appraisal_price":  1120000000,
-                      "minimum_price":  1120000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  112000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/102641",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EC%9E%91%EA%B5%AC%20%ED%9D%91%EC%84%9D%EB%8F%99%20%ED%9D%91%EC%84%9D%ED%95%9C%EA%B0%95%EC%84%BC%ED%8A%B8%EB%A0%88%EB%B9%8C2%EC%B0%A8"
-                  },
-                  {
-                      "id":  "2026타경100629",
-                      "case_no":  "2026타경100629",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "하이파크아파트",
-                      "dong_ho":  "101동 805호",
-                      "households":  "48세대",
-                      "region_group":  "서울",
-                      "district":  "서울 관악구 남현동",
-                      "address":  "서울특별시 관악구 남현동 1079-3 하이파크아파트 101동 8층805호",
-                      "area_m2":  75.03,
-                      "area_pyeong":  22.7,
-                      "floor_info":  "8층",
-                      "appraisal_price":  818000000,
-                      "minimum_price":  818000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-05",
-                      "d_day":  14,
-                      "bid_deposit":  81800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/128327",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B4%80%EC%95%85%EA%B5%AC%20%EB%82%A8%ED%98%84%EB%8F%99%20%ED%95%98%EC%9D%B4%ED%8C%8C%ED%81%AC%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경100722",
-                      "case_no":  "2026타경100722",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "방배대우유로카운티",
-                      "dong_ho":  "105호",
-                      "households":  "65세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서초구 방배동",
-                      "address":  "서울특별시 서초구 방배동 847-34 방배대우유로카운티 1층105호",
-                      "area_m2":  234.01,
-                      "area_pyeong":  70.8,
-                      "floor_info":  "1층",
-                      "appraisal_price":  4200000000,
-                      "minimum_price":  4200000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-28",
-                      "d_day":  6,
-                      "bid_deposit":  420000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3397",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EC%B4%88%EA%B5%AC%20%EB%B0%A9%EB%B0%B0%EB%8F%99%20%EB%B0%A9%EB%B0%B0%EB%8C%80%EC%9A%B0%EC%9C%A0%EB%A1%9C%EC%B9%B4%EC%9A%B4%ED%8B%B0"
-                  },
-                  {
-                      "id":  "2026타경101303",
-                      "case_no":  "2026타경101303",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "타워팰리스",
-                      "dong_ho":  "1104호",
-                      "households":  "480세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강남구 도곡동",
-                      "address":  "서울특별시 강남구 도곡동 467-17 타워팰리스 에프동 11층1104호",
-                      "area_m2":  159.44,
-                      "area_pyeong":  48.2,
-                      "floor_info":  "11층",
-                      "appraisal_price":  5100000000,
-                      "minimum_price":  5100000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  510000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3038",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%8F%84%EA%B3%A1%EB%8F%99%20%ED%83%80%EC%9B%8C%ED%8C%B0%EB%A6%AC%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2024타경56181",
-                      "case_no":  "2024타경56181",
-                      "court":  "서울동부지법",
-                      "complex_name":  "광장극동아파트",
-                      "dong_ho":  "16동 202호",
-                      "households":  "1,344세대",
-                      "region_group":  "서울",
-                      "district":  "서울 광진구 광장동",
-                      "address":  "서울특별시 광진구 아차산로 552 16동 2층202호 (광장동,광장극동아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "2층",
-                      "appraisal_price":  2092000000,
-                      "minimum_price":  2092000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-02",
-                      "d_day":  11,
-                      "bid_deposit":  209200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/67",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B4%91%EC%A7%84%EA%B5%AC%20%EA%B4%91%EC%9E%A5%EB%8F%99%20%EA%B4%91%EC%9E%A5%EA%B7%B9%EB%8F%99%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경64236",
-                      "case_no":  "2024타경64236",
-                      "court":  "서울동부지법",
-                      "complex_name":  "거여2단지동아아파트",
-                      "dong_ho":  "201동 1302호",
-                      "households":  "478세대",
-                      "region_group":  "서울",
-                      "district":  "서울 송파구 거여동",
-                      "address":  "서울특별시 송파구 양산로8길 24 201동 13층1302호 (거여동,거여2단지동아아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "13층",
-                      "appraisal_price":  1360000000,
-                      "minimum_price":  1088000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-02",
-                      "d_day":  11,
-                      "bid_deposit":  108800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%86%A1%ED%8C%8C%EA%B5%AC%20%EA%B1%B0%EC%97%AC%EB%8F%99%20%EA%B1%B0%EC%97%AC2%EB%8B%A8%EC%A7%80%EB%8F%99%EC%95%84%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%86%A1%ED%8C%8C%EA%B5%AC%20%EA%B1%B0%EC%97%AC%EB%8F%99%20%EA%B1%B0%EC%97%AC2%EB%8B%A8%EC%A7%80%EB%8F%99%EC%95%84%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경385",
-                      "case_no":  "2025타경385",
-                      "court":  "서울동부지법",
-                      "complex_name":  "갤러리아팰리스",
-                      "dong_ho":  "3810호",
-                      "households":  "1,584세대",
-                      "region_group":  "서울",
-                      "district":  "서울 송파구 잠실동",
-                      "address":  "서울특별시 송파구 잠실동 40 갤러리아팰리스 에이동 38층3810호",
-                      "area_m2":  138.56,
-                      "area_pyeong":  41.9,
-                      "floor_info":  "38층",
-                      "appraisal_price":  2990000000,
-                      "minimum_price":  2392000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-26",
-                      "d_day":  4,
-                      "bid_deposit":  239200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/12236",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%86%A1%ED%8C%8C%EA%B5%AC%20%EC%9E%A0%EC%8B%A4%EB%8F%99%20%EA%B0%A4%EB%9F%AC%EB%A6%AC%EC%95%84%ED%8C%B0%EB%A6%AC%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2025타경478",
-                      "case_no":  "2025타경478",
-                      "court":  "서울동부지법",
-                      "complex_name":  "송파호반베르디움더퍼스트",
-                      "dong_ho":  "101동 2001호",
-                      "households":  "220세대",
-                      "region_group":  "서울",
-                      "district":  "서울 송파구 오금동",
-                      "address":  "서울특별시 송파구 오금동 619 송파호반베르디움더퍼스트 101동 20층2001호",
-                      "area_m2":  101.46,
-                      "area_pyeong":  30.7,
-                      "floor_info":  "20층",
-                      "appraisal_price":  1710000000,
-                      "minimum_price":  1710000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-26",
-                      "d_day":  4,
-                      "bid_deposit":  171000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/114818",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%86%A1%ED%8C%8C%EA%B5%AC%20%EC%98%A4%EA%B8%88%EB%8F%99%20%EC%86%A1%ED%8C%8C%ED%98%B8%EB%B0%98%EB%B2%A0%EB%A5%B4%EB%94%94%EC%9B%80%EB%8D%94%ED%8D%BC%EC%8A%A4%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경51453",
-                      "case_no":  "2025타경51453",
-                      "court":  "서울동부지법",
-                      "complex_name":  "성원아파트",
-                      "dong_ho":  "101동 1903호",
-                      "households":  "91세대",
-                      "region_group":  "서울",
-                      "district":  "서울 광진구 중곡동",
-                      "address":  "서울특별시 광진구 중곡동 681 성원아파트 101동 19층1903호",
-                      "area_m2":  84.98,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "19층",
-                      "appraisal_price":  670000000,
-                      "minimum_price":  670000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  67000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8572",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B4%91%EC%A7%84%EA%B5%AC%20%EC%A4%91%EA%B3%A1%EB%8F%99%20%EC%84%B1%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경52237",
-                      "case_no":  "2025타경52237",
-                      "court":  "서울동부지법",
-                      "complex_name":  "잠실시그마타워",
-                      "dong_ho":  "2105호",
-                      "households":  "84세대",
-                      "region_group":  "서울",
-                      "district":  "서울 송파구 신천동",
-                      "address":  "서울특별시 송파구 신천동 7-19 잠실시그마타워 21층2105호",
-                      "area_m2":  208.56,
-                      "area_pyeong":  63.1,
-                      "floor_info":  "21층",
-                      "appraisal_price":  2800000000,
-                      "minimum_price":  2240000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-02",
-                      "d_day":  11,
-                      "bid_deposit":  224000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8972",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%86%A1%ED%8C%8C%EA%B5%AC%20%EC%8B%A0%EC%B2%9C%EB%8F%99%20%EC%9E%A0%EC%8B%A4%EC%8B%9C%EA%B7%B8%EB%A7%88%ED%83%80%EC%9B%8C"
-                  },
-                  {
-                      "id":  "2026타경50548",
-                      "case_no":  "2026타경50548",
-                      "court":  "서울동부지법",
-                      "complex_name":  "금호현대아파트",
-                      "dong_ho":  "108동 204호",
-                      "households":  "693세대",
-                      "region_group":  "서울",
-                      "district":  "서울 성동구 응봉동",
-                      "address":  "서울특별시 성동구 응봉동 98 금호현대아파트 108동 2층204호",
-                      "area_m2":  79.8,
-                      "area_pyeong":  24.1,
-                      "floor_info":  "2층",
-                      "appraisal_price":  1290000000,
-                      "minimum_price":  1290000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  129000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/572",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%B1%EB%8F%99%EA%B5%AC%20%EC%9D%91%EB%B4%89%EB%8F%99%20%EA%B8%88%ED%98%B8%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경130525",
-                      "case_no":  "2024타경130525",
-                      "court":  "서울남부지법",
-                      "complex_name":  "마곡나루경남아파트",
-                      "dong_ho":  "1동 403호",
-                      "households":  "140세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강서구 마곡동",
-                      "address":  "서울특별시 강서구 양천로30길 108 제1동 제4층 제403호 (방화동, 마곡나루경남아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "4층",
-                      "appraisal_price":  953000000,
-                      "minimum_price":  762400000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  76240000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/20",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%A7%88%EA%B3%A1%EB%8F%99%20%EB%A7%88%EA%B3%A1%EB%82%98%EB%A3%A8%EA%B2%BD%EB%82%A8%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경149321",
-                      "case_no":  "2024타경149321",
-                      "court":  "서울남부지법",
-                      "complex_name":  "목동신시가지아파트",
-                      "dong_ho":  "720동 506호",
-                      "households":  "522세대",
-                      "region_group":  "서울",
-                      "district":  "서울 양천구 목동",
-                      "address":  "서울특별시 양천구 목동로 212 제720동 제5층 제506호 (목동, 목동신시가지아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "5층",
-                      "appraisal_price":  1750000000,
-                      "minimum_price":  1400000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  140000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/654",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%96%91%EC%B2%9C%EA%B5%AC%20%EB%AA%A9%EB%8F%99%20%EB%AA%A9%EB%8F%99%EC%8B%A0%EC%8B%9C%EA%B0%80%EC%A7%80%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경636",
-                      "case_no":  "2025타경636",
-                      "court":  "서울남부지법",
-                      "complex_name":  "강서금호어울림퍼스티어",
-                      "dong_ho":  "101동 105호",
-                      "households":  "1세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강서구 화곡동",
-                      "address":  "서울특별시 강서구 화곡동 1176 강서금호어울림퍼스티어 제101동 제1층 제105호",
-                      "area_m2":  59.74,
-                      "area_pyeong":  18.1,
-                      "floor_info":  "1층",
-                      "appraisal_price":  1050000000,
-                      "minimum_price":  1050000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-28",
-                      "d_day":  6,
-                      "bid_deposit":  105000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/145432",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%ED%99%94%EA%B3%A1%EB%8F%99%20%EA%B0%95%EC%84%9C%EA%B8%88%ED%98%B8%EC%96%B4%EC%9A%B8%EB%A6%BC%ED%8D%BC%EC%8A%A4%ED%8B%B0%EC%96%B4"
-                  },
-                  {
-                      "id":  "2025타경10477",
-                      "case_no":  "2025타경10477",
-                      "court":  "서울남부지법",
-                      "complex_name":  "부영그린타운3차",
-                      "dong_ho":  "1403호",
-                      "households":  "276세대",
-                      "region_group":  "서울",
-                      "district":  "서울 양천구 목동",
-                      "address":  "서울특별시 양천구 목동 908-34 부영그린타운3차 제14층 제1403호",
-                      "area_m2":  89.61,
-                      "area_pyeong":  27.1,
-                      "floor_info":  "14층",
-                      "appraisal_price":  1450000000,
-                      "minimum_price":  1160000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  116000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3768",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%96%91%EC%B2%9C%EA%B5%AC%20%EB%AA%A9%EB%8F%99%20%EB%B6%80%EC%98%81%EA%B7%B8%EB%A6%B0%ED%83%80%EC%9A%B43%EC%B0%A8"
-                  },
-                  {
-                      "id":  "2025타경11570",
-                      "case_no":  "2025타경11570",
-                      "court":  "서울남부지법",
-                      "complex_name":  "목동신시가지아파트",
-                      "dong_ho":  "611동 206호",
-                      "households":  "522세대",
-                      "region_group":  "서울",
-                      "district":  "서울 양천구 목동",
-                      "address":  "서울특별시 양천구 목동 911 목동신시가지아파트 제611동 제2층 제206호",
-                      "area_m2":  47.94,
-                      "area_pyeong":  14.5,
-                      "floor_info":  "2층",
-                      "appraisal_price":  2170000000,
-                      "minimum_price":  2170000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  217000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/654",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%96%91%EC%B2%9C%EA%B5%AC%20%EB%AA%A9%EB%8F%99%20%EB%AA%A9%EB%8F%99%EC%8B%A0%EC%8B%9C%EA%B0%80%EC%A7%80%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경12360",
-                      "case_no":  "2025타경12360",
-                      "court":  "서울남부지법",
-                      "complex_name":  "문래동해태아파트",
-                      "dong_ho":  "102동 302호",
-                      "households":  "101세대",
-                      "region_group":  "서울",
-                      "district":  "서울 영등포구 문래동3가",
-                      "address":  "서울특별시 영등포구 문래동3가 13 문래동해태아파트 제102동 제3층 제302호",
-                      "area_m2":  59.41,
-                      "area_pyeong":  18.0,
-                      "floor_info":  "3층",
-                      "appraisal_price":  608000000,
-                      "minimum_price":  486400000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  48640000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1213",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%98%81%EB%93%B1%ED%8F%AC%EA%B5%AC%20%EB%AC%B8%EB%9E%98%EB%8F%993%EA%B0%80%20%EB%AC%B8%EB%9E%98%EB%8F%99%ED%95%B4%ED%83%9C%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13394",
-                      "case_no":  "2025타경13394",
-                      "court":  "서울남부지법",
-                      "complex_name":  "방화아파트",
-                      "dong_ho":  "303동 610호",
-                      "households":  "3,698세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강서구 방화동",
-                      "address":  "서울특별시 강서구 방화동 832 방화아파트 제303동 제6층 제610호",
-                      "area_m2":  39.36,
-                      "area_pyeong":  11.9,
-                      "floor_info":  "6층",
-                      "appraisal_price":  484000000,
-                      "minimum_price":  484000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  48400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%B0%A9%ED%99%94%EB%8F%99%20%EB%B0%A9%ED%99%94%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%B0%A9%ED%99%94%EB%8F%99%20%EB%B0%A9%ED%99%94%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13639",
-                      "case_no":  "2025타경13639",
-                      "court":  "서울남부지법",
-                      "complex_name":  "한신휴플러스아파트",
-                      "dong_ho":  "102동 1301호",
-                      "households":  "498세대",
-                      "region_group":  "서울",
-                      "district":  "서울 구로구 구로동",
-                      "address":  "서울특별시 구로구 구로동 1280 한신휴플러스아파트 제102동 제13층 제1301호",
-                      "area_m2":  58.03,
-                      "area_pyeong":  17.6,
-                      "floor_info":  "13층",
-                      "appraisal_price":  749000000,
-                      "minimum_price":  749000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  74900000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/18913",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B5%AC%EB%A1%9C%EA%B5%AC%20%EA%B5%AC%EB%A1%9C%EB%8F%99%20%ED%95%9C%EC%8B%A0%ED%9C%B4%ED%94%8C%EB%9F%AC%EC%8A%A4%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13744",
-                      "case_no":  "2025타경13744",
-                      "court":  "서울남부지법",
-                      "complex_name":  "고척엘아이지리가 1단지",
-                      "dong_ho":  "101동 902호",
-                      "households":  "421세대",
-                      "region_group":  "서울",
-                      "district":  "서울 구로구 고척동",
-                      "address":  "서울특별시 구로구 고척동 340 고척엘아이지리가 1단지 제101동 제9층 제902호",
-                      "area_m2":  84.91,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "9층",
-                      "appraisal_price":  879000000,
-                      "minimum_price":  879000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-29",
-                      "d_day":  7,
-                      "bid_deposit":  87900000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EA%B5%AC%EB%A1%9C%EA%B5%AC%20%EA%B3%A0%EC%B2%99%EB%8F%99%20%EA%B3%A0%EC%B2%99%EC%97%98%EC%95%84%EC%9D%B4%EC%A7%80%EB%A6%AC%EA%B0%80%201%EB%8B%A8%EC%A7%80",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B5%AC%EB%A1%9C%EA%B5%AC%20%EA%B3%A0%EC%B2%99%EB%8F%99%20%EA%B3%A0%EC%B2%99%EC%97%98%EC%95%84%EC%9D%B4%EC%A7%80%EB%A6%AC%EA%B0%80%201%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2026타경23",
-                      "case_no":  "2026타경23",
-                      "court":  "서울남부지법",
-                      "complex_name":  "마곡우림필유아파트",
-                      "dong_ho":  "102동 108호",
-                      "households":  "320세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강서구 마곡동",
-                      "address":  "서울특별시 강서구 마곡동 1467 마곡우림필유아파트 제102동 제1층 제108호",
-                      "area_m2":  74.95,
-                      "area_pyeong":  22.7,
-                      "floor_info":  "1층",
-                      "appraisal_price":  824000000,
-                      "minimum_price":  824000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  82400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/9410",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%A7%88%EA%B3%A1%EB%8F%99%20%EB%A7%88%EA%B3%A1%EC%9A%B0%EB%A6%BC%ED%95%84%EC%9C%A0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경33",
-                      "case_no":  "2026타경33",
-                      "court":  "서울남부지법",
-                      "complex_name":  "신도림태영타운",
-                      "dong_ho":  "106동 1506호",
-                      "households":  "1,252세대",
-                      "region_group":  "서울",
-                      "district":  "서울 구로구 구로동",
-                      "address":  "서울특별시 구로구 구로동 1267 신도림태영타운 제106동 제15층 제1506호",
-                      "area_m2":  84.87,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "15층",
-                      "appraisal_price":  1400000000,
-                      "minimum_price":  1400000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  140000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3204",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B5%AC%EB%A1%9C%EA%B5%AC%20%EA%B5%AC%EB%A1%9C%EB%8F%99%20%EC%8B%A0%EB%8F%84%EB%A6%BC%ED%83%9C%EC%98%81%ED%83%80%EC%9A%B4"
-                  },
-                  {
-                      "id":  "2026타경216",
-                      "case_no":  "2026타경216",
-                      "court":  "서울남부지법",
-                      "complex_name":  "수명산에스케이뷰아파트",
-                      "dong_ho":  "101동 804호",
-                      "households":  "171세대",
-                      "region_group":  "서울",
-                      "district":  "서울 양천구 신월동",
-                      "address":  "서울특별시 양천구 신월동 1053 수명산에스케이뷰아파트 제101동 제8층 제804호",
-                      "area_m2":  128.76,
-                      "area_pyeong":  38.9,
-                      "floor_info":  "8층",
-                      "appraisal_price":  1110000000,
-                      "minimum_price":  1110000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  111000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/10861884",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%96%91%EC%B2%9C%EA%B5%AC%20%EC%8B%A0%EC%9B%94%EB%8F%99%20%EC%88%98%EB%AA%85%EC%82%B0%EC%97%90%EC%8A%A4%EC%BC%80%EC%9D%B4%EB%B7%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경3747",
-                      "case_no":  "2026타경3747",
-                      "court":  "서울남부지법",
-                      "complex_name":  "롯데아파트",
-                      "dong_ho":  "1003호",
-                      "households":  "157세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강서구 내발산동",
-                      "address":  "서울특별시 강서구 내발산동 728 롯데아파트 제10층 제1003호",
-                      "area_m2":  84.51,
-                      "area_pyeong":  25.6,
-                      "floor_info":  "10층",
-                      "appraisal_price":  904000000,
-                      "minimum_price":  904000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  90400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8362",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%82%B4%EB%B0%9C%EC%82%B0%EB%8F%99%20%EB%A1%AF%EB%8D%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경4088",
-                      "case_no":  "2026타경4088",
-                      "court":  "서울남부지법",
-                      "complex_name":  "베어스타운아파트",
-                      "dong_ho":  "102동 1104호",
-                      "households":  "304세대",
-                      "region_group":  "서울",
-                      "district":  "서울 영등포구 문래동6가",
-                      "address":  "서울특별시 영등포구 문래동6가 38-1 베어스타운아파트 제102동 제11층 제1104호",
-                      "area_m2":  59.95,
-                      "area_pyeong":  18.1,
-                      "floor_info":  "11층",
-                      "appraisal_price":  1020000000,
-                      "minimum_price":  1020000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  102000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/707",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%98%81%EB%93%B1%ED%8F%AC%EA%B5%AC%20%EB%AC%B8%EB%9E%98%EB%8F%996%EA%B0%80%20%EB%B2%A0%EC%96%B4%EC%8A%A4%ED%83%80%EC%9A%B4%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경4176",
-                      "case_no":  "2026타경4176",
-                      "court":  "서울남부지법",
-                      "complex_name":  "장미아파트",
-                      "dong_ho":  "103동 1004호",
-                      "households":  "387세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강서구 방화동",
-                      "address":  "서울특별시 강서구 방화동 841 장미아파트 제103동 제10층 제1004호",
-                      "area_m2":  39.96,
-                      "area_pyeong":  12.1,
-                      "floor_info":  "10층",
-                      "appraisal_price":  466000000,
-                      "minimum_price":  466000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  46600000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/22",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%B0%A9%ED%99%94%EB%8F%99%20%EC%9E%A5%EB%AF%B8%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경4305",
-                      "case_no":  "2026타경4305",
-                      "court":  "서울남부지법",
-                      "complex_name":  "대림동문영칸타빌레아파트",
-                      "dong_ho":  "101동 704호",
-                      "households":  "133세대",
-                      "region_group":  "서울",
-                      "district":  "서울 영등포구 대림동",
-                      "address":  "서울특별시 영등포구 대림동 1061 대림동문영칸타빌레아파트 제101동 제7층 제704호",
-                      "area_m2":  120.18,
-                      "area_pyeong":  36.4,
-                      "floor_info":  "7층",
-                      "appraisal_price":  781000000,
-                      "minimum_price":  781000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  78100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%98%81%EB%93%B1%ED%8F%AC%EA%B5%AC%20%EB%8C%80%EB%A6%BC%EB%8F%99%20%EB%8C%80%EB%A6%BC%EB%8F%99%EB%AC%B8%EC%98%81%EC%B9%B8%ED%83%80%EB%B9%8C%EB%A0%88%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%98%81%EB%93%B1%ED%8F%AC%EA%B5%AC%20%EB%8C%80%EB%A6%BC%EB%8F%99%20%EB%8C%80%EB%A6%BC%EB%8F%99%EB%AC%B8%EC%98%81%EC%B9%B8%ED%83%80%EB%B9%8C%EB%A0%88%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경4672",
-                      "case_no":  "2026타경4672",
-                      "court":  "서울남부지법",
-                      "complex_name":  "영등포중흥에스클래스",
-                      "dong_ho":  "101동 705호",
-                      "households":  "308세대",
-                      "region_group":  "서울",
-                      "district":  "서울 영등포구 양평동1가",
-                      "address":  "서울특별시 영등포구 양평동1가 271 영등포중흥에스클래스 제101동 제7층 제705호",
-                      "area_m2":  55.95,
-                      "area_pyeong":  16.9,
-                      "floor_info":  "7층",
-                      "appraisal_price":  1280000000,
-                      "minimum_price":  1280000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-28",
-                      "d_day":  6,
-                      "bid_deposit":  128000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%98%81%EB%93%B1%ED%8F%AC%EA%B5%AC%20%EC%96%91%ED%8F%89%EB%8F%991%EA%B0%80%20%EC%98%81%EB%93%B1%ED%8F%AC%EC%A4%91%ED%9D%A5%EC%97%90%EC%8A%A4%ED%81%B4%EB%9E%98%EC%8A%A4",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%98%81%EB%93%B1%ED%8F%AC%EA%B5%AC%20%EC%96%91%ED%8F%89%EB%8F%991%EA%B0%80%20%EC%98%81%EB%93%B1%ED%8F%AC%EC%A4%91%ED%9D%A5%EC%97%90%EC%8A%A4%ED%81%B4%EB%9E%98%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2026타경4853",
-                      "case_no":  "2026타경4853",
-                      "court":  "서울남부지법",
-                      "complex_name":  "목동현대 하이페리온2",
-                      "dong_ho":  "201동 1403호",
-                      "households":  "576세대",
-                      "region_group":  "서울",
-                      "district":  "서울 양천구 목동",
-                      "address":  "서울특별시 양천구 목동 961 목동현대 하이페리온2 제201동 제14층 제1403호",
-                      "area_m2":  155.59,
-                      "area_pyeong":  47.1,
-                      "floor_info":  "14층",
-                      "appraisal_price":  3580000000,
-                      "minimum_price":  3580000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-28",
-                      "d_day":  6,
-                      "bid_deposit":  358000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%96%91%EC%B2%9C%EA%B5%AC%20%EB%AA%A9%EB%8F%99%20%EB%AA%A9%EB%8F%99%ED%98%84%EB%8C%80%20%ED%95%98%EC%9D%B4%ED%8E%98%EB%A6%AC%EC%98%A82",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%96%91%EC%B2%9C%EA%B5%AC%20%EB%AA%A9%EB%8F%99%20%EB%AA%A9%EB%8F%99%ED%98%84%EB%8C%80%20%ED%95%98%EC%9D%B4%ED%8E%98%EB%A6%AC%EC%98%A82"
-                  },
-                  {
-                      "id":  "2023타경106702",
-                      "case_no":  "2023타경106702",
-                      "court":  "서울북부지법",
-                      "complex_name":  "동진,신안아파트",
-                      "dong_ho":  "108동 1103호",
-                      "households":  "468세대",
-                      "region_group":  "서울",
-                      "district":  "서울 노원구 중계동",
-                      "address":  "서울특별시 노원구 중계로 195 108동 11층1103호 (중계동,동진,신안아파트)",
-                      "area_m2":  134.74,
-                      "area_pyeong":  40.8,
-                      "floor_info":  "11층",
-                      "appraisal_price":  1350000000,
-                      "minimum_price":  1350000000,
-                      "discount_rate":  0,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  135000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/233",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%A4%91%EA%B3%84%EB%8F%99%20%EB%8F%99%EC%A7%84%2C%EC%8B%A0%EC%95%88%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경108231",
-                      "case_no":  "2024타경108231",
-                      "court":  "서울북부지법",
-                      "complex_name":  "한신.동성아파트",
-                      "dong_ho":  "5동 608호",
-                      "households":  "498세대",
-                      "region_group":  "서울",
-                      "district":  "서울 노원구 하계동",
-                      "address":  "서울특별시 노원구 한글비석로 151 5동 6층608호 (하계동,한신.동성아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "6층",
-                      "appraisal_price":  990000000,
-                      "minimum_price":  792000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  79200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%ED%95%98%EA%B3%84%EB%8F%99%20%ED%95%9C%EC%8B%A0.%EB%8F%99%EC%84%B1%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%ED%95%98%EA%B3%84%EB%8F%99%20%ED%95%9C%EC%8B%A0.%EB%8F%99%EC%84%B1%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경112971",
-                      "case_no":  "2024타경112971",
-                      "court":  "서울북부지법",
-                      "complex_name":  "전농동삼성아파트",
-                      "dong_ho":  "105동 502호",
-                      "households":  "757세대",
-                      "region_group":  "서울",
-                      "district":  "서울 동대문구 전농동",
-                      "address":  "서울특별시 동대문구 전농로 192 105동 5층502호 (전농동,전농동삼성아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "5층",
-                      "appraisal_price":  766000000,
-                      "minimum_price":  612800000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  61280000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1254",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EB%8C%80%EB%AC%B8%EA%B5%AC%20%EC%A0%84%EB%86%8D%EB%8F%99%20%EC%A0%84%EB%86%8D%EB%8F%99%EC%82%BC%EC%84%B1%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경113523",
-                      "case_no":  "2024타경113523",
-                      "court":  "서울북부지법",
-                      "complex_name":  "오동공원현대홈타운",
-                      "dong_ho":  "103동 805호",
-                      "households":  "245세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강북구 번동",
-                      "address":  "서울특별시 강북구 오현로31길 89 103동 8층805호 (번동,오동공원현대홈타운)",
-                      "area_m2":  84.44,
-                      "area_pyeong":  25.5,
-                      "floor_info":  "8층",
-                      "appraisal_price":  643000000,
-                      "minimum_price":  514400000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  51440000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/9086",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%B2%88%EB%8F%99%20%EC%98%A4%EB%8F%99%EA%B3%B5%EC%9B%90%ED%98%84%EB%8C%80%ED%99%88%ED%83%80%EC%9A%B4"
-                  },
-                  {
-                      "id":  "2025타경3371",
-                      "case_no":  "2025타경3371",
-                      "court":  "서울북부지법",
-                      "complex_name":  "건영2차아파트",
-                      "dong_ho":  "204동 503호",
-                      "households":  "397세대",
-                      "region_group":  "서울",
-                      "district":  "서울 중랑구 상봉동",
-                      "address":  "서울특별시 중랑구 상봉동 63 건영2차아파트 204동 5층503호",
-                      "area_m2":  84.96,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "5층",
-                      "appraisal_price":  736000000,
-                      "minimum_price":  736000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  73600000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/806",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%A4%91%EB%9E%91%EA%B5%AC%20%EC%83%81%EB%B4%89%EB%8F%99%20%EA%B1%B4%EC%98%812%EC%B0%A8%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경6035",
-                      "case_no":  "2025타경6035",
-                      "court":  "서울북부지법",
-                      "complex_name":  "에스케이북한산시티아파트",
-                      "dong_ho":  "124동 402호",
-                      "households":  "5,327세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강북구 미아동",
-                      "address":  "서울특별시 강북구 미아동 1353 에스케이북한산시티아파트 124동 4층402호",
-                      "area_m2":  84.76,
-                      "area_pyeong":  25.6,
-                      "floor_info":  "4층",
-                      "appraisal_price":  730000000,
-                      "minimum_price":  730000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  73000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3098",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%AF%B8%EC%95%84%EB%8F%99%20%EC%97%90%EC%8A%A4%EC%BC%80%EC%9D%B4%EB%B6%81%ED%95%9C%EC%82%B0%EC%8B%9C%ED%8B%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경6110",
-                      "case_no":  "2025타경6110",
-                      "court":  "서울북부지법",
-                      "complex_name":  "학여울청구아파트",
-                      "dong_ho":  "108동 402호",
-                      "households":  "378세대",
-                      "region_group":  "서울",
-                      "district":  "서울 노원구 하계동",
-                      "address":  "서울특별시 노원구 하계동 354 학여울청구아파트 108동 4층402호",
-                      "area_m2":  113.51,
-                      "area_pyeong":  34.3,
-                      "floor_info":  "4층",
-                      "appraisal_price":  924000000,
-                      "minimum_price":  924000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  92400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/128",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%ED%95%98%EA%B3%84%EB%8F%99%20%ED%95%99%EC%97%AC%EC%9A%B8%EC%B2%AD%EA%B5%AC%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경6127",
-                      "case_no":  "2025타경6127",
-                      "court":  "서울북부지법",
-                      "complex_name":  "성원아파트",
-                      "dong_ho":  "101동 1406호",
-                      "households":  "271세대",
-                      "region_group":  "서울",
-                      "district":  "서울 성북구 정릉동",
-                      "address":  "서울특별시 성북구 정릉동 1019 성원아파트 101동 14층1406호",
-                      "area_m2":  59.94,
-                      "area_pyeong":  18.1,
-                      "floor_info":  "14층",
-                      "appraisal_price":  575000000,
-                      "minimum_price":  460000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  46000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1188",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%B1%EB%B6%81%EA%B5%AC%20%EC%A0%95%EB%A6%89%EB%8F%99%20%EC%84%B1%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경11975",
-                      "case_no":  "2025타경11975",
-                      "court":  "서울북부지법",
-                      "complex_name":  "풍림아파트",
-                      "dong_ho":  "103동 1202호",
-                      "households":  "460세대",
-                      "region_group":  "서울",
-                      "district":  "서울 성북구 돈암동",
-                      "address":  "서울특별시 성북구 돈암동 632 풍림아파트 103동 12층1202호",
-                      "area_m2":  114.41,
-                      "area_pyeong":  34.6,
-                      "floor_info":  "12층",
-                      "appraisal_price":  810000000,
-                      "minimum_price":  648000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  64800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/580",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%B1%EB%B6%81%EA%B5%AC%20%EB%8F%88%EC%95%94%EB%8F%99%20%ED%92%8D%EB%A6%BC%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경12977",
-                      "case_no":  "2025타경12977",
-                      "court":  "서울북부지법",
-                      "complex_name":  "성원아파트",
-                      "dong_ho":  "101동 401호",
-                      "households":  "340세대",
-                      "region_group":  "서울",
-                      "district":  "서울 도봉구 방학동",
-                      "address":  "서울특별시 도봉구 방학동 735 성원아파트 101동 4층401호",
-                      "area_m2":  59.94,
-                      "area_pyeong":  18.1,
-                      "floor_info":  "4층",
-                      "appraisal_price":  503000000,
-                      "minimum_price":  402400000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  40240000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/101855",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%84%EB%B4%89%EA%B5%AC%20%EB%B0%A9%ED%95%99%EB%8F%99%20%EC%84%B1%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13525",
-                      "case_no":  "2025타경13525",
-                      "court":  "서울북부지법",
-                      "complex_name":  "진로아파트",
-                      "dong_ho":  "702동 1101호",
-                      "households":  "818세대",
-                      "region_group":  "서울",
-                      "district":  "서울 중랑구 신내동",
-                      "address":  "서울특별시 중랑구 신내동 654 진로아파트 제702동 제11층 제1101호",
-                      "area_m2":  101.86,
-                      "area_pyeong":  30.8,
-                      "floor_info":  "11층",
-                      "appraisal_price":  880000000,
-                      "minimum_price":  704000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  70400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%A4%91%EB%9E%91%EA%B5%AC%20%EC%8B%A0%EB%82%B4%EB%8F%99%20%EC%A7%84%EB%A1%9C%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%A4%91%EB%9E%91%EA%B5%AC%20%EC%8B%A0%EB%82%B4%EB%8F%99%20%EC%A7%84%EB%A1%9C%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13714",
-                      "case_no":  "2025타경13714",
-                      "court":  "서울북부지법",
-                      "complex_name":  "삼환도봉아파트",
-                      "dong_ho":  "1동 906호",
-                      "households":  "993세대",
-                      "region_group":  "서울",
-                      "district":  "서울 도봉구 도봉동",
-                      "address":  "서울특별시 도봉구 도봉동 87 삼환도봉아파트 1동 9층 906호",
-                      "area_m2":  83.97,
-                      "area_pyeong":  25.4,
-                      "floor_info":  "9층",
-                      "appraisal_price":  631000000,
-                      "minimum_price":  631000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  63100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/265",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%84%EB%B4%89%EA%B5%AC%20%EB%8F%84%EB%B4%89%EB%8F%99%20%EC%82%BC%ED%99%98%EB%8F%84%EB%B4%89%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13779",
-                      "case_no":  "2025타경13779",
-                      "court":  "서울북부지법",
-                      "complex_name":  "창동금호어울림아파트",
-                      "dong_ho":  "106동 202호",
-                      "households":  "299세대",
-                      "region_group":  "서울",
-                      "district":  "서울 도봉구 창동",
-                      "address":  "서울특별시 도봉구 창동 823 창동금호어울림아파트 106동 2층 202호",
-                      "area_m2":  84.99,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "2층",
-                      "appraisal_price":  820000000,
-                      "minimum_price":  820000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  82000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8653",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%84%EB%B4%89%EA%B5%AC%20%EC%B0%BD%EB%8F%99%20%EC%B0%BD%EB%8F%99%EA%B8%88%ED%98%B8%EC%96%B4%EC%9A%B8%EB%A6%BC%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13782",
-                      "case_no":  "2025타경13782",
-                      "court":  "서울북부지법",
-                      "complex_name":  "동아에코빌아파트",
-                      "dong_ho":  "106동 1504호",
-                      "households":  "526세대",
-                      "region_group":  "서울",
-                      "district":  "서울 도봉구 도봉동",
-                      "address":  "서울특별시 도봉구 도봉동 654 동아에코빌아파트 106동 15층1504호",
-                      "area_m2":  105.98,
-                      "area_pyeong":  32.1,
-                      "floor_info":  "15층",
-                      "appraisal_price":  820000000,
-                      "minimum_price":  820000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  82000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%8F%84%EB%B4%89%EA%B5%AC%20%EB%8F%84%EB%B4%89%EB%8F%99%20%EB%8F%99%EC%95%84%EC%97%90%EC%BD%94%EB%B9%8C%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%84%EB%B4%89%EA%B5%AC%20%EB%8F%84%EB%B4%89%EB%8F%99%20%EB%8F%99%EC%95%84%EC%97%90%EC%BD%94%EB%B9%8C%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13787",
-                      "case_no":  "2025타경13787",
-                      "court":  "서울북부지법",
-                      "complex_name":  "한양아파트",
-                      "dong_ho":  "52동 1303호",
-                      "households":  "414세대",
-                      "region_group":  "서울",
-                      "district":  "서울 도봉구 쌍문동",
-                      "address":  "서울특별시 도봉구 쌍문동 59-3 한양아파트 52동 13층 1303호",
-                      "area_m2":  65.37,
-                      "area_pyeong":  19.8,
-                      "floor_info":  "13층",
-                      "appraisal_price":  432000000,
-                      "minimum_price":  345600000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  34560000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%8F%84%EB%B4%89%EA%B5%AC%20%EC%8C%8D%EB%AC%B8%EB%8F%99%20%ED%95%9C%EC%96%91%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%84%EB%B4%89%EA%B5%AC%20%EC%8C%8D%EB%AC%B8%EB%8F%99%20%ED%95%9C%EC%96%91%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경13854",
-                      "case_no":  "2025타경13854",
-                      "court":  "서울북부지법",
-                      "complex_name":  "삼성래미안트리베라아파트",
-                      "dong_ho":  "219동 1402호",
-                      "households":  "1,330세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강북구 미아동",
-                      "address":  "서울특별시 강북구 미아동 812 삼성래미안트리베라아파트 219동 14층 1402호",
-                      "area_m2":  84.29,
-                      "area_pyeong":  25.5,
-                      "floor_info":  "14층",
-                      "appraisal_price":  916000000,
-                      "minimum_price":  916000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  91600000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%AF%B8%EC%95%84%EB%8F%99%20%EC%82%BC%EC%84%B1%EB%9E%98%EB%AF%B8%EC%95%88%ED%8A%B8%EB%A6%AC%EB%B2%A0%EB%9D%BC%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%AF%B8%EC%95%84%EB%8F%99%20%EC%82%BC%EC%84%B1%EB%9E%98%EB%AF%B8%EC%95%88%ED%8A%B8%EB%A6%AC%EB%B2%A0%EB%9D%BC%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경17",
-                      "case_no":  "2026타경17",
-                      "court":  "서울북부지법",
-                      "complex_name":  "상계3차현대아파트",
-                      "dong_ho":  "304동 1404호",
-                      "households":  "494세대",
-                      "region_group":  "서울",
-                      "district":  "서울 노원구 상계동",
-                      "address":  "서울특별시 노원구 상계동 1063 상계3차현대아파트 304동 14층1404호",
-                      "area_m2":  84.96,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "14층",
-                      "appraisal_price":  676000000,
-                      "minimum_price":  676000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  67600000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%83%81%EA%B3%84%EB%8F%99%20%EC%83%81%EA%B3%843%EC%B0%A8%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%83%81%EA%B3%84%EB%8F%99%20%EC%83%81%EA%B3%843%EC%B0%A8%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경149",
-                      "case_no":  "2026타경149",
-                      "court":  "서울북부지법",
-                      "complex_name":  "면목한신아파트",
-                      "dong_ho":  "8동 606호",
-                      "households":  "1,362세대",
-                      "region_group":  "서울",
-                      "district":  "서울 중랑구 면목동",
-                      "address":  "서울특별시 중랑구 면목동 193-1 면목한신아파트 8동 6층606호",
-                      "area_m2":  84.92,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "6층",
-                      "appraisal_price":  720000000,
-                      "minimum_price":  720000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  72000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%A4%91%EB%9E%91%EA%B5%AC%20%EB%A9%B4%EB%AA%A9%EB%8F%99%20%EB%A9%B4%EB%AA%A9%ED%95%9C%EC%8B%A0%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%A4%91%EB%9E%91%EA%B5%AC%20%EB%A9%B4%EB%AA%A9%EB%8F%99%20%EB%A9%B4%EB%AA%A9%ED%95%9C%EC%8B%A0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경159",
-                      "case_no":  "2026타경159",
-                      "court":  "서울북부지법",
-                      "complex_name":  "성원아파트",
-                      "dong_ho":  "101동 608호",
-                      "households":  "91세대",
-                      "region_group":  "서울",
-                      "district":  "서울 중랑구 면목동",
-                      "address":  "서울특별시 중랑구 면목동 1515 성원아파트 101동 6층608호",
-                      "area_m2":  84.96,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "6층",
-                      "appraisal_price":  706000000,
-                      "minimum_price":  706000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  70600000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8572",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%A4%91%EB%9E%91%EA%B5%AC%20%EB%A9%B4%EB%AA%A9%EB%8F%99%20%EC%84%B1%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경10032",
-                      "case_no":  "2026타경10032",
-                      "court":  "서울북부지법",
-                      "complex_name":  "월계센트럴아이파크아파트",
-                      "dong_ho":  "101동 2402호",
-                      "households":  "859세대",
-                      "region_group":  "서울",
-                      "district":  "서울 노원구 월계동",
-                      "address":  "서울특별시 노원구 월계동 951 월계센트럴아이파크아파트 101동 24층2402호",
-                      "area_m2":  84.99,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "24층",
-                      "appraisal_price":  1070000000,
-                      "minimum_price":  1070000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  107000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%9B%94%EA%B3%84%EB%8F%99%20%EC%9B%94%EA%B3%84%EC%84%BC%ED%8A%B8%EB%9F%B4%EC%95%84%EC%9D%B4%ED%8C%8C%ED%81%AC%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%9B%94%EA%B3%84%EB%8F%99%20%EC%9B%94%EA%B3%84%EC%84%BC%ED%8A%B8%EB%9F%B4%EC%95%84%EC%9D%B4%ED%8C%8C%ED%81%AC%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경10075",
-                      "case_no":  "2026타경10075",
-                      "court":  "서울북부지법",
-                      "complex_name":  "현대아파트",
-                      "dong_ho":  "107동 501호",
-                      "households":  "783세대",
-                      "region_group":  "서울",
-                      "district":  "서울 도봉구 쌍문동",
-                      "address":  "서울특별시 도봉구 쌍문동 54 현대아파트 107동 5층 501호",
-                      "area_m2":  84.66,
-                      "area_pyeong":  25.6,
-                      "floor_info":  "5층",
-                      "appraisal_price":  548000000,
-                      "minimum_price":  438400000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  43840000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/355",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%84%EB%B4%89%EA%B5%AC%20%EC%8C%8D%EB%AC%B8%EB%8F%99%20%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경10200",
-                      "case_no":  "2026타경10200",
-                      "court":  "서울북부지법",
-                      "complex_name":  "대림아파트",
-                      "dong_ho":  "101동 102호",
-                      "households":  "228세대",
-                      "region_group":  "서울",
-                      "district":  "서울 동대문구 답십리동",
-                      "address":  "서울특별시 동대문구 답십리동 808 대림아파트 101동 1층 102호",
-                      "area_m2":  84.66,
-                      "area_pyeong":  25.6,
-                      "floor_info":  "1층",
-                      "appraisal_price":  742000000,
-                      "minimum_price":  742000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  74200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EB%8C%80%EB%AC%B8%EA%B5%AC%20%EB%8B%B5%EC%8B%AD%EB%A6%AC%EB%8F%99%20%EB%8C%80%EB%A6%BC%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EB%8C%80%EB%AC%B8%EA%B5%AC%20%EB%8B%B5%EC%8B%AD%EB%A6%AC%EB%8F%99%20%EB%8C%80%EB%A6%BC%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경10231",
-                      "case_no":  "2026타경10231",
-                      "court":  "서울북부지법",
-                      "complex_name":  "장안현대홈타운",
-                      "dong_ho":  "116동 2701호",
-                      "households":  "2,182세대",
-                      "region_group":  "서울",
-                      "district":  "서울 동대문구 장안동",
-                      "address":  "서울특별시 동대문구 장안동 336 장안현대홈타운 116동 27층2701호",
-                      "area_m2":  84.87,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "27층",
-                      "appraisal_price":  1105000000,
-                      "minimum_price":  1105000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  110500000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EB%8C%80%EB%AC%B8%EA%B5%AC%20%EC%9E%A5%EC%95%88%EB%8F%99%20%EC%9E%A5%EC%95%88%ED%98%84%EB%8C%80%ED%99%88%ED%83%80%EC%9A%B4",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EB%8C%80%EB%AC%B8%EA%B5%AC%20%EC%9E%A5%EC%95%88%EB%8F%99%20%EC%9E%A5%EC%95%88%ED%98%84%EB%8C%80%ED%99%88%ED%83%80%EC%9A%B4"
-                  },
-                  {
-                      "id":  "2026타경10384",
-                      "case_no":  "2026타경10384",
-                      "court":  "서울북부지법",
-                      "complex_name":  "벽산아파트",
-                      "dong_ho":  "101동 1507호",
-                      "households":  "1,590세대",
-                      "region_group":  "서울",
-                      "district":  "서울 노원구 상계동",
-                      "address":  "서울특별시 노원구 상계동 173-1 벽산아파트 101동 15층 1507호",
-                      "area_m2":  59.9,
-                      "area_pyeong":  18.1,
-                      "floor_info":  "15층",
-                      "appraisal_price":  505000000,
-                      "minimum_price":  505000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  50500000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/184",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%83%81%EA%B3%84%EB%8F%99%20%EB%B2%BD%EC%82%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경10396",
-                      "case_no":  "2026타경10396",
-                      "court":  "서울북부지법",
-                      "complex_name":  "길음뉴타운",
-                      "dong_ho":  "805동 801호",
-                      "households":  "2,352세대",
-                      "region_group":  "서울",
-                      "district":  "서울 성북구 길음동",
-                      "address":  "서울특별시 성북구 길음동 1284 길음뉴타운 805동 8층 801호",
-                      "area_m2":  84.82,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "8층",
-                      "appraisal_price":  1480000000,
-                      "minimum_price":  1480000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  148000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%84%B1%EB%B6%81%EA%B5%AC%20%EA%B8%B8%EC%9D%8C%EB%8F%99%20%EA%B8%B8%EC%9D%8C%EB%89%B4%ED%83%80%EC%9A%B4",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%B1%EB%B6%81%EA%B5%AC%20%EA%B8%B8%EC%9D%8C%EB%8F%99%20%EA%B8%B8%EC%9D%8C%EB%89%B4%ED%83%80%EC%9A%B4"
-                  },
-                  {
-                      "id":  "2026타경10525",
-                      "case_no":  "2026타경10525",
-                      "court":  "서울북부지법",
-                      "complex_name":  "공릉해링턴플레이스",
-                      "dong_ho":  "309동 902호",
-                      "households":  "564세대",
-                      "region_group":  "서울",
-                      "district":  "서울 노원구 공릉동",
-                      "address":  "서울특별시 노원구 공릉동 106 공릉해링턴플레이스 309동 제9층 제902호",
-                      "area_m2":  134.91,
-                      "area_pyeong":  40.8,
-                      "floor_info":  "9층",
-                      "appraisal_price":  1190000000,
-                      "minimum_price":  952000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  95200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3245",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%EA%B3%B5%EB%A6%89%EB%8F%99%20%EA%B3%B5%EB%A6%89%ED%95%B4%EB%A7%81%ED%84%B4%ED%94%8C%EB%A0%88%EC%9D%B4%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2026타경10561",
-                      "case_no":  "2026타경10561",
-                      "court":  "서울북부지법",
-                      "complex_name":  "미아한일유앤아이",
-                      "dong_ho":  "108동 1201호",
-                      "households":  "384세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강북구 미아동",
-                      "address":  "서울특별시 강북구 미아동 1355 미아한일유앤아이 108동 제12층 제1201호",
-                      "area_m2":  129.78,
-                      "area_pyeong":  39.3,
-                      "floor_info":  "12층",
-                      "appraisal_price":  969000000,
-                      "minimum_price":  775200000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  77520000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8787",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%AF%B8%EC%95%84%EB%8F%99%20%EB%AF%B8%EC%95%84%ED%95%9C%EC%9D%BC%EC%9C%A0%EC%95%A4%EC%95%84%EC%9D%B4"
-                  },
-                  {
-                      "id":  "2026타경10589",
-                      "case_no":  "2026타경10589",
-                      "court":  "서울북부지법",
-                      "complex_name":  "중계그린아파트",
-                      "dong_ho":  "122동 1503호",
-                      "households":  "3,481세대",
-                      "region_group":  "서울",
-                      "district":  "서울 노원구 중계동",
-                      "address":  "서울특별시 노원구 중계동 504-1 중계그린아파트 122동 제15층 제1503호",
-                      "area_m2":  49.5,
-                      "area_pyeong":  15.0,
-                      "floor_info":  "15층",
-                      "appraisal_price":  622000000,
-                      "minimum_price":  497600000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  49760000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/240",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%85%B8%EC%9B%90%EA%B5%AC%20%EC%A4%91%EA%B3%84%EB%8F%99%20%EC%A4%91%EA%B3%84%EA%B7%B8%EB%A6%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경10771",
-                      "case_no":  "2026타경10771",
-                      "court":  "서울북부지법",
-                      "complex_name":  "번동주공아파트",
-                      "dong_ho":  "408동 1406호",
-                      "households":  "2,084세대",
-                      "region_group":  "서울",
-                      "district":  "서울 강북구 번동",
-                      "address":  "서울특별시 강북구 번동 234 번동주공아파트 408동 14층1406호",
-                      "area_m2":  41.3,
-                      "area_pyeong":  12.5,
-                      "floor_info":  "14층",
-                      "appraisal_price":  388000000,
-                      "minimum_price":  310400000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  31040000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%B2%88%EB%8F%99%20%EB%B2%88%EB%8F%99%EC%A3%BC%EA%B3%B5%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EA%B0%95%EB%B6%81%EA%B5%AC%20%EB%B2%88%EB%8F%99%20%EB%B2%88%EB%8F%99%EC%A3%BC%EA%B3%B5%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경10841",
-                      "case_no":  "2026타경10841",
-                      "court":  "서울북부지법",
-                      "complex_name":  "주공아파트",
-                      "dong_ho":  "201동 2302호",
-                      "households":  "2,042세대",
-                      "region_group":  "서울",
-                      "district":  "서울 동대문구 휘경동",
-                      "address":  "서울특별시 동대문구 휘경동 57 주공아파트 201동 제23층 제2302호",
-                      "area_m2":  59.79,
-                      "area_pyeong":  18.1,
-                      "floor_info":  "23층",
-                      "appraisal_price":  921000000,
-                      "minimum_price":  921000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  92100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3379",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%8F%99%EB%8C%80%EB%AC%B8%EA%B5%AC%20%ED%9C%98%EA%B2%BD%EB%8F%99%20%EC%A3%BC%EA%B3%B5%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경52693",
-                      "case_no":  "2024타경52693",
-                      "court":  "서울서부지법",
-                      "complex_name":  "동아그린아파트",
-                      "dong_ho":  "106동 601호",
-                      "households":  "499세대",
-                      "region_group":  "서울",
-                      "district":  "서울 용산구 이촌동",
-                      "address":  "서울특별시 용산구 이촌로 100-8 106동 6층601호 (이촌동,동아그린아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "6층",
-                      "appraisal_price":  1847000000,
-                      "minimum_price":  1477600000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  147760000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/968",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9A%A9%EC%82%B0%EA%B5%AC%20%EC%9D%B4%EC%B4%8C%EB%8F%99%20%EB%8F%99%EC%95%84%EA%B7%B8%EB%A6%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경55203",
-                      "case_no":  "2024타경55203",
-                      "court":  "서울서부지법",
-                      "complex_name":  "마포더클래시",
-                      "dong_ho":  "112동 1401호",
-                      "households":  "1,419세대",
-                      "region_group":  "서울",
-                      "district":  "서울 마포구 아현동",
-                      "address":  "서울특별시 마포구 아현동 804 마포더클래시 112동 14층1401호",
-                      "area_m2":  59.97,
-                      "area_pyeong":  18.1,
-                      "floor_info":  "14층",
-                      "appraisal_price":  2230000000,
-                      "minimum_price":  1784000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  178400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/148651",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%A7%88%ED%8F%AC%EA%B5%AC%20%EC%95%84%ED%98%84%EB%8F%99%20%EB%A7%88%ED%8F%AC%EB%8D%94%ED%81%B4%EB%9E%98%EC%8B%9C"
-                  },
-                  {
-                      "id":  "2025타경1128",
-                      "case_no":  "2025타경1128",
-                      "court":  "서울서부지법",
-                      "complex_name":  "디엠씨금호리첸시아",
-                      "dong_ho":  "102동 602호",
-                      "households":  "450세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서대문구 남가좌동",
-                      "address":  "서울특별시 서대문구 남가좌동 396 디엠씨금호리첸시아 102동 6층602호",
-                      "area_m2":  84.99,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "6층",
-                      "appraisal_price":  1460000000,
-                      "minimum_price":  1168000000,
-                      "discount_rate":  20,
-                      "auction_round":  "3회차 (2회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  116800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EB%8C%80%EB%AC%B8%EA%B5%AC%20%EB%82%A8%EA%B0%80%EC%A2%8C%EB%8F%99%20%EB%94%94%EC%97%A0%EC%94%A8%EA%B8%88%ED%98%B8%EB%A6%AC%EC%B2%B8%EC%8B%9C%EC%95%84",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EB%8C%80%EB%AC%B8%EA%B5%AC%20%EB%82%A8%EA%B0%80%EC%A2%8C%EB%8F%99%20%EB%94%94%EC%97%A0%EC%94%A8%EA%B8%88%ED%98%B8%EB%A6%AC%EC%B2%B8%EC%8B%9C%EC%95%84"
-                  },
-                  {
-                      "id":  "2025타경2428",
-                      "case_no":  "2025타경2428",
-                      "court":  "서울서부지법",
-                      "complex_name":  "디엠씨파크뷰자이",
-                      "dong_ho":  "218동 104호",
-                      "households":  "4,300세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서대문구 남가좌동",
-                      "address":  "서울특별시 서대문구 남가좌동 385 디엠씨파크뷰자이 218동 1층104호",
-                      "area_m2":  84.91,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "1층",
-                      "appraisal_price":  1350000000,
-                      "minimum_price":  1080000000,
-                      "discount_rate":  20,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  108000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/108064",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EB%8C%80%EB%AC%B8%EA%B5%AC%20%EB%82%A8%EA%B0%80%EC%A2%8C%EB%8F%99%20%EB%94%94%EC%97%A0%EC%94%A8%ED%8C%8C%ED%81%AC%EB%B7%B0%EC%9E%90%EC%9D%B4"
-                  },
-                  {
-                      "id":  "2025타경50885",
-                      "case_no":  "2025타경50885",
-                      "court":  "서울서부지법",
-                      "complex_name":  "모아아파트",
-                      "dong_ho":  "102동 201호",
-                      "households":  "20세대",
-                      "region_group":  "서울",
-                      "district":  "서울 은평구 대조동",
-                      "address":  "서울특별시 은평구 불광로1길 8 102동 2층201호 (대조동,모아아파트)",
-                      "area_m2":  74.19,
-                      "area_pyeong":  22.4,
-                      "floor_info":  "2층",
-                      "appraisal_price":  438000000,
-                      "minimum_price":  224256000,
-                      "discount_rate":  49,
-                      "auction_round":  "4회차 (3회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  22425600,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/132245",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EB%8C%80%EC%A1%B0%EB%8F%99%20%EB%AA%A8%EC%95%84%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경51362",
-                      "case_no":  "2025타경51362",
-                      "court":  "서울서부지법",
-                      "complex_name":  "시니어캐슬 클라시온",
-                      "dong_ho":  "303호",
-                      "households":  "137세대",
-                      "region_group":  "서울",
-                      "district":  "서울 은평구 녹번동",
-                      "address":  "서울특별시 은평구 녹번동 91-7 시니어캐슬 클라시온 3층303호",
-                      "area_m2":  45.87,
-                      "area_pyeong":  13.9,
-                      "floor_info":  "3층",
-                      "appraisal_price":  761000000,
-                      "minimum_price":  389632000,
-                      "discount_rate":  49,
-                      "auction_round":  "4회차 (3회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  38963200,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EB%85%B9%EB%B2%88%EB%8F%99%20%EC%8B%9C%EB%8B%88%EC%96%B4%EC%BA%90%EC%8A%AC%20%ED%81%B4%EB%9D%BC%EC%8B%9C%EC%98%A8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EB%85%B9%EB%B2%88%EB%8F%99%20%EC%8B%9C%EB%8B%88%EC%96%B4%EC%BA%90%EC%8A%AC%20%ED%81%B4%EB%9D%BC%EC%8B%9C%EC%98%A8"
-                  },
-                  {
-                      "id":  "2025타경51363",
-                      "case_no":  "2025타경51363",
-                      "court":  "서울서부지법",
-                      "complex_name":  "시니어캐슬 클라시온",
-                      "dong_ho":  "406호",
-                      "households":  "137세대",
-                      "region_group":  "서울",
-                      "district":  "서울 은평구 녹번동",
-                      "address":  "서울특별시 은평구 녹번동 91-7 시니어캐슬 클라시온 4층406호",
-                      "area_m2":  56.34,
-                      "area_pyeong":  17.0,
-                      "floor_info":  "4층",
-                      "appraisal_price":  940000000,
-                      "minimum_price":  385024000,
-                      "discount_rate":  59,
-                      "auction_round":  "5회차 (4회 유찰)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  38502400,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EB%85%B9%EB%B2%88%EB%8F%99%20%EC%8B%9C%EB%8B%88%EC%96%B4%EC%BA%90%EC%8A%AC%20%ED%81%B4%EB%9D%BC%EC%8B%9C%EC%98%A8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EB%85%B9%EB%B2%88%EB%8F%99%20%EC%8B%9C%EB%8B%88%EC%96%B4%EC%BA%90%EC%8A%AC%20%ED%81%B4%EB%9D%BC%EC%8B%9C%EC%98%A8"
-                  },
-                  {
-                      "id":  "2025타경52278",
-                      "case_no":  "2025타경52278",
-                      "court":  "서울서부지법",
-                      "complex_name":  "성산시영아파트",
-                      "dong_ho":  "4동 1301호",
-                      "households":  "3,710세대",
-                      "region_group":  "서울",
-                      "district":  "서울 마포구 성산동",
-                      "address":  "서울특별시 마포구 성산동 446 성산시영아파트 4동 13층1301호",
-                      "area_m2":  59.43,
-                      "area_pyeong":  18.0,
-                      "floor_info":  "13층",
-                      "appraisal_price":  1600000000,
-                      "minimum_price":  1600000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  160000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%A7%88%ED%8F%AC%EA%B5%AC%20%EC%84%B1%EC%82%B0%EB%8F%99%20%EC%84%B1%EC%82%B0%EC%8B%9C%EC%98%81%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%A7%88%ED%8F%AC%EA%B5%AC%20%EC%84%B1%EC%82%B0%EB%8F%99%20%EC%84%B1%EC%82%B0%EC%8B%9C%EC%98%81%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경26",
-                      "case_no":  "2026타경26",
-                      "court":  "서울서부지법",
-                      "complex_name":  "대호프라자아파트",
-                      "dong_ho":  "102동 208호",
-                      "households":  "198세대",
-                      "region_group":  "서울",
-                      "district":  "서울 은평구 불광동",
-                      "address":  "서울특별시 은평구 불광동 631-1 대호프라자아파트 102동 3층208호",
-                      "area_m2":  41.22,
-                      "area_pyeong":  12.5,
-                      "floor_info":  "3층",
-                      "appraisal_price":  370000000,
-                      "minimum_price":  370000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  37000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EB%B6%88%EA%B4%91%EB%8F%99%20%EB%8C%80%ED%98%B8%ED%94%84%EB%9D%BC%EC%9E%90%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EB%B6%88%EA%B4%91%EB%8F%99%20%EB%8C%80%ED%98%B8%ED%94%84%EB%9D%BC%EC%9E%90%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경50029",
-                      "case_no":  "2026타경50029",
-                      "court":  "서울서부지법",
-                      "complex_name":  "합정한강아파트",
-                      "dong_ho":  "306호",
-                      "households":  "46세대",
-                      "region_group":  "서울",
-                      "district":  "서울 마포구 합정동",
-                      "address":  "서울특별시 마포구 합정동 474 합정한강아파트 3층306호",
-                      "area_m2":  52.62,
-                      "area_pyeong":  15.9,
-                      "floor_info":  "3층",
-                      "appraisal_price":  722000000,
-                      "minimum_price":  722000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  72200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%A7%88%ED%8F%AC%EA%B5%AC%20%ED%95%A9%EC%A0%95%EB%8F%99%20%ED%95%A9%EC%A0%95%ED%95%9C%EA%B0%95%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%A7%88%ED%8F%AC%EA%B5%AC%20%ED%95%A9%EC%A0%95%EB%8F%99%20%ED%95%A9%EC%A0%95%ED%95%9C%EA%B0%95%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경50194",
-                      "case_no":  "2026타경50194",
-                      "court":  "서울서부지법",
-                      "complex_name":  "이편한세상백련산",
-                      "dong_ho":  "105동 501호",
-                      "households":  "358세대",
-                      "region_group":  "서울",
-                      "district":  "서울 은평구 응암동",
-                      "address":  "서울특별시 은평구 응암동 771 이편한세상백련산 105동 5층501호",
-                      "area_m2":  84.31,
-                      "area_pyeong":  25.5,
-                      "floor_info":  "5층",
-                      "appraisal_price":  919000000,
-                      "minimum_price":  919000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  91900000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EC%9D%91%EC%95%94%EB%8F%99%20%EC%9D%B4%ED%8E%B8%ED%95%9C%EC%84%B8%EC%83%81%EB%B0%B1%EB%A0%A8%EC%82%B0",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EC%9D%91%EC%95%94%EB%8F%99%20%EC%9D%B4%ED%8E%B8%ED%95%9C%EC%84%B8%EC%83%81%EB%B0%B1%EB%A0%A8%EC%82%B0"
-                  },
-                  {
-                      "id":  "2026타경50226",
-                      "case_no":  "2026타경50226",
-                      "court":  "서울서부지법",
-                      "complex_name":  "극동아파트",
-                      "dong_ho":  "106동 207호",
-                      "households":  "488세대",
-                      "region_group":  "서울",
-                      "district":  "서울 서대문구 홍은동",
-                      "address":  "서울특별시 서대문구 홍은동 454 극동아파트 106동 2층207호",
-                      "area_m2":  148.54,
-                      "area_pyeong":  44.9,
-                      "floor_info":  "2층",
-                      "appraisal_price":  808000000,
-                      "minimum_price":  808000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  80800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EB%8C%80%EB%AC%B8%EA%B5%AC%20%ED%99%8D%EC%9D%80%EB%8F%99%20%EA%B7%B9%EB%8F%99%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%84%9C%EB%8C%80%EB%AC%B8%EA%B5%AC%20%ED%99%8D%EC%9D%80%EB%8F%99%20%EA%B7%B9%EB%8F%99%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경50257",
-                      "case_no":  "2026타경50257",
-                      "court":  "서울서부지법",
-                      "complex_name":  "한가람아파트",
-                      "dong_ho":  "205동 207호",
-                      "households":  "2,036세대",
-                      "region_group":  "서울",
-                      "district":  "서울 용산구 이촌동",
-                      "address":  "서울특별시 용산구 이촌동 404 한가람아파트 205동 2층207호",
-                      "area_m2":  59.88,
-                      "area_pyeong":  18.1,
-                      "floor_info":  "2층",
-                      "appraisal_price":  2440000000,
-                      "minimum_price":  2440000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-10",
-                      "d_day":  19,
-                      "bid_deposit":  244000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%9A%A9%EC%82%B0%EA%B5%AC%20%EC%9D%B4%EC%B4%8C%EB%8F%99%20%ED%95%9C%EA%B0%80%EB%9E%8C%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9A%A9%EC%82%B0%EA%B5%AC%20%EC%9D%B4%EC%B4%8C%EB%8F%99%20%ED%95%9C%EA%B0%80%EB%9E%8C%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경50455",
-                      "case_no":  "2026타경50455",
-                      "court":  "서울서부지법",
-                      "complex_name":  "은평뉴타운제각말",
-                      "dong_ho":  "526동 503호",
-                      "households":  "330세대",
-                      "region_group":  "서울",
-                      "district":  "서울 은평구 진관동",
-                      "address":  "서울특별시 은평구 진관동 94 은평뉴타운제각말 526동 5층503호",
-                      "area_m2":  84.89,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "5층",
-                      "appraisal_price":  832000000,
-                      "minimum_price":  832000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  83200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EC%A7%84%EA%B4%80%EB%8F%99%20%EC%9D%80%ED%8F%89%EB%89%B4%ED%83%80%EC%9A%B4%EC%A0%9C%EA%B0%81%EB%A7%90",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EC%A7%84%EA%B4%80%EB%8F%99%20%EC%9D%80%ED%8F%89%EB%89%B4%ED%83%80%EC%9A%B4%EC%A0%9C%EA%B0%81%EB%A7%90"
-                  },
-                  {
-                      "id":  "2026타경50498",
-                      "case_no":  "2026타경50498",
-                      "court":  "서울서부지법",
-                      "complex_name":  "상암월드컵파크5단지",
-                      "dong_ho":  "504동 1002호",
-                      "households":  "436세대",
-                      "region_group":  "서울",
-                      "district":  "서울 마포구 상암동",
-                      "address":  "서울특별시 마포구 상암동 1658 상암월드컵파크5단지 504동 10층1002호",
-                      "area_m2":  104.69,
-                      "area_pyeong":  31.7,
-                      "floor_info":  "10층",
-                      "appraisal_price":  1590000000,
-                      "minimum_price":  1590000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  159000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EB%A7%88%ED%8F%AC%EA%B5%AC%20%EC%83%81%EC%95%94%EB%8F%99%20%EC%83%81%EC%95%94%EC%9B%94%EB%93%9C%EC%BB%B5%ED%8C%8C%ED%81%AC5%EB%8B%A8%EC%A7%80",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EB%A7%88%ED%8F%AC%EA%B5%AC%20%EC%83%81%EC%95%94%EB%8F%99%20%EC%83%81%EC%95%94%EC%9B%94%EB%93%9C%EC%BB%B5%ED%8C%8C%ED%81%AC5%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2026타경50703",
-                      "case_no":  "2026타경50703",
-                      "court":  "서울서부지법",
-                      "complex_name":  "은평뉴타운우물골",
-                      "dong_ho":  "236동 801호",
-                      "households":  "486세대",
-                      "region_group":  "서울",
-                      "district":  "서울 은평구 진관동",
-                      "address":  "서울특별시 은평구 진관동 84 은평뉴타운우물골 236동 8층801호",
-                      "area_m2":  167.71,
-                      "area_pyeong":  50.7,
-                      "floor_info":  "8층",
-                      "appraisal_price":  1370000000,
-                      "minimum_price":  1370000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  137000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EC%A7%84%EA%B4%80%EB%8F%99%20%EC%9D%80%ED%8F%89%EB%89%B4%ED%83%80%EC%9A%B4%EC%9A%B0%EB%AC%BC%EA%B3%A8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%EC%A7%84%EA%B4%80%EB%8F%99%20%EC%9D%80%ED%8F%89%EB%89%B4%ED%83%80%EC%9A%B4%EC%9A%B0%EB%AC%BC%EA%B3%A8"
-                  },
-                  {
-                      "id":  "2024타경60536",
-                      "case_no":  "2024타경60536",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "한국아파트",
-                      "dong_ho":  "103동 702호",
-                      "households":  "768세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 영통구 매탄동",
-                      "address":  "경기도 수원시 영통구 동탄원천로1109번길 37 103동 7층702호 (매탄동,한국아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "7층",
-                      "appraisal_price":  633000000,
-                      "minimum_price":  443100000,
-                      "discount_rate":  30,
-                      "auction_round":  "3회차 (2회 유찰)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  44310000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1794",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EB%A7%A4%ED%83%84%EB%8F%99%20%ED%95%9C%EA%B5%AD%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경63573",
-                      "case_no":  "2024타경63573",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "벽적골주공아파트",
-                      "dong_ho":  "831동 1101호",
-                      "households":  "1,265세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 영통구 영통동",
-                      "address":  "경기도 수원시 영통구 영통로290번길 26 831동 11층1101호 (영통동,벽적골주공아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "11층",
-                      "appraisal_price":  410000000,
-                      "minimum_price":  287000000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  28700000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3988",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EC%98%81%ED%86%B5%EB%8F%99%20%EB%B2%BD%EC%A0%81%EA%B3%A8%EC%A3%BC%EA%B3%B5%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경76623",
-                      "case_no":  "2024타경76623",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "인계 파밀리에",
-                      "dong_ho":  "102동 203호",
-                      "households":  "431세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 팔달구 인계동",
-                      "address":  "경기도 수원시 팔달구 세지로 211 102동 2층203호 (인계동,인계 파밀리에)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "2층",
-                      "appraisal_price":  510000000,
-                      "minimum_price":  357000000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  35700000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/26276",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%ED%8C%94%EB%8B%AC%EA%B5%AC%20%EC%9D%B8%EA%B3%84%EB%8F%99%20%EC%9D%B8%EA%B3%84%20%ED%8C%8C%EB%B0%80%EB%A6%AC%EC%97%90"
-                  },
-                  {
-                      "id":  "2024타경80769",
-                      "case_no":  "2024타경80769",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "버들치마을 경남아너스빌1차",
-                      "dong_ho":  "104동 1505호",
-                      "households":  "816세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 수지구 성복동",
-                      "address":  "경기도 용인시 수지구 성복1로 157 104동 15층1505호 (성복동,버들치마을 경남아너스빌1차)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "15층",
-                      "appraisal_price":  716000000,
-                      "minimum_price":  716000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  71600000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EC%84%B1%EB%B3%B5%EB%8F%99%20%EB%B2%84%EB%93%A4%EC%B9%98%EB%A7%88%EC%9D%84%20%EA%B2%BD%EB%82%A8%EC%95%84%EB%84%88%EC%8A%A4%EB%B9%8C1%EC%B0%A8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EC%84%B1%EB%B3%B5%EB%8F%99%20%EB%B2%84%EB%93%A4%EC%B9%98%EB%A7%88%EC%9D%84%20%EA%B2%BD%EB%82%A8%EC%95%84%EB%84%88%EC%8A%A4%EB%B9%8C1%EC%B0%A8"
-                  },
-                  {
-                      "id":  "2024타경89407",
-                      "case_no":  "2024타경89407",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "연원마을쉐르빌아파트",
-                      "dong_ho":  "202동 506호",
-                      "households":  "424세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 마북동",
-                      "address":  "경기도 용인시 기흥구 연원로42번길 33 202동 5층506호 (마북동,연원마을쉐르빌아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "5층",
-                      "appraisal_price":  837000000,
-                      "minimum_price":  287091000,
-                      "discount_rate":  66,
-                      "auction_round":  "5회차 (4회 유찰)",
-                      "auction_date":  "2026-10-30",
-                      "d_day":  8,
-                      "bid_deposit":  28709100,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8369",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%A7%88%EB%B6%81%EB%8F%99%20%EC%97%B0%EC%9B%90%EB%A7%88%EC%9D%84%EC%89%90%EB%A5%B4%EB%B9%8C%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경89421",
-                      "case_no":  "2024타경89421",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "연원마을쉐르빌아파트",
-                      "dong_ho":  "202동 304호",
-                      "households":  "424세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 마북동",
-                      "address":  "경기도 용인시 기흥구 연원로42번길 33 202동 3층304호 (마북동,연원마을쉐르빌아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "3층",
-                      "appraisal_price":  826000000,
-                      "minimum_price":  578200000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  57820000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8369",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%A7%88%EB%B6%81%EB%8F%99%20%EC%97%B0%EC%9B%90%EB%A7%88%EC%9D%84%EC%89%90%EB%A5%B4%EB%B9%8C%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2024타경101499",
-                      "case_no":  "2024타경101499",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "대원아파트",
-                      "dong_ho":  "105동 906호",
-                      "households":  "474세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 권선구 고색동",
-                      "address":  "경기도 수원시 권선구 고산로6번길 45 105동 9층906호 (고색동,대원아파트)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "9층",
-                      "appraisal_price":  370000000,
-                      "minimum_price":  259000000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-30",
-                      "d_day":  8,
-                      "bid_deposit":  25900000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/2668",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%EA%B3%A0%EC%83%89%EB%8F%99%20%EB%8C%80%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경1093",
-                      "case_no":  "2025타경1093",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "연원마을삼성명가타운아파트",
-                      "dong_ho":  "105동 302호",
-                      "households":  "430세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 보정동",
-                      "address":  "경기도 용인시 기흥구 보정동 1177 연원마을삼성명가타운아파트 105동 3층302호",
-                      "area_m2":  124.92,
-                      "area_pyeong":  37.8,
-                      "floor_info":  "3층",
-                      "appraisal_price":  1000000000,
-                      "minimum_price":  700000000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  70000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3893",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%B3%B4%EC%A0%95%EB%8F%99%20%EC%97%B0%EC%9B%90%EB%A7%88%EC%9D%84%EC%82%BC%EC%84%B1%EB%AA%85%EA%B0%80%ED%83%80%EC%9A%B4%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경1203",
-                      "case_no":  "2025타경1203",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "행원마을동아솔레시티아파트",
-                      "dong_ho":  "101동 504호",
-                      "households":  "1,701세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 보정동",
-                      "address":  "경기도 용인시 기흥구 보정동 1162 행원마을동아솔레시티아파트 101동 5층504호",
-                      "area_m2":  152.39,
-                      "area_pyeong":  46.1,
-                      "floor_info":  "5층",
-                      "appraisal_price":  1070000000,
-                      "minimum_price":  1070000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  107000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3678",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%B3%B4%EC%A0%95%EB%8F%99%20%ED%96%89%EC%9B%90%EB%A7%88%EC%9D%84%EB%8F%99%EC%95%84%EC%86%94%EB%A0%88%EC%8B%9C%ED%8B%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경1221",
-                      "case_no":  "2025타경1221",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "성동마을엘지빌리지6차",
-                      "dong_ho":  "607동 401호",
-                      "households":  "956세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 수지구 성복동",
-                      "address":  "경기도 용인시 수지구 성복동 731 성동마을엘지빌리지6차 607동 4층401호",
-                      "area_m2":  164.42,
-                      "area_pyeong":  49.7,
-                      "floor_info":  "4층",
-                      "appraisal_price":  936000000,
-                      "minimum_price":  655200000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  65520000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8427",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EC%84%B1%EB%B3%B5%EB%8F%99%20%EC%84%B1%EB%8F%99%EB%A7%88%EC%9D%84%EC%97%98%EC%A7%80%EB%B9%8C%EB%A6%AC%EC%A7%806%EC%B0%A8"
-                  },
-                  {
-                      "id":  "2025타경1251",
-                      "case_no":  "2025타경1251",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "기흥역더샵",
-                      "dong_ho":  "103동 704호",
-                      "households":  "1,219세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 구갈동",
-                      "address":  "경기도 용인시 기흥구 구갈동 661 기흥역더샵 103동 7층704호",
-                      "area_m2":  84.98,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "7층",
-                      "appraisal_price":  1100000000,
-                      "minimum_price":  1100000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-23",
-                      "d_day":  1,
-                      "bid_deposit":  110000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/111385",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EA%B5%AC%EA%B0%88%EB%8F%99%20%EA%B8%B0%ED%9D%A5%EC%97%AD%EB%8D%94%EC%83%B5"
-                  },
-                  {
-                      "id":  "2025타경1336",
-                      "case_no":  "2025타경1336",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "동문아파트",
-                      "dong_ho":  "103동 402호",
-                      "households":  "368세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 수지구 풍덕천동",
-                      "address":  "경기도 용인시 수지구 풍덕천동 690 동문아파트 103동 4층402호",
-                      "area_m2":  128.07,
-                      "area_pyeong":  38.7,
-                      "floor_info":  "4층",
-                      "appraisal_price":  713000000,
-                      "minimum_price":  713000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  71300000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/2214",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%ED%92%8D%EB%8D%95%EC%B2%9C%EB%8F%99%20%EB%8F%99%EB%AC%B8%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경1373",
-                      "case_no":  "2025타경1373",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "수원동마을쌍용스윗닷홈",
-                      "dong_ho":  "201동 1304호",
-                      "households":  "465세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 상하동",
-                      "address":  "경기도 용인시 기흥구 상하동 652 수원동마을쌍용스윗닷홈 201동 13층1304호",
-                      "area_m2":  84.87,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "13층",
-                      "appraisal_price":  364000000,
-                      "minimum_price":  364000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  36400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/9553",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%83%81%ED%95%98%EB%8F%99%20%EC%88%98%EC%9B%90%EB%8F%99%EB%A7%88%EC%9D%84%EC%8C%8D%EC%9A%A9%EC%8A%A4%EC%9C%97%EB%8B%B7%ED%99%88"
-                  },
-                  {
-                      "id":  "2025타경1387",
-                      "case_no":  "2025타경1387",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "수지신봉동도센트리움",
-                      "dong_ho":  "102동 901호",
-                      "households":  "184세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 수지구 신봉동",
-                      "address":  "경기도 용인시 수지구 신봉동 965 수지신봉동도센트리움 102동 9층901호",
-                      "area_m2":  69.79,
-                      "area_pyeong":  21.1,
-                      "floor_info":  "9층",
-                      "appraisal_price":  613000000,
-                      "minimum_price":  613000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  61300000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/115080",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EC%8B%A0%EB%B4%89%EB%8F%99%20%EC%88%98%EC%A7%80%EC%8B%A0%EB%B4%89%EB%8F%99%EB%8F%84%EC%84%BC%ED%8A%B8%EB%A6%AC%EC%9B%80"
-                  },
-                  {
-                      "id":  "2025타경1394",
-                      "case_no":  "2025타경1394",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "벽산아파트",
-                      "dong_ho":  "203동 1005호",
-                      "households":  "740세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 장안구 조원동",
-                      "address":  "경기도 수원시 장안구 조원동 510 벽산아파트 203동 10층1005호",
-                      "area_m2":  74.72,
-                      "area_pyeong":  22.6,
-                      "floor_info":  "10층",
-                      "appraisal_price":  368000000,
-                      "minimum_price":  368000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  36800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1848",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%A1%B0%EC%9B%90%EB%8F%99%20%EB%B2%BD%EC%82%B0%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경1430",
-                      "case_no":  "2025타경1430",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "탑실마을대주피오레2단지",
-                      "dong_ho":  "215동 905호",
-                      "households":  "710세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 공세동",
-                      "address":  "경기도 용인시 기흥구 공세동 714 탑실마을대주피오레2단지 215동 9층905호",
-                      "area_m2":  148.63,
-                      "area_pyeong":  45.0,
-                      "floor_info":  "9층",
-                      "appraisal_price":  569000000,
-                      "minimum_price":  398300000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-26",
-                      "d_day":  4,
-                      "bid_deposit":  39830000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/25910",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EA%B3%B5%EC%84%B8%EB%8F%99%20%ED%83%91%EC%8B%A4%EB%A7%88%EC%9D%84%EB%8C%80%EC%A3%BC%ED%94%BC%EC%98%A4%EB%A0%882%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경1487",
-                      "case_no":  "2025타경1487",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "신동백서해그랑블2차",
-                      "dong_ho":  "209동 604호",
-                      "households":  "817세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 중동",
-                      "address":  "경기도 용인시 기흥구 중동 1139 신동백서해그랑블2차 209동 6층604호",
-                      "area_m2":  84.86,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "6층",
-                      "appraisal_price":  514000000,
-                      "minimum_price":  514000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-28",
-                      "d_day":  6,
-                      "bid_deposit":  51400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/103714",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%A4%91%EB%8F%99%20%EC%8B%A0%EB%8F%99%EB%B0%B1%EC%84%9C%ED%95%B4%EA%B7%B8%EB%9E%91%EB%B8%942%EC%B0%A8"
-                  },
-                  {
-                      "id":  "2025타경1518",
-                      "case_no":  "2025타경1518",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "수원인계푸르지오",
-                      "dong_ho":  "102동 3001호",
-                      "households":  "190세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 팔달구 인계동",
-                      "address":  "경기도 수원시 팔달구 인계동 1169 수원인계푸르지오 102동 30층3001호",
-                      "area_m2":  84.98,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "30층",
-                      "appraisal_price":  563000000,
-                      "minimum_price":  394100000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  39410000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/102511",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%ED%8C%94%EB%8B%AC%EA%B5%AC%20%EC%9D%B8%EA%B3%84%EB%8F%99%20%EC%88%98%EC%9B%90%EC%9D%B8%EA%B3%84%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A4"
-                  },
-                  {
-                      "id":  "2025타경1691",
-                      "case_no":  "2025타경1691",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "남광하우스토리",
-                      "dong_ho":  "105동 1102호",
-                      "households":  "363세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 권선구 오목천동",
-                      "address":  "경기도 수원시 권선구 오목천동 962 남광하우스토리 105동 11층1102호",
-                      "area_m2":  84.97,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "11층",
-                      "appraisal_price":  434000000,
-                      "minimum_price":  434000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  43400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%EC%98%A4%EB%AA%A9%EC%B2%9C%EB%8F%99%20%EB%82%A8%EA%B4%91%ED%95%98%EC%9A%B0%EC%8A%A4%ED%86%A0%EB%A6%AC",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%EC%98%A4%EB%AA%A9%EC%B2%9C%EB%8F%99%20%EB%82%A8%EA%B4%91%ED%95%98%EC%9A%B0%EC%8A%A4%ED%86%A0%EB%A6%AC"
-                  },
-                  {
-                      "id":  "2025타경1716",
-                      "case_no":  "2025타경1716",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "도담마을7단지뜨리에체아파트",
-                      "dong_ho":  "706동 602호",
-                      "households":  "430세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 수지구 죽전동",
-                      "address":  "경기도 용인시 수지구 죽전동 414 도담마을7단지뜨리에체아파트 706동 6층602호",
-                      "area_m2":  114.88,
-                      "area_pyeong":  34.8,
-                      "floor_info":  "6층",
-                      "appraisal_price":  703000000,
-                      "minimum_price":  703000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  70300000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EC%A3%BD%EC%A0%84%EB%8F%99%20%EB%8F%84%EB%8B%B4%EB%A7%88%EC%9D%847%EB%8B%A8%EC%A7%80%EB%9C%A8%EB%A6%AC%EC%97%90%EC%B2%B4%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EC%A3%BD%EC%A0%84%EB%8F%99%20%EB%8F%84%EB%8B%B4%EB%A7%88%EC%9D%847%EB%8B%A8%EC%A7%80%EB%9C%A8%EB%A6%AC%EC%97%90%EC%B2%B4%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경1822",
-                      "case_no":  "2025타경1822",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "용인행정타운두산위브3단지",
-                      "dong_ho":  "301동 601호",
-                      "households":  "470세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 처인구 삼가동",
-                      "address":  "경기도 용인시 처인구 삼가동 564 용인행정타운두산위브3단지 301동 6층601호",
-                      "area_m2":  120.8,
-                      "area_pyeong":  36.5,
-                      "floor_info":  "6층",
-                      "appraisal_price":  663000000,
-                      "minimum_price":  663000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-26",
-                      "d_day":  4,
-                      "bid_deposit":  66300000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/103431",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%B2%98%EC%9D%B8%EA%B5%AC%20%EC%82%BC%EA%B0%80%EB%8F%99%20%EC%9A%A9%EC%9D%B8%ED%96%89%EC%A0%95%ED%83%80%EC%9A%B4%EB%91%90%EC%82%B0%EC%9C%84%EB%B8%8C3%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경53511",
-                      "case_no":  "2025타경53511",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "신동백롯데캐슬에코1단지",
-                      "dong_ho":  "110동 4001호",
-                      "households":  "2,770세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 중동",
-                      "address":  "경기도 용인시 기흥구 동백죽전대로527번길 80 110동 40층4001호 (중동,신동백롯데캐슬에코1단지)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "40층",
-                      "appraisal_price":  1450000000,
-                      "minimum_price":  40958910,
-                      "discount_rate":  97,
-                      "auction_round":  "11회차 (10회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  4095891,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/101375",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%A4%91%EB%8F%99%20%EC%8B%A0%EB%8F%99%EB%B0%B1%EB%A1%AF%EB%8D%B0%EC%BA%90%EC%8A%AC%EC%97%90%EC%BD%941%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경54392",
-                      "case_no":  "2025타경54392",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "호매실경남아너스빌",
-                      "dong_ho":  "1519동 1002호",
-                      "households":  "1,029세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 권선구 호매실동",
-                      "address":  "경기도 수원시 권선구 호매실동 1388 호매실경남아너스빌 1519동 10층1002호",
-                      "area_m2":  74.93,
-                      "area_pyeong":  22.7,
-                      "floor_info":  "10층",
-                      "appraisal_price":  428000000,
-                      "minimum_price":  299600000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  29960000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/132609",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%ED%98%B8%EB%A7%A4%EC%8B%A4%EB%8F%99%20%ED%98%B8%EB%A7%A4%EC%8B%A4%EA%B2%BD%EB%82%A8%EC%95%84%EB%84%88%EC%8A%A4%EB%B9%8C"
-                  },
-                  {
-                      "id":  "2025타경54791",
-                      "case_no":  "2025타경54791",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "강남마을자연앤",
-                      "dong_ho":  "402동 804호",
-                      "households":  "344세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 구갈동",
-                      "address":  "경기도 용인시 기흥구 구갈동 600 강남마을자연앤 402동 8층804호",
-                      "area_m2":  118.23,
-                      "area_pyeong":  35.8,
-                      "floor_info":  "8층",
-                      "appraisal_price":  561000000,
-                      "minimum_price":  561000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  56100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/25297",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EA%B5%AC%EA%B0%88%EB%8F%99%20%EA%B0%95%EB%82%A8%EB%A7%88%EC%9D%84%EC%9E%90%EC%97%B0%EC%95%A4"
-                  },
-                  {
-                      "id":  "2025타경54798",
-                      "case_no":  "2025타경54798",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "삼거마을삼성래미안1차아파트",
-                      "dong_ho":  "111동 402호",
-                      "households":  "282세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 마북동",
-                      "address":  "경기도 용인시 기흥구 마북동 629 삼거마을삼성래미안1차아파트 111동 4층402호",
-                      "area_m2":  134.99,
-                      "area_pyeong":  40.8,
-                      "floor_info":  "4층",
-                      "appraisal_price":  1060000000,
-                      "minimum_price":  1060000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-30",
-                      "d_day":  8,
-                      "bid_deposit":  106000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3679",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%A7%88%EB%B6%81%EB%8F%99%20%EC%82%BC%EA%B1%B0%EB%A7%88%EC%9D%84%EC%82%BC%EC%84%B1%EB%9E%98%EB%AF%B8%EC%95%881%EC%B0%A8%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경54992",
-                      "case_no":  "2025타경54992",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "한국아파트",
-                      "dong_ho":  "109동 403호",
-                      "households":  "768세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 영통구 매탄동",
-                      "address":  "경기도 수원시 영통구 매탄동 1217 한국아파트 109동 4층403호",
-                      "area_m2":  72.84,
-                      "area_pyeong":  22.0,
-                      "floor_info":  "4층",
-                      "appraisal_price":  582000000,
-                      "minimum_price":  407400000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  40740000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1794",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EB%A7%A4%ED%83%84%EB%8F%99%20%ED%95%9C%EA%B5%AD%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경55533",
-                      "case_no":  "2025타경55533",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "금령마을우남퍼스트빌아파트",
-                      "dong_ho":  "104동 1602호",
-                      "households":  "451세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 처인구 삼가동",
-                      "address":  "경기도 용인시 처인구 삼가동 537 금령마을우남퍼스트빌아파트 104동 16층1602호",
-                      "area_m2":  84.8,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "16층",
-                      "appraisal_price":  390000000,
-                      "minimum_price":  273000000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  27300000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/9200",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%B2%98%EC%9D%B8%EA%B5%AC%20%EC%82%BC%EA%B0%80%EB%8F%99%20%EA%B8%88%EB%A0%B9%EB%A7%88%EC%9D%84%EC%9A%B0%EB%82%A8%ED%8D%BC%EC%8A%A4%ED%8A%B8%EB%B9%8C%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경55722",
-                      "case_no":  "2025타경55722",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "한빛마을래미안이스트팰리스4단지",
-                      "dong_ho":  "1403동 404호",
-                      "households":  "620세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 수지구 동천동",
-                      "address":  "경기도 용인시 수지구 동천동 923 한빛마을래미안이스트팰리스4단지 1403동 4층404호",
-                      "area_m2":  117.51,
-                      "area_pyeong":  35.5,
-                      "floor_info":  "4층",
-                      "appraisal_price":  1130000000,
-                      "minimum_price":  791000000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-26",
-                      "d_day":  4,
-                      "bid_deposit":  79100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/14529635",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EB%8F%99%EC%B2%9C%EB%8F%99%20%ED%95%9C%EB%B9%9B%EB%A7%88%EC%9D%84%EB%9E%98%EB%AF%B8%EC%95%88%EC%9D%B4%EC%8A%A4%ED%8A%B8%ED%8C%B0%EB%A6%AC%EC%8A%A44%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경56017",
-                      "case_no":  "2025타경56017",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "지석마을 진흥더루벤스",
-                      "dong_ho":  "102동 1302호",
-                      "households":  "200세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 상하동",
-                      "address":  "경기도 용인시 기흥구 상하동 659 지석마을 진흥더루벤스 102동 13층1302호",
-                      "area_m2":  152.47,
-                      "area_pyeong":  46.1,
-                      "floor_info":  "13층",
-                      "appraisal_price":  519000000,
-                      "minimum_price":  363300000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  36330000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/24954",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%83%81%ED%95%98%EB%8F%99%20%EC%A7%80%EC%84%9D%EB%A7%88%EC%9D%84%20%EC%A7%84%ED%9D%A5%EB%8D%94%EB%A3%A8%EB%B2%A4%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2025타경56091",
-                      "case_no":  "2025타경56091",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "신갈현대아파트",
-                      "dong_ho":  "101동 406호",
-                      "households":  "293세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 신갈동",
-                      "address":  "경기도 용인시 기흥구 신갈동 151-1 신갈현대아파트 101동 4층406호",
-                      "area_m2":  84.82,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "4층",
-                      "appraisal_price":  470000000,
-                      "minimum_price":  470000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  47000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8909",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%8B%A0%EA%B0%88%EB%8F%99%20%EC%8B%A0%EA%B0%88%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경56146",
-                      "case_no":  "2025타경56146",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "원천주공아파트",
-                      "dong_ho":  "108동 308호",
-                      "households":  "1,320세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 영통구 원천동",
-                      "address":  "경기도 수원시 영통구 원천동 35 원천주공아파트 108동 3층308호",
-                      "area_m2":  41.3,
-                      "area_pyeong":  12.5,
-                      "floor_info":  "3층",
-                      "appraisal_price":  378000000,
-                      "minimum_price":  264600000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  26460000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1825",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EC%9B%90%EC%B2%9C%EB%8F%99%20%EC%9B%90%EC%B2%9C%EC%A3%BC%EA%B3%B5%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경56197",
-                      "case_no":  "2025타경56197",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "광교더샵",
-                      "dong_ho":  "105동 1102호",
-                      "households":  "686세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 영통구 원천동",
-                      "address":  "경기도 수원시 영통구 원천동 604 광교더샵 105동 11층1102호",
-                      "area_m2":  91.34,
-                      "area_pyeong":  27.6,
-                      "floor_info":  "11층",
-                      "appraisal_price":  1300000000,
-                      "minimum_price":  1300000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-09",
-                      "d_day":  18,
-                      "bid_deposit":  130000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/110726",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EC%9B%90%EC%B2%9C%EB%8F%99%20%EA%B4%91%EA%B5%90%EB%8D%94%EC%83%B5"
-                  },
-                  {
-                      "id":  "2025타경56437",
-                      "case_no":  "2025타경56437",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "현대아파트",
-                      "dong_ho":  "104동 104호",
-                      "households":  "516세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 팔달구 화서동",
-                      "address":  "경기도 수원시 팔달구 화서동 656 현대아파트 104동 1층104호",
-                      "area_m2":  99.88,
-                      "area_pyeong":  30.2,
-                      "floor_info":  "1층",
-                      "appraisal_price":  627000000,
-                      "minimum_price":  627000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  62700000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/355",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%ED%8C%94%EB%8B%AC%EA%B5%AC%20%ED%99%94%EC%84%9C%EB%8F%99%20%ED%98%84%EB%8C%80%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경56505",
-                      "case_no":  "2025타경56505",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "민속마을현대모닝사이드",
-                      "dong_ho":  "314동 1404호",
-                      "households":  "1,112세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 보라동",
-                      "address":  "경기도 용인시 기흥구 보라동 570 민속마을현대모닝사이드 314동 14층1404호",
-                      "area_m2":  116.98,
-                      "area_pyeong":  35.4,
-                      "floor_info":  "14층",
-                      "appraisal_price":  407000000,
-                      "minimum_price":  284900000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  28490000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/9993",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%B3%B4%EB%9D%BC%EB%8F%99%20%EB%AF%BC%EC%86%8D%EB%A7%88%EC%9D%84%ED%98%84%EB%8C%80%EB%AA%A8%EB%8B%9D%EC%82%AC%EC%9D%B4%EB%93%9C"
-                  },
-                  {
-                      "id":  "2025타경56824",
-                      "case_no":  "2025타경56824",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "청명호수마을신안인스빌1단지",
-                      "dong_ho":  "112동 201호",
-                      "households":  "829세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 하갈동",
-                      "address":  "경기도 용인시 기흥구 하갈동 631 청명호수마을신안인스빌1단지 112동 2층201호",
-                      "area_m2":  84.99,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "2층",
-                      "appraisal_price":  366000000,
-                      "minimum_price":  256200000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  25620000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/27029",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%ED%95%98%EA%B0%88%EB%8F%99%20%EC%B2%AD%EB%AA%85%ED%98%B8%EC%88%98%EB%A7%88%EC%9D%84%EC%8B%A0%EC%95%88%EC%9D%B8%EC%8A%A4%EB%B9%8C1%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경56882",
-                      "case_no":  "2025타경56882",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "하마비마을동부센트레빌",
-                      "dong_ho":  "106동 803호",
-                      "households":  "418세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 언남동",
-                      "address":  "경기도 용인시 기흥구 언남동 493 하마비마을동부센트레빌 106동 8층803호",
-                      "area_m2":  125.67,
-                      "area_pyeong":  38.0,
-                      "floor_info":  "8층",
-                      "appraisal_price":  571000000,
-                      "minimum_price":  399700000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-04",
-                      "d_day":  13,
-                      "bid_deposit":  39970000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3677",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%96%B8%EB%82%A8%EB%8F%99%20%ED%95%98%EB%A7%88%EB%B9%84%EB%A7%88%EC%9D%84%EB%8F%99%EB%B6%80%EC%84%BC%ED%8A%B8%EB%A0%88%EB%B9%8C"
-                  },
-                  {
-                      "id":  "2025타경57136",
-                      "case_no":  "2025타경57136",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "수원장안 에스티엑스칸1단지",
-                      "dong_ho":  "110동 1801호",
-                      "households":  "734세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 장안구 이목동",
-                      "address":  "경기도 수원시 장안구 이목동 918 수원장안 에스티엑스칸1단지 110동 18층1801호",
-                      "area_m2":  84.57,
-                      "area_pyeong":  25.6,
-                      "floor_info":  "18층",
-                      "appraisal_price":  641000000,
-                      "minimum_price":  641000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-26",
-                      "d_day":  4,
-                      "bid_deposit":  64100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%9D%B4%EB%AA%A9%EB%8F%99%20%EC%88%98%EC%9B%90%EC%9E%A5%EC%95%88%20%EC%97%90%EC%8A%A4%ED%8B%B0%EC%97%91%EC%8A%A4%EC%B9%B81%EB%8B%A8%EC%A7%80",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%9D%B4%EB%AA%A9%EB%8F%99%20%EC%88%98%EC%9B%90%EC%9E%A5%EC%95%88%20%EC%97%90%EC%8A%A4%ED%8B%B0%EC%97%91%EC%8A%A4%EC%B9%B81%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경57350",
-                      "case_no":  "2025타경57350",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "영통아파트",
-                      "dong_ho":  "710동 1102호",
-                      "households":  "1,248세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 영통구 영통동",
-                      "address":  "경기도 수원시 영통구 영통동 988-2 영통아파트 710동 11층1102호",
-                      "area_m2":  164.85,
-                      "area_pyeong":  49.9,
-                      "floor_info":  "11층",
-                      "appraisal_price":  958000000,
-                      "minimum_price":  958000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  95800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EC%98%81%ED%86%B5%EB%8F%99%20%EC%98%81%ED%86%B5%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%98%81%ED%86%B5%EA%B5%AC%20%EC%98%81%ED%86%B5%EB%8F%99%20%EC%98%81%ED%86%B5%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경57359",
-                      "case_no":  "2025타경57359",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "서수원레이크푸르지오2단지",
-                      "dong_ho":  "205동 2705호",
-                      "households":  "797세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 권선구 입북동",
-                      "address":  "경기도 수원시 권선구 입북동 815 서수원레이크푸르지오2단지 205동 27층2705호",
-                      "area_m2":  84.98,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "27층",
-                      "appraisal_price":  541000000,
-                      "minimum_price":  541000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-28",
-                      "d_day":  6,
-                      "bid_deposit":  54100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/104300",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EA%B6%8C%EC%84%A0%EA%B5%AC%20%EC%9E%85%EB%B6%81%EB%8F%99%20%EC%84%9C%EC%88%98%EC%9B%90%EB%A0%88%EC%9D%B4%ED%81%AC%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A42%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경57582",
-                      "case_no":  "2025타경57582",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "두진아파트",
-                      "dong_ho":  "103동 1707호",
-                      "households":  "541세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 영덕동",
-                      "address":  "경기도 용인시 기흥구 영덕동 13 두진아파트 103동 17층1707호",
-                      "area_m2":  84.99,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "17층",
-                      "appraisal_price":  365000000,
-                      "minimum_price":  255500000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-11-06",
-                      "d_day":  15,
-                      "bid_deposit":  25550000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%98%81%EB%8D%95%EB%8F%99%20%EB%91%90%EC%A7%84%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%98%81%EB%8D%95%EB%8F%99%20%EB%91%90%EC%A7%84%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경57601",
-                      "case_no":  "2025타경57601",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "수원장안 에스티엑스칸2단지",
-                      "dong_ho":  "111동 1304호",
-                      "households":  "213세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 장안구 이목동",
-                      "address":  "경기도 수원시 장안구 이목동 917 수원장안 에스티엑스칸2단지 111동 13층1304호",
-                      "area_m2":  84.93,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "13층",
-                      "appraisal_price":  608000000,
-                      "minimum_price":  608000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  60800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%9D%B4%EB%AA%A9%EB%8F%99%20%EC%88%98%EC%9B%90%EC%9E%A5%EC%95%88%20%EC%97%90%EC%8A%A4%ED%8B%B0%EC%97%91%EC%8A%A4%EC%B9%B82%EB%8B%A8%EC%A7%80",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%9D%B4%EB%AA%A9%EB%8F%99%20%EC%88%98%EC%9B%90%EC%9E%A5%EC%95%88%20%EC%97%90%EC%8A%A4%ED%8B%B0%EC%97%91%EC%8A%A4%EC%B9%B82%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2025타경57818",
-                      "case_no":  "2025타경57818",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "블루밍 구성 더센트럴",
-                      "dong_ho":  "118동 903호",
-                      "households":  "1,576세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 마북동",
-                      "address":  "경기도 용인시 기흥구 마북동 524-8 블루밍 구성 더센트럴 118동 9층903호",
-                      "area_m2":  129.85,
-                      "area_pyeong":  39.3,
-                      "floor_info":  "9층",
-                      "appraisal_price":  950000000,
-                      "minimum_price":  950000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-23",
-                      "d_day":  1,
-                      "bid_deposit":  95000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/8443",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%A7%88%EB%B6%81%EB%8F%99%20%EB%B8%94%EB%A3%A8%EB%B0%8D%20%EA%B5%AC%EC%84%B1%20%EB%8D%94%EC%84%BC%ED%8A%B8%EB%9F%B4"
-                  },
-                  {
-                      "id":  "2025타경57831",
-                      "case_no":  "2025타경57831",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "초원마을성원상떼빌",
-                      "dong_ho":  "209동 201호",
-                      "households":  "860세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 언남동",
-                      "address":  "경기도 용인시 기흥구 언남동 500 초원마을성원상떼빌 209동 2층201호",
-                      "area_m2":  129.71,
-                      "area_pyeong":  39.2,
-                      "floor_info":  "2층",
-                      "appraisal_price":  600000000,
-                      "minimum_price":  600000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  60000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%96%B8%EB%82%A8%EB%8F%99%20%EC%B4%88%EC%9B%90%EB%A7%88%EC%9D%84%EC%84%B1%EC%9B%90%EC%83%81%EB%96%BC%EB%B9%8C",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EC%96%B8%EB%82%A8%EB%8F%99%20%EC%B4%88%EC%9B%90%EB%A7%88%EC%9D%84%EC%84%B1%EC%9B%90%EC%83%81%EB%96%BC%EB%B9%8C"
-                  },
-                  {
-                      "id":  "2026타경50366",
-                      "case_no":  "2026타경50366",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "내대지마을건영캐스빌",
-                      "dong_ho":  "701동 1301호",
-                      "households":  "1,254세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 수지구 죽전동",
-                      "address":  "경기도 용인시 수지구 죽전동 1182 내대지마을건영캐스빌 701동 13층1301호",
-                      "area_m2":  110.35,
-                      "area_pyeong":  33.4,
-                      "floor_info":  "13층",
-                      "appraisal_price":  860000000,
-                      "minimum_price":  860000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  86000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EC%A3%BD%EC%A0%84%EB%8F%99%20%EB%82%B4%EB%8C%80%EC%A7%80%EB%A7%88%EC%9D%84%EA%B1%B4%EC%98%81%EC%BA%90%EC%8A%A4%EB%B9%8C",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%88%98%EC%A7%80%EA%B5%AC%20%EC%A3%BD%EC%A0%84%EB%8F%99%20%EB%82%B4%EB%8C%80%EC%A7%80%EB%A7%88%EC%9D%84%EA%B1%B4%EC%98%81%EC%BA%90%EC%8A%A4%EB%B9%8C"
-                  },
-                  {
-                      "id":  "2026타경50468",
-                      "case_no":  "2026타경50468",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "탑실마을대주피오레2단지",
-                      "dong_ho":  "209동 2402호",
-                      "households":  "710세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 공세동",
-                      "address":  "경기도 용인시 기흥구 공세동 714 탑실마을대주피오레2단지 209동 24층2402호",
-                      "area_m2":  205.33,
-                      "area_pyeong":  62.1,
-                      "floor_info":  "24층",
-                      "appraisal_price":  1100000000,
-                      "minimum_price":  1100000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-20",
-                      "d_day":  29,
-                      "bid_deposit":  110000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/25910",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EA%B3%B5%EC%84%B8%EB%8F%99%20%ED%83%91%EC%8B%A4%EB%A7%88%EC%9D%84%EB%8C%80%EC%A3%BC%ED%94%BC%EC%98%A4%EB%A0%882%EB%8B%A8%EC%A7%80"
-                  },
-                  {
-                      "id":  "2026타경50534",
-                      "case_no":  "2026타경50534",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "한보라 에듀포레",
-                      "dong_ho":  "503동 105호",
-                      "households":  "446세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 보라동",
-                      "address":  "경기도 용인시 기흥구 보라동 617 한보라 에듀포레 503동 1층105호",
-                      "area_m2":  84.99,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "1층",
-                      "appraisal_price":  408000000,
-                      "minimum_price":  408000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  40800000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/22472",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%B3%B4%EB%9D%BC%EB%8F%99%20%ED%95%9C%EB%B3%B4%EB%9D%BC%20%EC%97%90%EB%93%80%ED%8F%AC%EB%A0%88"
-                  },
-                  {
-                      "id":  "2026타경50572",
-                      "case_no":  "2026타경50572",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "송전마을세광엔리치타워",
-                      "dong_ho":  "103동 204호",
-                      "households":  "782세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 처인구 이동읍",
-                      "address":  "경기도 용인시 처인구 이동읍 송전리 1227 송전마을세광엔리치타워 103동 2층204호",
-                      "area_m2":  107.88,
-                      "area_pyeong":  32.6,
-                      "floor_info":  "2층",
-                      "appraisal_price":  400000000,
-                      "minimum_price":  400000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  40000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/100729",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EC%B2%98%EC%9D%B8%EA%B5%AC%20%EC%9D%B4%EB%8F%99%EC%9D%8D%20%EC%86%A1%EC%A0%84%EB%A7%88%EC%9D%84%EC%84%B8%EA%B4%91%EC%97%94%EB%A6%AC%EC%B9%98%ED%83%80%EC%9B%8C"
-                  },
-                  {
-                      "id":  "2026타경50642",
-                      "case_no":  "2026타경50642",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "비단마을베스트타운",
-                      "dong_ho":  "733동 2202호",
-                      "households":  "1,032세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 장안구 천천동",
-                      "address":  "경기도 수원시 장안구 천천동 511 비단마을베스트타운 733동 22층2202호",
-                      "area_m2":  85.0,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "22층",
-                      "appraisal_price":  677000000,
-                      "minimum_price":  677000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-03",
-                      "d_day":  12,
-                      "bid_deposit":  67700000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3646",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%B2%9C%EC%B2%9C%EB%8F%99%20%EB%B9%84%EB%8B%A8%EB%A7%88%EC%9D%84%EB%B2%A0%EC%8A%A4%ED%8A%B8%ED%83%80%EC%9A%B4"
-                  },
-                  {
-                      "id":  "2026타경50666",
-                      "case_no":  "2026타경50666",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "밤꽃마을뜨란채",
-                      "dong_ho":  "106동 204호",
-                      "households":  "1,078세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 장안구 율전동",
-                      "address":  "경기도 수원시 장안구 율전동 546 밤꽃마을뜨란채 106동 2층204호",
-                      "area_m2":  84.8,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "2층",
-                      "appraisal_price":  421000000,
-                      "minimum_price":  421000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-20",
-                      "d_day":  29,
-                      "bid_deposit":  42100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%9C%A8%EC%A0%84%EB%8F%99%20%EB%B0%A4%EA%BD%83%EB%A7%88%EC%9D%84%EB%9C%A8%EB%9E%80%EC%B1%84",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%9C%A8%EC%A0%84%EB%8F%99%20%EB%B0%A4%EA%BD%83%EB%A7%88%EC%9D%84%EB%9C%A8%EB%9E%80%EC%B1%84"
-                  },
-                  {
-                      "id":  "2026타경50688",
-                      "case_no":  "2026타경50688",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "교동마을동양파라곤",
-                      "dong_ho":  "103동 1501호",
-                      "households":  "278세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 마북동",
-                      "address":  "경기도 용인시 기흥구 마북동 641 교동마을동양파라곤 103동 15층1501호",
-                      "area_m2":  127.77,
-                      "area_pyeong":  38.7,
-                      "floor_info":  "15층",
-                      "appraisal_price":  723000000,
-                      "minimum_price":  723000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-02",
-                      "d_day":  11,
-                      "bid_deposit":  72300000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/101520",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%A7%88%EB%B6%81%EB%8F%99%20%EA%B5%90%EB%8F%99%EB%A7%88%EC%9D%84%EB%8F%99%EC%96%91%ED%8C%8C%EB%9D%BC%EA%B3%A4"
-                  },
-                  {
-                      "id":  "2026타경50850",
-                      "case_no":  "2026타경50850",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "청솔마을에스케이.한화아파트",
-                      "dong_ho":  "626동 303호",
-                      "households":  "520세대",
-                      "region_group":  "수원",
-                      "district":  "수원시 장안구 정자동",
-                      "address":  "경기도 수원시 장안구 정자동 918 청솔마을에스케이.한화아파트 626동 3층303호",
-                      "area_m2":  157.44,
-                      "area_pyeong":  47.6,
-                      "floor_info":  "3층",
-                      "appraisal_price":  824000000,
-                      "minimum_price":  824000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-20",
-                      "d_day":  29,
-                      "bid_deposit":  82400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%A0%95%EC%9E%90%EB%8F%99%20%EC%B2%AD%EC%86%94%EB%A7%88%EC%9D%84%EC%97%90%EC%8A%A4%EC%BC%80%EC%9D%B4.%ED%95%9C%ED%99%94%EC%95%84%ED%8C%8C%ED%8A%B8",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%88%98%EC%9B%90%EC%8B%9C%20%EC%9E%A5%EC%95%88%EA%B5%AC%20%EC%A0%95%EC%9E%90%EB%8F%99%20%EC%B2%AD%EC%86%94%EB%A7%88%EC%9D%84%EC%97%90%EC%8A%A4%EC%BC%80%EC%9D%B4.%ED%95%9C%ED%99%94%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경51009",
-                      "case_no":  "2026타경51009",
-                      "court":  "수원지법 본원",
-                      "complex_name":  "보라마을현대모닝사이드",
-                      "dong_ho":  "105동 1102호",
-                      "households":  "771세대",
-                      "region_group":  "용인",
-                      "district":  "용인시 기흥구 보라동",
-                      "address":  "경기도 용인시 기흥구 보라동 564 보라마을현대모닝사이드 105동 11층1102호",
-                      "area_m2":  84.81,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "11층",
-                      "appraisal_price":  442000000,
-                      "minimum_price":  442000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-20",
-                      "d_day":  29,
-                      "bid_deposit":  44200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%B3%B4%EB%9D%BC%EB%8F%99%20%EB%B3%B4%EB%9D%BC%EB%A7%88%EC%9D%84%ED%98%84%EB%8C%80%EB%AA%A8%EB%8B%9D%EC%82%AC%EC%9D%B4%EB%93%9C",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%9A%A9%EC%9D%B8%EC%8B%9C%20%EA%B8%B0%ED%9D%A5%EA%B5%AC%20%EB%B3%B4%EB%9D%BC%EB%8F%99%20%EB%B3%B4%EB%9D%BC%EB%A7%88%EC%9D%84%ED%98%84%EB%8C%80%EB%AA%A8%EB%8B%9D%EC%82%AC%EC%9D%B4%EB%93%9C"
-                  },
-                  {
-                      "id":  "2026타경7",
-                      "case_no":  "2026타경7",
-                      "court":  "수원지법 성남지원",
-                      "complex_name":  "위례래미안이편한세상",
-                      "dong_ho":  "5601동 701호",
-                      "households":  "1,540세대",
-                      "region_group":  "성남",
-                      "district":  "성남시 수정구 창곡동",
-                      "address":  "경기도 성남시 수정구 창곡동 567 위례래미안이편한세상 5601동 7층701호",
-                      "area_m2":  75.98,
-                      "area_pyeong":  23.0,
-                      "floor_info":  "7층",
-                      "appraisal_price":  1580000000,
-                      "minimum_price":  1580000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-26",
-                      "d_day":  4,
-                      "bid_deposit":  158000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/107715",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EC%88%98%EC%A0%95%EA%B5%AC%20%EC%B0%BD%EA%B3%A1%EB%8F%99%20%EC%9C%84%EB%A1%80%EB%9E%98%EB%AF%B8%EC%95%88%EC%9D%B4%ED%8E%B8%ED%95%9C%EC%84%B8%EC%83%81"
-                  },
-                  {
-                      "id":  "2026타경52",
-                      "case_no":  "2026타경52",
-                      "court":  "수원지법 성남지원",
-                      "complex_name":  "이매촌삼성아파트",
-                      "dong_ho":  "1015동 302호",
-                      "households":  "446세대",
-                      "region_group":  "성남",
-                      "district":  "성남시 분당구 이매동",
-                      "address":  "경기도 성남시 분당구 이매동 100 이매촌삼성아파트 1015동 3층302호",
-                      "area_m2":  84.94,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "3층",
-                      "appraisal_price":  1620000000,
-                      "minimum_price":  1620000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-02",
-                      "d_day":  11,
-                      "bid_deposit":  162000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/2493",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EB%B6%84%EB%8B%B9%EA%B5%AC%20%EC%9D%B4%EB%A7%A4%EB%8F%99%20%EC%9D%B4%EB%A7%A4%EC%B4%8C%EC%82%BC%EC%84%B1%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경50816",
-                      "case_no":  "2026타경50816",
-                      "court":  "수원지법 성남지원",
-                      "complex_name":  "더샵판교퍼스트파크",
-                      "dong_ho":  "107동 1502호",
-                      "households":  "1,223세대",
-                      "region_group":  "성남",
-                      "district":  "성남시 분당구 백현동",
-                      "address":  "경기도 성남시 분당구 백현동 608 더샵판교퍼스트파크 107동 15층1502호",
-                      "area_m2":  84.97,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "15층",
-                      "appraisal_price":  1500000000,
-                      "minimum_price":  1500000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-02",
-                      "d_day":  11,
-                      "bid_deposit":  150000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/118128",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EB%B6%84%EB%8B%B9%EA%B5%AC%20%EB%B0%B1%ED%98%84%EB%8F%99%20%EB%8D%94%EC%83%B5%ED%8C%90%EA%B5%90%ED%8D%BC%EC%8A%A4%ED%8A%B8%ED%8C%8C%ED%81%AC"
-                  },
-                  {
-                      "id":  "2025타경101364",
-                      "case_no":  "2025타경101364",
-                      "court":  "수원지법 안양지원",
-                      "complex_name":  "래미안안양메가트리아",
-                      "dong_ho":  "115동 1001호",
-                      "households":  "4,250세대",
-                      "region_group":  "안양",
-                      "district":  "안양시 만안구 안양동",
-                      "address":  "경기도 안양시 만안구 안양동 1393 래미안안양메가트리아 115동 10층1001호",
-                      "area_m2":  39.5,
-                      "area_pyeong":  11.9,
-                      "floor_info":  "10층",
-                      "appraisal_price":  384000000,
-                      "minimum_price":  384000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  38400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/112054",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EC%95%88%EC%96%91%EB%8F%99%20%EB%9E%98%EB%AF%B8%EC%95%88%EC%95%88%EC%96%91%EB%A9%94%EA%B0%80%ED%8A%B8%EB%A6%AC%EC%95%84"
-                  },
-                  {
-                      "id":  "2025타경101578",
-                      "case_no":  "2025타경101578",
-                      "court":  "수원지법 안양지원",
-                      "complex_name":  "초원아파트",
-                      "dong_ho":  "704동 911호",
-                      "households":  "1,743세대",
-                      "region_group":  "안양",
-                      "district":  "안양시 동안구 평촌동",
-                      "address":  "경기도 안양시 동안구 평촌동 896-6 초원아파트 704동 9층911호",
-                      "area_m2":  37.85,
-                      "area_pyeong":  11.4,
-                      "floor_info":  "9층",
-                      "appraisal_price":  443000000,
-                      "minimum_price":  443000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  44300000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1477",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%8F%99%EC%95%88%EA%B5%AC%20%ED%8F%89%EC%B4%8C%EB%8F%99%20%EC%B4%88%EC%9B%90%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경101612",
-                      "case_no":  "2025타경101612",
-                      "court":  "수원지법 안양지원",
-                      "complex_name":  "관악아파트",
-                      "dong_ho":  "125동 801호",
-                      "households":  "1,800세대",
-                      "region_group":  "안양",
-                      "district":  "안양시 동안구 비산동",
-                      "address":  "경기도 안양시 동안구 비산동 1102 관악아파트 125동 8층801호",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "8층",
-                      "appraisal_price":  974000000,
-                      "minimum_price":  974000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  97400000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/1985",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%8F%99%EC%95%88%EA%B5%AC%20%EB%B9%84%EC%82%B0%EB%8F%99%20%EA%B4%80%EC%95%85%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경101688",
-                      "case_no":  "2025타경101688",
-                      "court":  "수원지법 안양지원",
-                      "complex_name":  "두산위브더아티움",
-                      "dong_ho":  "103동 701호",
-                      "households":  "558세대",
-                      "region_group":  "안양",
-                      "district":  "안양시 만안구 안양동",
-                      "address":  "경기도 안양시 만안구 안양동 1438 두산위브더아티움 103동 7층701호",
-                      "area_m2":  74.93,
-                      "area_pyeong":  22.7,
-                      "floor_info":  "7층",
-                      "appraisal_price":  717000000,
-                      "minimum_price":  717000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-27",
-                      "d_day":  5,
-                      "bid_deposit":  71700000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/127667",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%95%88%EC%96%91%EC%8B%9C%20%EB%A7%8C%EC%95%88%EA%B5%AC%20%EC%95%88%EC%96%91%EB%8F%99%20%EB%91%90%EC%82%B0%EC%9C%84%EB%B8%8C%EB%8D%94%EC%95%84%ED%8B%B0%EC%9B%80"
-                  },
-                  {
-                      "id":  "2024타경2343",
-                      "case_no":  "2024타경2343",
-                      "court":  "수원지법 안산지원",
-                      "complex_name":  "시흥배곧씨2호반써밋플레이스",
-                      "dong_ho":  "201동 2502호",
-                      "households":  "890세대",
-                      "region_group":  "서울",
-                      "district":  "서울 시흥시 배곧동",
-                      "address":  "경기도 시흥시 서울대학로264번길 12 201동 25층2502호 (정왕동,시흥배곧씨2호반써밋플레이스)",
-                      "area_m2":  84.9,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "25층",
-                      "appraisal_price":  632000000,
-                      "minimum_price":  632000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-05",
-                      "d_day":  14,
-                      "bid_deposit":  63200000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/search?sk=%EC%84%9C%EC%9A%B8%20%EC%8B%9C%ED%9D%A5%EC%8B%9C%20%EB%B0%B0%EA%B3%A7%EB%8F%99%20%EC%8B%9C%ED%9D%A5%EB%B0%B0%EA%B3%A7%EC%94%A82%ED%98%B8%EB%B0%98%EC%8D%A8%EB%B0%8B%ED%94%8C%EB%A0%88%EC%9D%B4%EC%8A%A4",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%9C%EC%9A%B8%20%EC%8B%9C%ED%9D%A5%EC%8B%9C%20%EB%B0%B0%EA%B3%A7%EB%8F%99%20%EC%8B%9C%ED%9D%A5%EB%B0%B0%EA%B3%A7%EC%94%A82%ED%98%B8%EB%B0%98%EC%8D%A8%EB%B0%8B%ED%94%8C%EB%A0%88%EC%9D%B4%EC%8A%A4"
-                  },
-                  {
-                      "id":  "2025타경965",
-                      "case_no":  "2025타경965",
-                      "court":  "수원지법 안산지원",
-                      "complex_name":  "철산센트럴푸르지오",
-                      "dong_ho":  "103동 2401호",
-                      "households":  "798세대",
-                      "region_group":  "광명",
-                      "district":  "광명시 철산동",
-                      "address":  "경기도 광명시 철산동 638 철산센트럴푸르지오 103동 24층2401호",
-                      "area_m2":  84.99,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "24층",
-                      "appraisal_price":  1390000000,
-                      "minimum_price":  1390000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-11-05",
-                      "d_day":  14,
-                      "bid_deposit":  139000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/122487",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B4%91%EB%AA%85%EC%8B%9C%20%EC%B2%A0%EC%82%B0%EB%8F%99%20%EC%B2%A0%EC%82%B0%EC%84%BC%ED%8A%B8%EB%9F%B4%ED%91%B8%EB%A5%B4%EC%A7%80%EC%98%A4"
-                  },
-                  {
-                      "id":  "2025타경101801br2026타경100686br중복",
-                      "case_no":  "2025타경101801\u003c/br\u003e2026타경100686\u003c/br\u003e(중복)",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "삼성아파트",
-                      "dong_ho":  "1동 1003호",
-                      "households":  "237세대",
-                      "region_group":  "서울",
-                      "district":  "강남구 남부순환로379길",
-                      "address":  "서울특별시 강남구 남부순환로379길 14, 1동 10층1003호 (도곡동,삼성아파트)",
-                      "area_m2":  84.91,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "10층",
-                      "appraisal_price":  2270000000,
-                      "minimum_price":  2270000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  227000000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/10828",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EB%82%A8%EB%B6%80%EC%88%9C%ED%99%98%EB%A1%9C379%EA%B8%B8%20%EC%82%BC%EC%84%B1%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2026타경100888",
-                      "case_no":  "2026타경100888",
-                      "court":  "서울중앙지법",
-                      "complex_name":  "대아파크빌",
-                      "dong_ho":  "401호",
-                      "households":  "67세대",
-                      "region_group":  "서울",
-                      "district":  "종로구 신영동",
-                      "address":  "서울특별시 종로구 신영동 254 대아파크빌 4층401호",
-                      "area_m2":  84.84,
-                      "area_pyeong":  25.7,
-                      "floor_info":  "4층",
-                      "appraisal_price":  691000000,
-                      "minimum_price":  691000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-28",
-                      "d_day":  6,
-                      "bid_deposit":  69100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/3829",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%A2%85%EB%A1%9C%EA%B5%AC%20%EC%8B%A0%EC%98%81%EB%8F%99%20%EB%8C%80%EC%95%84%ED%8C%8C%ED%81%AC%EB%B9%8C"
-                  },
-                  {
-                      "id":  "2026타경3517",
-                      "case_no":  "2026타경3517",
-                      "court":  "서울남부지법",
-                      "complex_name":  "동인아파트",
-                      "dong_ho":  "1003호",
-                      "households":  "104세대",
-                      "region_group":  "서울",
-                      "district":  "구로구 개봉동",
-                      "address":  "서울특별시 구로구 개봉동 335-1 동인아파트 제10층 제1003호",
-                      "area_m2":  67.36,
-                      "area_pyeong":  20.4,
-                      "floor_info":  "10층",
-                      "appraisal_price":  401000000,
-                      "minimum_price":  401000000,
-                      "discount_rate":  0,
-                      "auction_round":  "1회차 (신건)",
-                      "auction_date":  "2026-10-22",
-                      "d_day":  0,
-                      "bid_deposit":  40100000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/112",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EA%B5%AC%EB%A1%9C%EA%B5%AC%20%EA%B0%9C%EB%B4%89%EB%8F%99%20%EB%8F%99%EC%9D%B8%EC%95%84%ED%8C%8C%ED%8A%B8"
-                  },
-                  {
-                      "id":  "2025타경53678",
-                      "case_no":  "2025타경53678",
-                      "court":  "수원지법 성남지원",
-                      "complex_name":  "셀레스빌",
-                      "dong_ho":  "1505호",
-                      "households":  "117세대",
-                      "region_group":  "성남",
-                      "district":  "성남시 수정구",
-                      "address":  "경기도 성남시 수정구 신흥동 125-2 셀레스빌 15층1505호",
-                      "area_m2":  76.88,
-                      "area_pyeong":  23.3,
-                      "floor_info":  "15층",
-                      "appraisal_price":  583000000,
-                      "minimum_price":  408100000,
-                      "discount_rate":  30,
-                      "auction_round":  "2회차 (1회 유찰)",
-                      "auction_date":  "2026-10-26",
-                      "d_day":  4,
-                      "bid_deposit":  40810000,
-                      "is_safe":  true,
-                      "rights_badge":  "인수권리 없음 (안전)",
-                      "naver_search_url":  "https://new.land.naver.com/complexes/25864",
-                      "hogang_search_url":  "https://hogangnono.com/search?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EC%88%98%EC%A0%95%EA%B5%AC%20%EC%85%80%EB%A0%88%EC%8A%A4%EB%B9%8C"
-                  }
-              ]
-};
+  // Minimal empty fallback when data fetch fails
+  const FALLBACK_DATA = { updated_at: '', stats: {}, items: [] };
 
   const NAVER_COMPLEX_ID_MAP = {
     "송파 헬리오시티":  "111515",
@@ -4092,15 +131,41 @@
   const PRICE_SLIDER_MAX = 3000000000;
   const PRICE_SLIDER_STEP = 50000000;
 
+  function loadSavedBookmarks() {
+    try {
+      const raw = localStorage.getItem('sar_bookmarks');
+      if (!raw) return new Set();
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return new Set(parsed.filter(v => typeof v === 'string' && v.length > 0));
+      }
+    } catch (_) {}
+    return new Set();
+  }
+
+  function loadSavedSnapshots() {
+    try {
+      const raw = localStorage.getItem('sar_bookmark_snapshots');
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch (_) {}
+    return {};
+  }
+
   // State
   let state = {
     activeTab: 'active',
     items: [],
     historyItems: [],
+    historyLoaded: false,
+    loadError: false,
     stats: {},
     updatedAt: '',
-    bookmarks: new Set(JSON.parse(localStorage.getItem('sar_bookmarks') || '[]')),
-    snapshots: JSON.parse(localStorage.getItem('sar_bookmark_snapshots') || '{}'),
+    bookmarks: loadSavedBookmarks(),
+    snapshots: loadSavedSnapshots(),
     filters: {
       regionGroup: 'ALL',
       seoulZone: 'ALL',
@@ -4116,6 +181,8 @@
     },
     activeCalcItem: null
   };
+
+  let historyLoadPromise = null;
 
   // DOM Elements
   const el = {
@@ -4180,7 +247,8 @@
 
   // Format Date (Strictly YY.MM.DD, e.g. 2026-10-22 -> 26.10.22)
   function formatDate(item) {
-    if (item && item.auction_date) {
+    if (!item || typeof item !== 'object') return '--.--.--';
+    if (item.auction_date && typeof item.auction_date === 'string') {
       try {
         const parts = item.auction_date.split('-');
         if (parts.length === 3) {
@@ -4193,7 +261,8 @@
     }
     // Fallback: calculate from d_day if auction_date string is missing
     const base = new Date();
-    base.setDate(base.getDate() + (item.d_day || 0));
+    const dDay = Number(item.d_day);
+    base.setDate(base.getDate() + (Number.isFinite(dDay) ? dDay : 0));
     const yy = String(base.getFullYear()).slice(-2);
     const mm = String(base.getMonth() + 1).padStart(2, '0');
     const dd = String(base.getDate()).padStart(2, '0');
@@ -4202,15 +271,18 @@
 
   // Toast
   function toast(msg) {
+    if (!el.toast) return;
     el.toast.textContent = msg;
     el.toast.classList.add('show');
-    setTimeout(() => el.toast.classList.remove('show'), 1800);
+    setTimeout(() => el.toast && el.toast.classList.remove('show'), 1800);
   }
 
   // Bookmark Helpers (Legacy ID migration + snapshot persistence)
   function saveBookmarks() {
-    localStorage.setItem('sar_bookmarks', JSON.stringify(Array.from(state.bookmarks)));
-    localStorage.setItem('sar_bookmark_snapshots', JSON.stringify(state.snapshots));
+    try {
+      localStorage.setItem('sar_bookmarks', JSON.stringify(Array.from(state.bookmarks)));
+      localStorage.setItem('sar_bookmark_snapshots', JSON.stringify(state.snapshots));
+    } catch (_) {}
   }
 
   function isItemBookmarked(item) {
@@ -4226,14 +298,14 @@
     const allKnown = [...state.items, ...state.historyItems];
     let changed = false;
     for (const savedId of Array.from(state.bookmarks)) {
-      const exact = allKnown.find(i => i.id === savedId);
+      const exact = allKnown.find(i => i && i.id === savedId);
       if (exact) {
         state.snapshots[exact.id] = { ...exact };
         changed = true;
         continue;
       }
       // Migrate legacy ID (e.g. "2023타경113343" -> "B0002102023타경1133431")
-      const matches = allKnown.filter(i => i.case_no === savedId || i.legacy_id === savedId || (i.id && i.id.includes(savedId)));
+      const matches = allKnown.filter(i => i && (i.case_no === savedId || i.legacy_id === savedId || (i.id && i.id.includes(savedId))));
       if (matches.length > 0) {
         state.bookmarks.delete(savedId);
         matches.forEach(m => {
@@ -4262,29 +334,58 @@
     return merged;
   }
 
+  async function fetchJsonWithTimeout(url, timeoutMs = 10000) {
+    const controller = new AbortController();
+    const timerId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { cache: 'no-cache', signal: controller.signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } finally {
+      clearTimeout(timerId);
+    }
+  }
+
+  async function ensureHistoryLoaded() {
+    if (state.historyLoaded) return;
+    if (historyLoadPromise) return historyLoadPromise;
+
+    historyLoadPromise = (async () => {
+      try {
+        const hData = await fetchJsonWithTimeout('data/auction_history.json', 10000);
+        state.historyItems = Array.isArray(hData && hData.items) ? hData.items : [];
+        state.historyLoaded = true;
+        migrateAndSyncBookmarks();
+        if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
+        if (state.activeTab === 'results') renderCards();
+      } catch (_) {
+        // Keep historyLoaded false so user can retry on tab switch if needed
+      } finally {
+        historyLoadPromise = null;
+      }
+    })();
+
+    return historyLoadPromise;
+  }
+
   // Load Data
   async function loadData() {
-    const [activeRes, histRes] = await Promise.allSettled([
-      fetch('data/auction_data.json?t=' + Date.now()),
-      fetch('data/auction_history.json?t=' + Date.now())
-    ]);
+    state.loadError = false;
+    const historyPromise = state.bookmarks.size > 0 ? ensureHistoryLoaded() : Promise.resolve();
+
     try {
-      if (activeRes.status !== 'fulfilled' || !activeRes.value.ok) throw new Error();
-      const data = await activeRes.value.json();
-      state.items = data.items || [];
-      state.stats = data.stats || {};
-      state.updatedAt = data.updated_at || '';
+      const data = await fetchJsonWithTimeout('data/auction_data.json', 10000);
+      state.items = Array.isArray(data && data.items) ? data.items : [];
+      state.stats = (data && data.stats && typeof data.stats === 'object') ? data.stats : {};
+      state.updatedAt = (data && typeof data.updated_at === 'string') ? data.updated_at : '';
     } catch (e) {
       state.items = FALLBACK_DATA.items;
       state.stats = FALLBACK_DATA.stats;
       state.updatedAt = FALLBACK_DATA.updated_at;
+      state.loadError = true;
     }
-    if (histRes.status === 'fulfilled' && histRes.value.ok) {
-      try {
-        const hData = await histRes.value.json();
-        state.historyItems = hData.items || [];
-      } catch (_) {}
-    }
+
+    await historyPromise;
     migrateAndSyncBookmarks();
     renderHeader();
     renderCards();
@@ -4292,7 +393,15 @@
 
   // Update live counts on Seoul 5-zone sub-buttons
   function updateSeoulZoneCounts() {
+    if (!el.seoulZoneButtons) return;
     const seoulItems = state.items.filter(isSeoulItem);
+    const zoneCounts = { ALL: seoulItems.length, SE: 0, CENTER: 0, SW: 0, NE: 0, NW: 0 };
+    const zoneKeys = ['SE', 'CENTER', 'SW', 'NE', 'NW'];
+    for (const it of seoulItems) {
+      for (const zk of zoneKeys) {
+        if (matchSeoulZone(it, zk)) zoneCounts[zk] += 1;
+      }
+    }
     const labels = {
       ALL: '서울 전체',
       SE: '강남·동남권',
@@ -4303,7 +412,7 @@
     };
     el.seoulZoneButtons.forEach(btn => {
       const zk = btn.getAttribute('data-seoul-zone');
-      const cnt = zk === 'ALL' ? seoulItems.length : seoulItems.filter(it => matchSeoulZone(it, zk)).length;
+      const cnt = zoneCounts[zk] || 0;
       const baseLabel = labels[zk] || btn.textContent;
       btn.innerHTML = `${baseLabel} <span class="zone-count">${cnt}</span>`;
     });
@@ -4311,20 +420,24 @@
 
   // Render Header & Stats
   function renderHeader() {
-    let dateLabel = '26.10.19';
+    let dateLabel = '-';
     if (state.updatedAt && state.updatedAt.includes('-')) {
       const p = state.updatedAt.split('-');
       if (p.length === 3) {
         dateLabel = `${p[0].slice(-2)}.${p[1].padStart(2, '0')}.${p[2].padStart(2, '0')}`;
       }
     }
-    el.headerMeta.textContent = `서울 · 경기 핵심지 자동 업데이트 (${dateLabel} 기준)`;
-    el.statTotal.textContent = `${state.stats.total || state.items.length}`;
-    el.statDiscount.textContent = `${state.stats.discounted_count || 0}`;
-    el.statNew.textContent = `${state.stats.new_count || 0}`;
-    el.statImminent.textContent = `${state.stats.imminent_count || 0}`;
+    if (el.headerMeta) {
+      el.headerMeta.textContent = state.loadError
+        ? '데이터를 불러오지 못했습니다'
+        : `서울 · 경기 핵심지 자동 업데이트 (${dateLabel} 기준)`;
+    }
+    if (el.statTotal) el.statTotal.textContent = `${state.stats.total || state.items.length}`;
+    if (el.statDiscount) el.statDiscount.textContent = `${state.stats.discounted_count || 0}`;
+    if (el.statNew) el.statNew.textContent = `${state.stats.new_count || 0}`;
+    if (el.statImminent) el.statImminent.textContent = `${state.stats.imminent_count || 0}`;
     if (el.tabCountActive) el.tabCountActive.textContent = state.items.length;
-    if (el.tabCountResults) el.tabCountResults.textContent = getResultsDataset().length;
+    if (el.tabCountResults) el.tabCountResults.textContent = state.historyLoaded ? getResultsDataset().length : '-';
     updateSeoulZoneCounts();
   }
 
@@ -4336,11 +449,35 @@
     return parseInt(digits, 10) || 0;
   }
 
+  function escapeHtml(val) {
+    if (val === null || val === undefined) return '';
+    return String(val)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function safeHttpUrl(url, fallback = '#') {
+    if (!url || typeof url !== 'string') return fallback;
+    const trimmed = url.trim();
+    if (!/^https?:\/\//i.test(trimmed)) return fallback;
+    try {
+      const parsed = new URL(trimmed);
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+        return parsed.href;
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
   // Filter Items
   function getFilteredItems() {
     const isResultsTab = state.activeTab === 'results';
     const sourceItems = isResultsTab ? getResultsDataset() : state.items;
     return sourceItems.filter(item => {
+      if (!item || typeof item !== 'object') return false;
       // Region Filter
       if (state.filters.regionGroup !== 'ALL') {
         if (state.filters.regionGroup === '서울') {
@@ -4358,16 +495,18 @@
       }
 
       // Price Range Slider Filter (5천만원 단위, max = 30억+ 무제한)
-      const p = item.minimum_price;
+      const p = Number(item.minimum_price) || 0;
       if (state.filters.minPrice > 0 && p < state.filters.minPrice) return false;
       if (state.filters.maxPrice < PRICE_SLIDER_MAX && p > state.filters.maxPrice) return false;
 
       // Discount & Imminent Filters (active tab only)
       if (state.activeTab === 'active') {
-        if (state.filters.discount === 'new' && item.discount_rate !== 0) return false;
-        if (state.filters.discount === 'disc20' && item.discount_rate < 20) return false;
-        if (state.filters.discount === 'disc36' && item.discount_rate < 36) return false;
-        if (state.filters.imminentOnly && (item.d_day < 0 || item.d_day > 7)) return false;
+        const disc = Number(item.discount_rate) || 0;
+        const dDay = Number(item.d_day);
+        if (state.filters.discount === 'new' && disc !== 0) return false;
+        if (state.filters.discount === 'disc20' && disc < 20) return false;
+        if (state.filters.discount === 'disc36' && disc < 36) return false;
+        if (state.filters.imminentOnly && (!Number.isFinite(dDay) || dDay < 0 || dDay > 7)) return false;
       }
 
       // Safe rights only
@@ -4379,7 +518,7 @@
       // Keyword Search
       if (state.filters.search) {
         const query = state.filters.search.toLowerCase();
-        const text = `${item.complex_name} ${item.district} ${item.case_no} ${item.court}`.toLowerCase();
+        const text = `${item.complex_name || ''} ${item.district || ''} ${item.case_no || ''} ${item.court || ''}`.toLowerCase();
         if (!text.includes(query)) return false;
       }
       return true;
@@ -4387,7 +526,7 @@
       if (state.activeTab === 'results') {
         const dCmp = (b.auction_date || '').localeCompare(a.auction_date || '');
         if (dCmp !== 0) return dCmp;
-        return (b.winning_price || 0) - (a.winning_price || 0);
+        return (Number(b.winning_price) || 0) - (Number(a.winning_price) || 0);
       }
       if (state.filters.sort === 'created_desc') {
         // 오늘 신규 유입(is_today_new) 1순위 -> 최신 등록일 -> 사건번호 순
@@ -4399,10 +538,10 @@
         if (dateA !== dateB) return dateB.localeCompare(dateA);
         return (b.case_no || '').localeCompare(a.case_no || '');
       }
-      if (state.filters.sort === 'dday_asc') return a.d_day - b.d_day;
-      if (state.filters.sort === 'discount_desc') return b.discount_rate - a.discount_rate;
-      if (state.filters.sort === 'min_price_asc') return a.minimum_price - b.minimum_price;
-      if (state.filters.sort === 'appraisal_desc') return b.appraisal_price - a.appraisal_price;
+      if (state.filters.sort === 'dday_asc') return (Number(a.d_day) || 999) - (Number(b.d_day) || 999);
+      if (state.filters.sort === 'discount_desc') return (Number(b.discount_rate) || 0) - (Number(a.discount_rate) || 0);
+      if (state.filters.sort === 'min_price_asc') return (Number(a.minimum_price) || 0) - (Number(b.minimum_price) || 0);
+      if (state.filters.sort === 'appraisal_desc') return (Number(b.appraisal_price) || 0) - (Number(a.appraisal_price) || 0);
       return 0;
     });
   }
@@ -4410,8 +549,9 @@
   // Resolve exact Naver Real Estate complex URL for 호가 button
   function getNaverComplexUrl(item) {
     const raw = (item && (item.naver_url || item.naver_search_url)) || '';
-    if (/\/complexes\/\d+/.test(raw)) {
-      return raw;
+    const safeRaw = safeHttpUrl(raw, '');
+    if (safeRaw && /\/complexes\/\d+/.test(safeRaw)) {
+      return safeRaw;
     }
     if (item && item.complex_name && NAVER_COMPLEX_ID_MAP[item.complex_name]) {
       return `https://new.land.naver.com/complexes/${NAVER_COMPLEX_ID_MAP[item.complex_name]}`;
@@ -4444,11 +584,13 @@
 
   // Render Card HTML (Clean & Informative)
   function renderCard(item) {
+    if (!item || typeof item !== 'object') return '';
     const isResult = state.activeTab === 'results' || Boolean(item.status_label);
     const isTodayNew = !isResult && Boolean(item.is_today_new || (state.updatedAt && item.first_seen === state.updatedAt));
     const newBadge = isTodayNew ? '<span class="chip chip-badge-new">NEW</span>' : '';
     const isBookmarked = isItemBookmarked(item);
-    const dDayClass = isResult ? 'chip chip-result-change' : (item.d_day <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday');
+    const dDayVal = Number(item.d_day);
+    const dDayClass = isResult ? 'chip chip-result-change' : (Number.isFinite(dDayVal) && dDayVal <= 5 ? 'chip chip-dday imminent' : 'chip chip-dday');
     // 100% Guaranteed YY.MM.DD Format
     const dateLabel = formatDate(item);
     
@@ -4456,20 +598,34 @@
     if (isResult) {
       const st = item.status_label || '목록 종료';
       const stClass = st.includes('매각') ? 'chip-result-sold' : (st.includes('유찰') ? 'chip-result-fail' : 'chip-result-change');
-      statusBadgeHtml = `<span class="chip ${stClass}">${st}</span>`;
+      statusBadgeHtml = `<span class="chip ${stClass}">${escapeHtml(st)}</span>`;
     } else {
-      statusBadgeHtml = item.discount_rate > 0
-        ? `<span class="chip chip-discount">-${item.discount_rate}%</span>`
+      const disc = Number(item.discount_rate) || 0;
+      statusBadgeHtml = disc > 0
+        ? `<span class="chip chip-discount">-${escapeHtml(disc)}%</span>`
         : `<span class="chip chip-new">신건</span>`;
     }
 
+    const caseNo = item.case_no || '';
+    const complexName = item.complex_name || '';
+    const court = item.court || '';
+    const district = item.district || '';
+    const areaM2 = item.area_m2 ?? '-';
+    const areaPyeong = item.area_pyeong ?? '-';
+    const floorInfo = item.floor_info || '-';
+    const auctionRound = item.auction_round || '-';
+    const itemId = item.id || '';
+
     // 단지명 클릭 시 사건번호+단지명 경매 상세 검색결과 연결
-    const auctionDetailUrl = `https://search.naver.com/search.naver?where=nexearch&query=${encodeURIComponent(item.case_no + ' ' + item.complex_name + ' 경매')}`;
-    const naverLink = getNaverComplexUrl(item);
-    const hogangLink = item.hogang_url || item.hogang_search_url || '#';
+    const auctionDetailUrl = safeHttpUrl(
+      `https://search.naver.com/search.naver?where=nexearch&query=${encodeURIComponent(caseNo + ' ' + complexName + ' 경매')}`
+    );
+    const naverLink = safeHttpUrl(getNaverComplexUrl(item));
+    const hogangLink = safeHttpUrl(item.hogang_url || item.hogang_search_url || '#');
+
     let rightsText = item.rights_badge || (item.is_safe ? '인수권리 없음 (안전)' : '권리확인 필요');
     if (isResult && item.next_date) {
-      const nd = item.next_date.split('-');
+      const nd = String(item.next_date).split('-');
       const ndLabel = nd.length === 3 ? `${nd[0].slice(-2)}.${nd[1]}.${nd[2]}` : item.next_date;
       rightsText = `다음 기일 예정: ${ndLabel}`;
     } else if (isResult && item.result_detail) {
@@ -4478,55 +634,58 @@
     const dongHo = getDongHo(item);
     const households = getHouseholds(item);
 
-    const hasWinning = isResult && item.winning_price > 0;
+    const winPrice = Number(item.winning_price) || 0;
+    const minPrice = Number(item.minimum_price) || 0;
+    const appPrice = Number(item.appraisal_price) || 0;
+    const hasWinning = isResult && winPrice > 0;
     const priceLabel = hasWinning ? '낙찰가' : '최저가';
-    const priceValue = hasWinning ? formatMoney(item.winning_price) : formatMoney(item.minimum_price);
-    const winRatio = hasWinning && item.appraisal_price > 0 ? Math.round((item.winning_price / item.appraisal_price) * 100) : 0;
+    const priceValue = hasWinning ? formatMoney(winPrice) : formatMoney(minPrice);
+    const winRatio = hasWinning && appPrice > 0 ? Math.round((winPrice / appPrice) * 100) : 0;
     const rightSubText = hasWinning
-      ? `최저가 ${formatMoney(item.minimum_price)} · 감정가 대비 ${winRatio}%`
+      ? `최저가 ${formatMoney(minPrice)} · 감정가 대비 ${winRatio}%`
       : `보증금 ${formatMoney(item.bid_deposit)}`;
 
     return `
-      <article class="auction-card" data-id="${item.id}">
+      <article class="auction-card" data-id="${escapeHtml(itemId)}">
         <div>
           <div class="card-top">
-            <span class="meta-case"><span class="meta-case-no" data-action="copy-case" data-case="${item.case_no}" title="클릭하여 사건번호 복사">${item.case_no}</span> · ${item.court}</span>
+            <span class="meta-case"><span class="meta-case-no" data-action="copy-case" data-case="${escapeHtml(caseNo)}" title="클릭하여 사건번호 복사">${escapeHtml(caseNo)}</span> · ${escapeHtml(court)}</span>
             <div class="badge-row">
               ${newBadge}${statusBadgeHtml}
-              <span class="${dDayClass}" title="${isResult ? '기존 매각기일' : '매각기일'}">${dateLabel}</span>
+              <span class="${dDayClass}" title="${isResult ? '기존 매각기일' : '매각기일'}">${escapeHtml(dateLabel)}</span>
             </div>
           </div>
 
           <div class="complex-header">
             <h3 class="complex-name">
-              <a href="${auctionDetailUrl}" target="_blank" rel="noopener" class="complex-name-link" title="법원 매물 상세공고 확인 (새 탭)">
-                ${item.complex_name}${dongHo ? ` <span style="font-weight:600; font-size:0.88em; color:#4e5968;">${dongHo}</span>` : ''}
+              <a href="${escapeHtml(auctionDetailUrl)}" target="_blank" rel="noopener noreferrer" class="complex-name-link" title="법원 매물 상세공고 확인 (새 탭)">
+                ${escapeHtml(complexName)}${dongHo ? ` <span style="font-weight:600; font-size:0.88em; color:#4e5968;">${escapeHtml(dongHo)}</span>` : ''}
               </a>
             </h3>
-            <div class="complex-spec">${item.district}${households ? ` · ${households}` : ''} · 전용 ${item.area_m2}㎡ (${item.area_pyeong}평) · ${item.floor_info} · ${item.auction_round}</div>
+            <div class="complex-spec">${escapeHtml(district)}${households ? ` · ${escapeHtml(households)}` : ''} · 전용 ${escapeHtml(areaM2)}㎡ (${escapeHtml(areaPyeong)}평) · ${escapeHtml(floorInfo)} · ${escapeHtml(auctionRound)}</div>
           </div>
 
           <div class="price-section">
             <div class="price-main-row">
-              <span class="price-target-label">${priceLabel}</span>
-              <span class="price-target-val">${priceValue}</span>
+              <span class="price-target-label">${escapeHtml(priceLabel)}</span>
+              <span class="price-target-val">${escapeHtml(priceValue)}</span>
             </div>
             <div class="price-sub-row">
-              <span>감정가 <span class="appraisal-val">${formatMoney(item.appraisal_price)}</span></span>
-              <span>${rightSubText}</span>
+              <span>감정가 <span class="appraisal-val">${escapeHtml(formatMoney(appPrice))}</span></span>
+              <span>${escapeHtml(rightSubText)}</span>
             </div>
           </div>
 
           <div class="rights-note">
-            ${isResult ? '📌' : '🛡️'} <strong>${rightsText}</strong>
+            ${isResult ? '📌' : '🛡️'} <strong>${escapeHtml(rightsText)}</strong>
           </div>
         </div>
 
         <div class="card-actions">
-          <a href="${naverLink}" target="_blank" rel="noopener" class="btn-secondary">호가</a>
-          <a href="${hogangLink}" target="_blank" rel="noopener" class="btn-secondary">실거래</a>
-          <button type="button" class="btn-primary" data-action="calc" data-id="${item.id}">계산기</button>
-          <button type="button" class="btn-fav ${isBookmarked ? 'active' : ''}" data-action="fav" data-id="${item.id}">
+          <a href="${escapeHtml(naverLink)}" target="_blank" rel="noopener noreferrer" class="btn-secondary">호가</a>
+          <a href="${escapeHtml(hogangLink)}" target="_blank" rel="noopener noreferrer" class="btn-secondary">실거래</a>
+          <button type="button" class="btn-primary" data-action="calc" data-id="${escapeHtml(itemId)}">계산기</button>
+          <button type="button" class="btn-fav ${isBookmarked ? 'active' : ''}" data-action="fav" data-id="${escapeHtml(itemId)}">
             ★
           </button>
         </div>
@@ -4537,7 +696,13 @@
   // Render All Cards
   function renderCards() {
     const list = getFilteredItems();
-    el.resultCount.textContent = list.length;
+    if (el.resultCount) el.resultCount.textContent = list.length;
+    if (!el.auctionGrid) return;
+
+    if (state.loadError && state.activeTab === 'active' && state.items.length === 0) {
+      el.auctionGrid.innerHTML = `<div class="empty-box">경매 데이터를 불러오지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.<div style="margin-top:12px;"><button type="button" class="btn-secondary" data-action="retry-load">다시 시도</button></div></div>`;
+      return;
+    }
 
     if (list.length === 0) {
       el.auctionGrid.innerHTML = `<div class="empty-box">해당하는 경매 물건이 없습니다.</div>`;
@@ -4580,45 +745,47 @@
   // Calculator
   function openCalculator(id) {
     const item = findItemById(id);
-    if (!item) return;
+    if (!item || !el.modalOverlay) return;
 
     state.activeCalcItem = item;
-    el.modalTitle.textContent = item.complex_name;
-    el.modalCaseNo.textContent = `${item.case_no} · 감정가 ${formatMoney(item.appraisal_price)}`;
-    el.calcInput.value = item.minimum_price;
+    if (el.modalTitle) el.modalTitle.textContent = item.complex_name || '-';
+    if (el.modalCaseNo) el.modalCaseNo.textContent = `${item.case_no || '-'} · 감정가 ${formatMoney(item.appraisal_price)}`;
+    if (el.calcInput) el.calcInput.value = Number(item.minimum_price) || 0;
     updateCalcMath();
 
     el.modalOverlay.classList.add('active');
   }
 
   function closeCalculator() {
-    el.modalOverlay.classList.remove('active');
+    if (el.modalOverlay) el.modalOverlay.classList.remove('active');
     state.activeCalcItem = null;
   }
 
   function updateCalcMath() {
     if (!state.activeCalcItem) return;
-    const bid = parseInt(el.calcInput.value, 10) || 0;
+    const bid = el.calcInput ? (parseInt(el.calcInput.value, 10) || 0) : 0;
     const item = state.activeCalcItem;
+    const minPrice = Number(item.minimum_price) || 0;
+    const appPrice = Number(item.appraisal_price) || 0;
 
-    const deposit = Math.round(item.minimum_price * 0.1);
+    const deposit = Math.round(minPrice * 0.1);
     const balance = Math.max(0, bid - deposit);
-    const loan = Math.round(Math.min(bid, item.appraisal_price) * 0.70);
+    const loan = Math.round(Math.min(bid, appPrice) * 0.70);
 
     let taxRate = 0.011;
     if (bid > 900000000) taxRate = 0.035;
     else if (bid > 600000000) taxRate = 0.022;
     const tax = Math.round(bid * taxRate);
 
-    const extra = Math.round((item.area_pyeong || 25) * 80000 + 1000000); // 명도비 + 채권/법무
+    const extra = Math.round((Number(item.area_pyeong) || 25) * 80000 + 1000000); // 명도비 + 채권/법무
     const ownCash = deposit + Math.max(0, balance - loan) + tax + extra;
 
-    el.resDeposit.textContent = formatMoney(deposit);
-    el.resBalance.textContent = formatMoney(balance);
-    el.resLoan.textContent = `약 ${formatMoney(loan)}`;
-    el.resTax.textContent = `${formatMoney(tax)} (${(taxRate * 100).toFixed(1)}%)`;
-    el.resExtra.textContent = formatMoney(extra);
-    el.resTotal.textContent = formatMoney(ownCash);
+    if (el.resDeposit) el.resDeposit.textContent = formatMoney(deposit);
+    if (el.resBalance) el.resBalance.textContent = formatMoney(balance);
+    if (el.resLoan) el.resLoan.textContent = `약 ${formatMoney(loan)}`;
+    if (el.resTax) el.resTax.textContent = `${formatMoney(tax)} (${(taxRate * 100).toFixed(1)}%)`;
+    if (el.resExtra) el.resExtra.textContent = formatMoney(extra);
+    if (el.resTotal) el.resTotal.textContent = formatMoney(ownCash);
   }
 
   // Event Listeners
@@ -4638,33 +805,40 @@
           if (el.summaryBar) {
             el.summaryBar.style.display = targetTab === 'active' ? 'grid' : 'none';
           }
+          if (targetTab === 'results' && !state.historyLoaded) {
+            ensureHistoryLoaded();
+          }
           renderCards();
         });
       });
     }
 
     // Region Pills
-    el.regionButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        el.regionButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const region = btn.getAttribute('data-region');
-        state.filters.regionGroup = region;
+    if (el.regionButtons) {
+      el.regionButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          el.regionButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const region = btn.getAttribute('data-region');
+          state.filters.regionGroup = region;
 
-        if (el.seoulSubWrapper) {
-          if (region === '서울') {
-            el.seoulSubWrapper.style.display = 'block';
-          } else {
-            el.seoulSubWrapper.style.display = 'none';
-            state.filters.seoulZone = 'ALL';
-            el.seoulZoneButtons.forEach(sb => {
-              sb.classList.toggle('active', sb.getAttribute('data-seoul-zone') === 'ALL');
-            });
+          if (el.seoulSubWrapper) {
+            if (region === '서울') {
+              el.seoulSubWrapper.style.display = 'block';
+            } else {
+              el.seoulSubWrapper.style.display = 'none';
+              state.filters.seoulZone = 'ALL';
+              if (el.seoulZoneButtons) {
+                el.seoulZoneButtons.forEach(sb => {
+                  sb.classList.toggle('active', sb.getAttribute('data-seoul-zone') === 'ALL');
+                });
+              }
+            }
           }
-        }
-        renderCards();
+          renderCards();
+        });
       });
-    });
+    }
 
     // Seoul 5-Zone Sub-Pills
     if (el.seoulZoneButtons) {
@@ -4983,70 +1157,85 @@
       }
     });
 
-    el.selectDiscount.addEventListener('change', e => {
-      state.filters.discount = e.target.value;
-      renderCards();
-    });
+    if (el.selectDiscount) {
+      el.selectDiscount.addEventListener('change', e => {
+        state.filters.discount = e.target.value;
+        renderCards();
+      });
+    }
 
-    el.selectSort.addEventListener('change', e => {
-      state.filters.sort = e.target.value;
-      renderCards();
-    });
+    if (el.selectSort) {
+      el.selectSort.addEventListener('change', e => {
+        state.filters.sort = e.target.value;
+        renderCards();
+      });
+    }
 
     // Checks
-    el.chkSafe.addEventListener('change', e => {
-      state.filters.safeOnly = e.target.checked;
-      renderCards();
-    });
+    if (el.chkSafe) {
+      el.chkSafe.addEventListener('change', e => {
+        state.filters.safeOnly = e.target.checked;
+        renderCards();
+      });
+    }
 
-    el.chkBookmark.addEventListener('change', e => {
-      state.filters.bookmarkedOnly = e.target.checked;
-      renderCards();
-    });
+    if (el.chkBookmark) {
+      el.chkBookmark.addEventListener('change', e => {
+        state.filters.bookmarkedOnly = e.target.checked;
+        renderCards();
+      });
+    }
 
     // Search
-    let timer = null;
-    el.inputSearch.addEventListener('input', e => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        state.filters.search = e.target.value.trim();
-        renderCards();
-      }, 150);
-    });
+    if (el.inputSearch) {
+      let timer = null;
+      el.inputSearch.addEventListener('input', e => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          state.filters.search = e.target.value.trim();
+          renderCards();
+        }, 150);
+      });
+    }
 
     // Grid Click Delegation
-    el.auctionGrid.addEventListener('click', e => {
-      const btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      const action = btn.getAttribute('data-action');
-      const id = btn.getAttribute('data-id');
+    if (el.auctionGrid) {
+      el.auctionGrid.addEventListener('click', e => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.getAttribute('data-action');
+        const id = btn.getAttribute('data-id');
 
-      if (action === 'fav') toggleFav(id);
-      else if (action === 'calc') openCalculator(id);
-      else if (action === 'copy-case') {
-        const caseNo = btn.getAttribute('data-case');
-        if (caseNo) {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(caseNo).then(() => {
-              toast(`사건번호 [${caseNo}] 복사되었습니다.`);
-            }).catch(() => fallbackCopy(caseNo));
-          } else {
-            fallbackCopy(caseNo);
+        if (action === 'fav') toggleFav(id);
+        else if (action === 'calc') openCalculator(id);
+        else if (action === 'retry-load') loadData();
+        else if (action === 'copy-case') {
+          const caseNo = btn.getAttribute('data-case');
+          if (caseNo) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(caseNo).then(() => {
+                toast(`사건번호 [${caseNo}] 복사되었습니다.`);
+              }).catch(() => fallbackCopy(caseNo));
+            } else {
+              fallbackCopy(caseNo);
+            }
           }
         }
-      }
-    });
+      });
+    }
 
     // Modal
-    el.modalClose.addEventListener('click', closeCalculator);
-    el.modalOverlay.addEventListener('click', e => {
-      if (e.target === el.modalOverlay) closeCalculator();
-    });
-    window.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && el.modalOverlay.classList.contains('active')) closeCalculator();
-    });
+    if (el.modalClose) el.modalClose.addEventListener('click', closeCalculator);
+    if (el.modalOverlay) {
+      el.modalOverlay.addEventListener('click', e => {
+        if (e.target === el.modalOverlay) closeCalculator();
+      });
+      window.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && el.modalOverlay.classList.contains('active')) closeCalculator();
+      });
+    }
 
-    el.calcInput.addEventListener('input', updateCalcMath);
+    if (el.calcInput) el.calcInput.addEventListener('input', updateCalcMath);
 
     // 사건번호 텍스트 클립보드 복사 폴백
     function fallbackCopy(text) {
